@@ -1,5 +1,5 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
-import Registry from './Registry.mjs';
+import Registry from './system/Registry.mjs';
 import path from 'path';
 import { existsSync, mkdirSync } from 'fs';
 
@@ -16,7 +16,7 @@ function createWindow() {
 		backgroundColor: "black",
 		frame: false,
 		webPreferences: {
-			preload: path.join(path.resolve(path.dirname('')), "preload.js")
+			preload: path.join(path.resolve(path.dirname('')), "system/preload.js")
 		}
 	});
 	

@@ -1,5 +1,5 @@
 import { HTML } from "imperative-html";
-import Registry from "../util/Registry.js";
+import Registry from "../util/system/Registry.js";
 import Renderable from "../util/Renderable.js";
 import Interactable from "../util/Interactable.js";
 
