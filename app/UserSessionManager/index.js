@@ -1,7 +1,7 @@
 import { HTML } from "imperative-html";
-import Registry from "../Registry.js";
-import Renderable from "../Renderable.js";
-import Interactable from "../Interactable.js";
+import Registry from "../util/Registry.js";
+import Renderable from "../util/Renderable.js";
+import Interactable from "../util/Interactable.js";
 
 class UserSessionManager extends Renderable {
 	style = "UserSessionManager/main.css";
@@ -29,14 +29,22 @@ class UserSessionManager extends Renderable {
 		return true;
 	}
 	
-	async render(target) {
-		const usm = super.render(target);
+	render() {
+		const usm = super.render();
 		usm.classList.add("usm");
 		
 		const userList = new HTML.div({class: "usm-user-list"});
 		usm.appendChild(userList);
 		
-		const users = await UserSessionManager.getUsers();
+		this.renderUsers(userList);
+		
+		return usm;
+	}
+	
+	async renderUsers(target) {
+		target.innerHTML = "";
+		
+		const users = await this.constructor.getUsers();
 		
 		for(let user of users) {
 			let userIcon, userName;
@@ -46,15 +54,17 @@ class UserSessionManager extends Renderable {
 			);
 			
 			new Interactable(userElement, {
-				activate: () => {
+				activate: async focusManager => {
+					const response = await focusManager.Keyboard.ask({prompt: "test"});
 					
+					console.log(response);
 				}
 			});
 			
 			
 			userName.innerText = user.name;
 			
-			userList.appendChild(userElement);
+			target.appendChild(userElement);
 		}
 		
 	}

@@ -1,4 +1,5 @@
 import Interactions from "./Interactions.js";
+import DefaultKeyboard from "../DefaultKeyboard/index.js";
 
 
 function withEventParents(target, cb) {
@@ -13,7 +14,14 @@ class FocusManager {
 	pointerId = crypto.randomUUID();
 	currentFocus = null;
 	
-	constructor() {}
+	Keyboard = DefaultKeyboard;
+	
+	constructor(details) {
+		if(details.Keyboard) {
+			this.Keyboard = details.Keyboard;
+		}
+		Interactions.focusManagers.push(this);
+	}
 	
 	moveFocus(direction) {
 		const newFocus = Interactions.getInteractableInDirection(this.currentFocus, direction);
@@ -25,16 +33,19 @@ class FocusManager {
 	hover(element) {
 		const interactable = Interactions.getInteractable(element);
 		if(interactable) {
-			const lastFocus = this.currentFocus;
-			this.currentFocus = interactable;
-			if(this.currentFocus !== lastFocus) {
-				if(lastFocus) {
-					lastFocus.unhover(this);
-				}
+			if(this.currentFocus !== interactable) {
+				this.unhover();
+				this.currentFocus = interactable;
 				if(this.currentFocus) {
 					this.currentFocus.hover(this);
 				}
 			}
+		}
+	}
+	unhover() {
+		if(this.currentFocus) {
+			this.currentFocus.unhover(this);
+			this.currentFocus = null;
 		}
 	}
 	beginInteract() {
@@ -48,6 +59,12 @@ class FocusManager {
 		}
 	}
 	
+	update() {
+		if(this.currentFocus && !Interactions.isInteractable(this.currentFocus.element)) {
+			this.currentFocus.unhover(this);
+			this.currentFocus = null;
+		}
+	}
 	
 	replaceAttribute(attr, target) {
 		const additions = this.addAttribute(attr, target);

@@ -6,7 +6,7 @@ class Interactable {
 	disabled = false;
 	interactionVolume = 0.3;
 	
-	sound = new SoundManager("./app/sounds/interaction", {
+	static sound = new SoundManager("./app/sounds/interaction", {
 		back: "back.wav",
 		interact_start: "interact-start.wav",
 		interact_end: "interact-end.wav",
@@ -15,6 +15,8 @@ class Interactable {
 		keyboard_space: "keyboard-space.wav",
 		select: "select.wav",
 	})
+	
+	sound = Interactable.sound;
 	
 	constructor(element, details) {
 		this.element = element;
@@ -48,6 +50,7 @@ class Interactable {
 		}
 	}
 	unhover(focusManager) {
+		focusManager.clearAttribute("hover");
 		if(this.unhoverEvent) {
 			this.unhoverEvent(focusManager);
 		}

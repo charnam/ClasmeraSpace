@@ -1,7 +1,7 @@
 import "./pointers/index.js";
+import Overlay from "./Overlay/index.js";
 import UserSessionManager from "./UserSessionManager/index.js";
 
 const USM = new UserSessionManager();
 
-const root = document.getElementById("root");
-USM.render(root);
+Overlay.fromRenderable(USM);

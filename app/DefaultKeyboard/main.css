@@ -1,0 +1,101 @@
+
+.keyboard-default {
+	width: 80vw;
+	height: 80vh;
+	background: linear-gradient(to bottom, gray, white 10%, #888);
+	color: black;
+	--key-margin: 0.2vmin;
+	--key-border: 0.2vmin solid #0004;
+	display: flex;
+	flex-direction: column;
+	box-sizing: border-box;
+	padding: 2vmin;
+}
+
+.keyboard-default-prompt {
+	flex: none;
+	height: 40%;
+	padding: 4vmin;
+	box-sizing: border-box;
+	display: flex;
+	justify-content: flex-start;
+	font-size: 1.3em;
+}
+
+.keyboard-default-row {
+	display: flex;
+	width: 100%;
+	height: 100%;
+}
+
+.keyboard-default-input,
+.keyboard-default-key,
+.keyboard-default-key-side {
+	padding: 1.2vmin;
+	background: white;
+	border: 0.2vmin solid #0004;
+	box-sizing: border-box;
+	margin: var(--key-margin);
+}
+
+.keyboard-default-key {
+	text-align: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.keyboard-default-key-main {
+	width: 100%;
+}
+.keyboard-default-key-side {
+	height: 100%;
+}
+.keyboard-default-key-bottom {
+	width: 100%;
+}
+
+.keyboard-default-key[hover] {
+	background: #090;
+	color: white;
+}
+.keyboard-default-key[active] {
+	filter: brightness(1.5);
+}
+
+.keyboard-default-areas {
+	display: grid;
+	grid-template-areas: "left middle right"
+						 "left bottom right";
+}
+
+.keyboard-default-areas {
+	display: grid;
+	grid-template-areas: "left middle right"
+						 "left bottom right";
+	width: 100%;
+	height: 100%;
+	grid-template-columns: 1fr 3fr 1fr;
+	box-sizing: border-box;
+}
+.keyboard-default-area-rows {
+	grid-area: middle;
+	display: flex;
+	flex-direction: column;
+}
+
+.keyboard-default-area-left {
+	grid-area: left;
+}
+.keyboard-default-area-right {
+	grid-area: right;
+}
+.keyboard-default-area-left, .keyboard-default-area-right {
+	display: flex;
+	flex-direction: column;
+}
+
+.keyboard-default-area-bottom {
+	grid-area: bottom;
+	display: flex;
+	align-items: flex-end;
+}

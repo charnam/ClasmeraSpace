@@ -1,10 +1,4 @@
 
-.usm {
-	position: fixed;
-	inset: 0;
-	display: flex;
-}
-
 .usm-user-list {
 	position: absolute;
 	left: 50%;
