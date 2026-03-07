@@ -4,15 +4,18 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>Clasmera SPACE</title>
+		<script type="importmap">
+			{
+				"imports": {
+					"imperative-html": "./node_modules/imperative-html/dist/esm/elements.js"
+				}
+			}
+		</script>
+		<link rel="stylesheet" href="./app/main.css" />
 	</head>
 	<body>
 		<div id="root"></div>
 		
-		<script type="module">
-			const USM = new UserSessionManager();
-			
-			const root = document.getElementById("root");
-			USM.render(root);
-		</script>
+		<script type="module" src="./app/index.js"></script>
 	</body>
 </html>

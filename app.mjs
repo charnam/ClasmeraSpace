@@ -1,6 +1,15 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
 import Registry from './Registry.mjs';
 import path from 'path';
+import { existsSync, mkdirSync } from 'fs';
+
+if(!existsSync("./data/")) {
+	mkdirSync("data");
+}
+
+if(!existsSync("./data/blobs/")) {
+	mkdirSync("data/blobs");
+}
 
 function createWindow() {
 	const win = new BrowserWindow({

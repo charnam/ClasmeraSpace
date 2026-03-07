@@ -1,0 +1,67 @@
+
+.usm {
+	position: fixed;
+	inset: 0;
+	display: flex;
+}
+
+.usm-user-list {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	display: flex;
+}
+
+.usm-user {
+	aspect-ratio: 1 / 1;
+	width: 15vmin;
+	position: relative;
+	font-size: 2vmin;
+	transition: 0.1s ease-in-out;
+	transition-property: transform, opacity;
+}
+.usm-user[hover] {
+	transform: scale(1.2);
+}
+.usm-user[active] {
+	transform: scale(1.1);
+	opacity: 0.5;
+}
+
+.usm-user .usm-user-icon {
+	border-radius: 50%;
+	inset: 1vmin;
+	background: #fff8;
+	position: absolute;
+	transition: 0.1s ease-in-out;
+	transition-property: outline, outline-offset;
+	outline: 0.3vmin solid transparent;
+}
+.usm-user[hover] .usm-user-icon{
+	outline: 0.3vmin solid #fff8;
+	outline-offset: 0.5vmin;
+}
+.usm-user[active] .usm-user-icon {
+	outline-offset: 0.2vmin;
+}
+
+.usm-user .usm-user-name {
+	position: absolute;
+	top: 100%;
+	left: 50%;
+	transform: translateX(-50%);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 100%;
+	transition: margin 0.1s ease-in-out;
+}
+.usm-user[hover] .usm-user-name {
+	margin-top: 1vmin;
+	max-width: fit-content;
+}
+
+
+.usm-user:not(:first-child) {
+	margin-left: 4vmin;
+}

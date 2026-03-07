@@ -2,13 +2,27 @@ import { existsSync } from "fs";
 import { readFile, writeFile } from "fs/promises";
 import Blobs from "./Blobs.mjs";
 
-const initialRegistry = existsSync("./data/registry.json") ? await readFile("./data/registry.json") : {};
+let initialRegistry = {
+	user: {
+		admin: {
+			id: "admin",
+			name: "Admin",
+			administrator: true
+		}
+	}
+}
+if(existsSync("./data/registry.json")) {
+	try {
+		const registryFileContent = (await readFile("./data/registry.json")).toString();
+		initialRegistry = JSON.parse(registryFileContent);
+	} catch(err) { throw new Error("Registry is unreadable! Stopping here for safety.") }
+}
 
 class Registry {
 	static registry = initialRegistry;
 	
 	static async update() {
-		await writeFile("./data/registry.json", this.registry);
+		await writeFile("./data/registry.json", JSON.stringify(this.registry, null, 4));
 	}
 	
 	static getKeyWrapper(key) {

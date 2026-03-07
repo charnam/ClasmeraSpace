@@ -1,0 +1,11 @@
+
+body, #root {
+	position: fixed;
+	inset: 0;
+}
+
+body {
+	user-select: none;
+	font-family: arial;
+	color: white;
+}
