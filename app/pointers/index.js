@@ -1,1 +1,2 @@
-import "./basicMouse/focusManager.js";
+import "./basicMouse/mouseFocus.js";
+import "./basicMouse/keyboardFocus.js";

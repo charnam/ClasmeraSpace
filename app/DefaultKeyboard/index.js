@@ -6,17 +6,17 @@ class DefaultKeyboard extends Keyboard {
 	static lowerKeys = [
 		"1234567890",
 		"qwertyuiop",
-		"asdfghjkl-",
-		"zxcvbnm_@."
+		"asdfghjkl;",
+		"zxcvbnm,./"
 	];
 	static upperKeys = [
-		"!@#$%^&*()",
+		"!@#$%&-_()",
 		"QWERTYUIOP",
-		"ASDFGHJKL;",
-		"ZXCVBNM/,?"
+		"ASDFGHJKL:",
+		"ZXCVBNM\"'?"
 	];
 	
-	style = "DefaultKeyboard/main.css";
+	style = [...this.style, "DefaultKeyboard/main.css"];
 	inCapsMode = false;
 	
 	render() {
@@ -139,6 +139,9 @@ class DefaultKeyboard extends Keyboard {
 				new Interactable(keyEl, {
 					preactivate: () => {
 						this.currentInput += keyEl.innerText;
+						if(this.inCapsMode) {
+							this.inCapsMode = false;
+						}
 						this.update();
 					}
 				})

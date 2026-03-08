@@ -1,8 +1,13 @@
+@import url("../node_modules/@fontsource/dm-sans/latin.css");
+@import url("../node_modules/@fontsource/dm-sans/latin-italic.css");
+@import url("../node_modules/@fontsource/dm-sans/latin-ext.css");
+@import url("../node_modules/@fontsource/dm-sans/latin-ext-italic.css");
 
 body, #root {
 	position: fixed;
 	inset: 0;
 	font-size: 2.3vmin;
+	font-family: "DM Sans", Helvetica, Arial, sans-serif;
 }
 
 body {
@@ -20,4 +25,5 @@ input {
 	color: inherit;
 	background: transparent;
 	border: none;
+	text-shadow: inherit;
 }

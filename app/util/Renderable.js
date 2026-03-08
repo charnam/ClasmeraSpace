@@ -1,8 +1,7 @@
 import { HTML } from "imperative-html";
-import Overlay from "../Overlay/index.js";
 
 class Renderable {
-	style = null;
+	style = [];
 	boundTo = [];
 	
 	constructor() {
@@ -20,8 +19,8 @@ class Renderable {
 	}
 	
 	render() {
-		if(this.style) {
-			const thisStyle = "./app/"+this.style
+		for(let style of this.style) {
+			const thisStyle = "./app/"+style
 			const styleElements = document.querySelectorAll("link[rel=\"stylesheet\"]");
 			
 			if(![...styleElements].some(element => element.href == thisStyle)) {

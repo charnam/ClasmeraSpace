@@ -43,9 +43,10 @@ class Registry {
 		}
 	}
 	
-	static async getKey(keyname) {
+	static async getKey(keyname, fallback) {
 		const keywrapper = this.getKeyWrapper(keyname);
-		return keywrapper.tree[keywrapper.key];
+		const value = keywrapper.tree[keywrapper.key];
+		return (typeof value !== "undefined") ? value : fallback;
 	}
 	
 	static async setKey(keyname, value) {

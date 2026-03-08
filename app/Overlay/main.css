@@ -1,10 +1,24 @@
 
+@keyframes overlay-background-fade-in {
+	0% {
+		background-color: transparent;
+	}
+	100% {
+		background-color: #0008;
+	}
+}
+
 .overlay {
 	position: fixed;
 	inset: 0;
-	background: #0008;
-	backdrop-filter: blur(1vmin);
+	background-color: #0008;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	animation: overlay-background-fade-in 1s ease-in-out;
+	transition: background-color 1s ease-in-out;
+}
+
+.overlay.disappear-animation {
+	background-color: transparent;
 }

@@ -2,9 +2,10 @@ import { HTML } from "imperative-html";
 import Registry from "../util/system/Registry.js";
 import Renderable from "../util/Renderable.js";
 import Interactable from "../util/Interactable.js";
+import UserHome from "../UserHome/index.js";
 
-class UserSessionManager extends Renderable {
-	style = "UserSessionManager/main.css";
+class InitialLoginComponent extends Renderable {
+	style = [...this.style, "InitialLoginComponent/main.css"];
 	
 	constructor() {
 		super();
@@ -55,9 +56,11 @@ class UserSessionManager extends Renderable {
 			
 			new Interactable(userElement, {
 				activate: async focusManager => {
-					const response = await focusManager.Keyboard.ask({prompt: "test"});
+					//const response = await focusManager.Keyboard.ask({prompt: "Enter your password."});
 					
-					console.log(response);
+					const home = new UserHome(user.id);
+					focusManager.userid = user.id;
+					home.open();
 				}
 			});
 			
@@ -70,4 +73,4 @@ class UserSessionManager extends Renderable {
 	}
 }
 
-export default UserSessionManager;
+export default InitialLoginComponent;

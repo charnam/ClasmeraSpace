@@ -26,7 +26,7 @@ function createWindow() {
 app.whenReady().then(createWindow)
 
 ipcMain.handle('readRegistry', (_event, query) => {
-	return Registry.getKey(query.key);
+	return Registry.getKey(query.key, query.fallback);
 });
 ipcMain.handle('writeRegistry', (_event, query) => {
 	return Registry.setKey(query.key, query.value);

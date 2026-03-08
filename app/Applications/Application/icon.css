@@ -1,0 +1,18 @@
+
+.application-icon {
+	--transform: translate(0px,0px); /* This is only here to prevent errors when the variable is used */
+	transform: var(--transform);
+	transition: 0.1s ease-in-out;
+	transition-property: transform, opacity;
+	box-sizing: border-box;
+}
+
+.application-icon[hover] {
+	transform: var(--transform) scale(1.05);
+	outline: #fff8 0.5vmin solid;
+	outline-offset: 0.5vmin;
+}
+.application-icon[active] {
+	transform: var(--transform) scale(1.02);
+	opacity: 0.9;
+}

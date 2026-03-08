@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@fontsource/dm-sans": "^5.2.8",
     "electron": "^40.8.0",
     "imperative-html": "^0.1.2"
   }

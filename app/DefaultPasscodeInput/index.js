@@ -1,7 +1,7 @@
 import PasscodeInput from "../PasscodeInput/index.js";
 
 class DefaultPasscodeInput extends PasscodeInput {
-	style = "DefaultPasscodeInput/main.css";
+	style = [...this.style, "DefaultPasscodeInput/main.css"];
 	
 }
 

@@ -18,6 +18,12 @@ class InteractionLayer {
 		if(Array.isArray(this.acceptsInput)) {
 			return this.acceptsInput.includes(pointer.pointerId);
 		}
+		if(typeof this.acceptsInput == "string") {
+			return this.acceptsInput == pointer.pointerId;
+		}
+		if(typeof this.acceptsInput == "object") {
+			return this.acceptsInput == pointer;
+		}
 		if(this.acceptsInput) {
 			return true;
 		}

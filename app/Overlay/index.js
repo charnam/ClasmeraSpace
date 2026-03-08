@@ -3,8 +3,10 @@ import InteractionLayer from "../util/InteractionLayer.js";
 import SingleInstanceRenderable from "../util/SingleInstanceRenderable.js";
 
 class Overlay extends SingleInstanceRenderable {
-	style = "Overlay/main.css";
+	style = [...this.style, "Overlay/main.css"];
 	layer = new InteractionLayer();
+	
+	animateDisappearDuration = 1000;
 	
 	constructor() {
 		super();
@@ -19,9 +21,9 @@ class Overlay extends SingleInstanceRenderable {
 		return overlay;
 	}
 	
-	remove() {
-		super.remove();
+	async remove() {
 		Interactions.removeLayer(this.layer);
+		await super.remove();
 	}
 	
 	static fromRenderable(renderable) {

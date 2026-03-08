@@ -1,5 +1,6 @@
 import Interactions from "./Interactions.js";
 import DefaultKeyboard from "../DefaultKeyboard/index.js";
+import DefaultPasscodeInput from "../DefaultPasscodeInput/index.js";
 
 
 function withEventParents(target, cb) {
@@ -15,18 +16,31 @@ class FocusManager {
 	currentFocus = null;
 	
 	Keyboard = DefaultKeyboard;
+	PasscodeInput = DefaultPasscodeInput;
 	
-	constructor(details) {
+	constructor(details = {}) {
 		if(details.Keyboard) {
 			this.Keyboard = details.Keyboard;
+		}
+		if(details.PasscodeInput) {
+			this.PasscodeInput = details.PasscodeInput;
 		}
 		Interactions.focusManagers.push(this);
 	}
 	
 	moveFocus(direction) {
-		const newFocus = Interactions.getInteractableInDirection(this.currentFocus, direction);
+		let newFocus;
+		if(this.currentFocus) {
+			newFocus = Interactions.getInteractableInDirection(this.currentFocus, direction);
+		} else {
+			newFocus = Interactions.getAvailableTargets()[0].element;
+		}
 		if(newFocus) {
 			this.hover(newFocus);
+			const scrollable = Interactions.getScrollable(newFocus);
+			if(scrollable) {
+				scrollable.scrollToInclude(newFocus);
+			}
 		}
 	}
 	

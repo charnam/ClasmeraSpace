@@ -1,0 +1,8 @@
+
+.application-icon.application-icon-large {
+	overflow: hidden;
+	aspect-ratio: 5 / 8;
+	background: white;
+	height: 100%;
+	--transform: skewX(-10deg);
+}

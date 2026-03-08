@@ -1,7 +1,7 @@
 import "./pointers/index.js";
 import Overlay from "./Overlay/index.js";
-import UserSessionManager from "./UserSessionManager/index.js";
+import InitialLoginComponent from "./InitialLoginComponent/index.js";
 
-const USM = new UserSessionManager();
+const InitialLogin = new InitialLoginComponent();
 
-Overlay.fromRenderable(USM);
+Overlay.fromRenderable(InitialLogin);

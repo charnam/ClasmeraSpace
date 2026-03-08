@@ -5,6 +5,7 @@ class Interactable {
 	element = null;
 	disabled = false;
 	interactionVolume = 0.3;
+	selectVolume = this.interactionVolume * 0.3;
 	
 	static sound = new SoundManager("./app/sounds/interaction", {
 		back: "back.wav",
@@ -44,7 +45,7 @@ class Interactable {
 	}
 	hover(focusManager) {
 		focusManager.replaceAttribute("hover", this.element);
-		this.sound.playSound("select", this.interactionVolume);
+		this.sound.playSound("select", this.selectVolume);
 		if(this.hoverEvent) {
 			this.hoverEvent(focusManager);
 		}
