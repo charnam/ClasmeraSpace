@@ -21,6 +21,7 @@ class DefaultKeyboard extends Keyboard {
 	
 	render() {
 		const keyboardEl = super.render();
+		keyboardEl.classList.add("popup-default");
 		keyboardEl.classList.add("keyboard-default");
 		
 		let keyboardPrompt,
@@ -86,15 +87,15 @@ class DefaultKeyboard extends Keyboard {
 			doneKey;
 		
 		leftKeysArea.append(
-			leftKey = new HTML.div({class: "keyboard-default-key keyboard-default-key-side"}, "Left"),
-			extKeyLeft = new HTML.div({class: "keyboard-default-key keyboard-default-key-side disabled"}, "..."),
-			capsKey = new HTML.div({class: "keyboard-default-key keyboard-default-key-side keyboard-caps-button"}, "Caps")
+			leftKey = new HTML.div({class: "base-button keyboard-default-key keyboard-default-key-side"}, "Left"),
+			extKeyLeft = new HTML.div({class: "base-button keyboard-default-key keyboard-default-key-side disabled"}, "..."),
+			capsKey = new HTML.div({class: "base-button keyboard-default-key keyboard-default-key-side keyboard-caps-button"}, "Caps")
 		);
 		
 		rightKeysArea.append(
-			rightKey = new HTML.div({class: "keyboard-default-key keyboard-default-key-side"}, "Right"),
-			extKeyRight = new HTML.div({class: "keyboard-default-key keyboard-default-key-side disabled"}, "..."),
-			doneKey = new HTML.div({class: "keyboard-default-key keyboard-default-key-side"}, "Done")
+			rightKey = new HTML.div({class: "base-button keyboard-default-key keyboard-default-key-side"}, "Right"),
+			extKeyRight = new HTML.div({class: "base-button keyboard-default-key keyboard-default-key-side disabled"}, "..."),
+			doneKey = new HTML.div({class: "base-button keyboard-default-key keyboard-default-key-side"}, "Done")
 		);
 		
 		new Interactable(leftKey, {
@@ -129,7 +130,7 @@ class DefaultKeyboard extends Keyboard {
 				const keyValue = keyRow[keyColumnIndex];
 				
 				const keyEl = new HTML.div({
-					class: "keyboard-default-key keyboard-default-key-main",
+					class: "base-button keyboard-default-key keyboard-default-key-main",
 					row: keyRowIndex,
 					column: keyColumnIndex
 				});
@@ -154,8 +155,8 @@ class DefaultKeyboard extends Keyboard {
 			backspaceKey;
 		
 		bottomKeysArea.append(
-			spaceKey = new HTML.div({class: "keyboard-default-key keyboard-default-key-bottom"}, "Space"),
-			backspaceKey = new HTML.div({class: "keyboard-default-key keyboard-default-key-bottom"}, "Backspace"),
+			spaceKey = new HTML.div({class: "base-button keyboard-default-key keyboard-default-key-bottom"}, "Space"),
+			backspaceKey = new HTML.div({class: "base-button keyboard-default-key keyboard-default-key-bottom"}, "Backspace"),
 		);
 		
 		new Interactable(spaceKey, {

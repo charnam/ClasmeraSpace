@@ -1,0 +1,23 @@
+
+@keyframes visual-overlay-background-fade-in {
+	0% {
+		background-color: transparent;
+		opacity: 0;
+	}
+	100% {
+		background-color: #0008;
+		opacity: 1;
+	}
+}
+
+.visual-overlay {
+	background-color: #0008;
+	animation: visual-overlay-background-fade-in 0.2s ease-in-out;
+	transition: 0.2s ease-in-out;
+	transition-property: background-color, opacity;
+}
+
+.visual-overlay.disappear-animation {
+	background-color: transparent;
+	opacity: 0;
+}

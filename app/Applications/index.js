@@ -16,5 +16,5 @@ class Applications {
 }
 
 await Applications.load(applications);
-console.log(Applications.all);
+
 export default Applications;

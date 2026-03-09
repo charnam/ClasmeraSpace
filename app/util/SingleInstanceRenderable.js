@@ -24,7 +24,10 @@ class SingleInstanceRenderable extends Renderable {
 	
 	async remove() {
 		if(this.element) {
-			await this.element.beforeRemove();
+			await this.beforeRemove();
+			if(this._overlay) {
+				this._overlay.remove();
+			}
 			this.element.remove();
 			this.collectGarbageBoundNodes();
 		}

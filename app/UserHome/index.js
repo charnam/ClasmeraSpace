@@ -1,18 +1,22 @@
 import { HTML } from "imperative-html";
 import Overlay from "../Overlay/index.js";
-import Renderable from "../util/Renderable.js";
 import Registry from "../util/system/Registry.js";
 import Interactable from "../util/Interactable.js";
 import Applications from "../Applications/index.js";
 import Scrollable from "../util/Scrollable.js";
+import OverlayMenu from "../OverlayMenu/index.js";
 
-class UserHome extends Renderable {
+class UserHome extends Overlay {
 	userid = null;
 	style = [...this.style, "UserHome/main.css"];
+	animateDisappearDuration = 1000;
 	
 	constructor(userid) {
 		super();
 		this.userid = userid;
+		this.layer.music = "app/UserHome/music.wav";
+		this.layer.isResetLayer = true;
+		this.layer.musicVolume = 0.12;
 	}
 	
 	render() {
@@ -22,12 +26,15 @@ class UserHome extends Renderable {
 		let header,
 			logoutButton,
 			userButton,
+			userName,
 			applicationsList;
 		
 		homeScreen.append(
 			header = new HTML.div({class: "home-header"},
+				userButton = new HTML.div({class: "home-header-user"},
+					userName = new HTML.div({class: "home-header-user-name"}, "Loading...")
+				),
 				logoutButton = new HTML.div({class: "home-header-logout"}),
-				userButton = new HTML.div({class: "home-header-user"})
 			),
 			applicationsList = new HTML.div({class: "home-applications-list"})
 		);
@@ -35,11 +42,32 @@ class UserHome extends Renderable {
 		new Scrollable(applicationsList);
 		
 		this.updateRendered(homeScreen);
+		
+		new Interactable(userButton, {
+			activate: manager => {
+				const menu = new OverlayMenu({
+					title: "Account",
+					menu: [
+						{
+							text: "Log out",
+							callback: () => this.remove()
+						},
+						{
+							text: "Options",
+							callback: manager => {
+								this.userid
+							}
+						},
+					]
+				});
+				menu.open();
+			}
+		});
 		return homeScreen;
 	}
 	
 	async updateRendered(element) {
-		let userButton = element.querySelector(".home-header-user"),
+		let userNameEl = element.querySelector(".home-header-user-name"),
 			applicationsList = element.querySelector(".home-applications-list");
 		
 		applicationsList.innerHTML = "";
@@ -56,17 +84,16 @@ class UserHome extends Renderable {
 				const icon = new App.LargeIcon();
 				const renderedIcon = icon.renderTo(applicationsList);
 				new Interactable(renderedIcon, {
-					activate: () => {
-						console.log("Icon selected");
+					activate: manager => {
+						
 					}
 				})
 			}
 		}
 		
-	}
-	
-	open() {
-		Overlay.fromRenderable(this);
+		const user = await Registry.getKey(`user.${this.userid}`);
+		userNameEl.innerText = `Logged in as ${user.name}`;
+		
 	}
 }
 

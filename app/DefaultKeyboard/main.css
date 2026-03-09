@@ -2,11 +2,6 @@
 .keyboard-default {
 	width: 80vw;
 	aspect-ratio: 11 / 4;
-	--keyboard-accent-color: 270deg;
-	background: radial-gradient(hsl(var(--keyboard-accent-color) 43% 63%), hsl(var(--keyboard-accent-color) 43% 23%));
-	border-radius: 2vmin;
-	text-shadow: 0 0.2vmin 0.2vmin #0008;
-	border: 0.5vmin solid #fff2;
 	--key-margin: 0.2vmin;
 	--key-border: 0.2vmin solid #0004;
 	display: flex;
@@ -36,19 +31,8 @@
 .keyboard-default-key,
 .keyboard-default-key-side {
 	padding: 1.2vmin;
-	background: linear-gradient(to bottom,
-		hsl(var(--keyboard-accent-color), 20%, 70%) 0%,
-		hsl(var(--keyboard-accent-color), 20%, 60%) 10%,
-		hsl(var(--keyboard-accent-color), 20%, 50%) 100%
-	);
-	background-size: 100% 100%;
-	box-shadow: 0 0.2vmin 1vmin #0008;
-	border-radius: 1vmin;
 	box-sizing: border-box;
 	margin: var(--key-margin);
-	transition: 0.1s ease-in-out;
-	transition-property: transform, filter, z-index;
-	z-index: 0;
 }
 
 .keyboard-default-key {
@@ -65,16 +49,6 @@
 }
 .keyboard-default-key-bottom {
 	width: 100%;
-}
-
-.keyboard-default-key[hover] {
-	filter: brightness(1.2);
-	transform: scale(1.3);
-	z-index: 100;
-}
-.keyboard-default-key[active] {
-	filter: brightness(0.5);
-	transform: scale(1.1) translateY(0.2vmin);
 }
 
 .keyboard-default-areas {

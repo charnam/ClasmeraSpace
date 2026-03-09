@@ -6,10 +6,11 @@ class Overlay extends SingleInstanceRenderable {
 	style = [...this.style, "Overlay/main.css"];
 	layer = new InteractionLayer();
 	
-	animateDisappearDuration = 1000;
-	
 	constructor() {
 		super();
+	}
+	
+	open() {
 		this.renderTo(document.getElementById("root"));
 	}
 	
@@ -26,9 +27,16 @@ class Overlay extends SingleInstanceRenderable {
 		await super.remove();
 	}
 	
-	static fromRenderable(renderable) {
+	static wrapRenderable(renderable) {
 		const overlay = new this();
+		overlay.open();
+		overlay.element.classList.add("overlay-wrap");
+		
 		const child = renderable.renderTo(overlay.element);
+		if(renderable instanceof SingleInstanceRenderable) {
+			renderable._overlay = overlay;
+		}
+		
 		return {
 			overlay: overlay,
 			child

@@ -1,0 +1,14 @@
+
+.overlay-menu {
+	display: flex;
+	flex-direction: column;
+	padding: 1vmin;
+	min-width: 27vw;
+	font-size: 1.5em;
+}
+
+.overlay-menu-item {
+	padding: 1.5vmin;
+	margin: 0.5vmin;
+	text-align: center;
+}

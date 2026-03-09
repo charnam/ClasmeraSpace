@@ -1,0 +1,13 @@
+
+.background-shader {
+	position: absolute;
+	inset: 0;
+	opacity: 0;
+	transition: opacity 2s ease-in-out;
+	width: 100%;
+	height: 100%;
+	/*filter: blur(1vmin);*/
+}
+.background-shader.loaded {
+	opacity: 1;
+}

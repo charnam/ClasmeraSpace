@@ -25,6 +25,7 @@ window.addEventListener("keydown", event => {
 			keyboardFocus.moveFocus("right");
 			break;
 		case "Enter":
+			if(event.repeat) break;
 			keyboardFocus.beginInteract();
 			break;
 	}

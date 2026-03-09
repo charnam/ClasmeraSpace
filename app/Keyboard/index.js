@@ -1,8 +1,6 @@
 import Interactions from "../util/Interactions.js";
-import Overlay from "../Overlay/index.js";
 import SingleInstanceRenderable from "../util/SingleInstanceRenderable.js";
-
-window.interactions = Interactions;
+import VisualOverlay from "../VisualOverlay/index.js";
 
 class Keyboard extends SingleInstanceRenderable {
 	prompt = "";
@@ -32,7 +30,7 @@ class Keyboard extends SingleInstanceRenderable {
 	}
 	
 	open() {
-		this.overlay = Overlay.fromRenderable(this).overlay;
+		this.overlay = VisualOverlay.wrapRenderable(this).overlay;
 	}
 	close() {
 		Interactions.removeLayer(this.overlay.layer);

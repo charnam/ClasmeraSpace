@@ -14,17 +14,54 @@ class Interactions {
 			this.getCurrentLayer().contains(target)
 		 && target.element.checkVisibility());
 	}
+	static getAvailableLayers() {
+		const layers = [...this.interactionLayers];
+		const availableLayers = [];
+		let currentLayer = layers.pop();
+		while(currentLayer) {
+			availableLayers.push(currentLayer);
+			if(currentLayer.isResetLayer) {
+				break;
+			}
+			currentLayer = layers.pop();
+		}
+		return availableLayers;
+	}
+	static updateMusic() {
+		const layers = [...this.interactionLayers];
+		let currentLayer = layers.pop();
+		while(currentLayer && currentLayer.music.length == 0) {
+			currentLayer = layers.pop();
+		}
+		if(!currentLayer) {
+			return;
+		}
+		for(let layer of this.interactionLayers) {
+			if(layer !== currentLayer && layer.musicIsPlaying) {
+				layer.fadeOutMusic();
+			}
+		}
+		if(!currentLayer.musicIsPlaying) {
+			currentLayer.fadeInMusic();
+		}
+	}
 	
 	static addLayer(layer) {
 		this.interactionLayers.push(layer);
 		for(let manager of this.focusManagers) {
 			manager.update();
 		}
+		this.updateMusic();
 	}
 	static removeLayer(removedLayer) {
 		this.interactionLayers = this.interactionLayers.filter(layer => {
 			return layer !== removedLayer && layer.element !== removedLayer;
 		});
+		removedLayer.fadeOutMusic();
+		for(let manager of this.focusManagers) {
+			manager.update();
+		}
+		this.updateMusic();
 	}
 	
 	static makeSelectable(interactable) {
@@ -36,6 +73,9 @@ class Interactions {
 	
 	static isInteractable(element) {
 		return this.getDirectInteractable(element) !== undefined;
+	}
+	static isLayerAvailable(layer) {
+		return this.getAvailableLayers().includes(layer);
 	}
 	
 	static getInteractable(element) {
@@ -162,5 +202,27 @@ class Interactions {
 	}
 	
 }
+
+setInterval(() => {
+	const currentLayer = Interactions.getCurrentLayer();
+	const availableLayers = Interactions.getAvailableLayers();
+	if(currentLayer) {
+		currentLayer.element.classList.add("active-layer");
+	}
+	for(let element of document.querySelectorAll(".active-layer")) {
+		if(!currentLayer || element !== currentLayer.element) {
+			element.classList.remove("active-layer");
+		}
+	}
+	
+	for(let layer of availableLayers) {
+		layer.element.classList.add("available-layer");
+	}
+	for(let element of document.querySelectorAll(".available-layer")) {
+		if(!availableLayers.some(layer => layer.element == element)) {
+			element.classList.remove("available-layer");
+		}
+	}
+}, 100);
 
 export default Interactions;

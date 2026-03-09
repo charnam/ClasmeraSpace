@@ -55,15 +55,15 @@ class Scrollable {
 		let scrollAmountX = 0;
 		let scrollAmountY = 0;
 		
-		if(containerRect.x > elementRect.x) {
+		if(containerRect.x > elementRect.x - this.padding) {
 			scrollAmountX -= containerRect.x - elementRect.x + this.padding;
-		} else if(containerRect.right < elementRect.right) {
+		} else if(containerRect.right < elementRect.right + this.padding) {
 			scrollAmountX -= containerRect.right - elementRect.right - this.padding;
 		}
 		
-		if(containerRect.y > elementRect.y) {
+		if(containerRect.y > elementRect.y - this.padding) {
 			scrollAmountY -= containerRect.y - elementRect.y + this.padding;
-		} else if(containerRect.bottom < elementRect.bottom) {
+		} else if(containerRect.bottom < elementRect.bottom + this.padding) {
 			scrollAmountY -= containerRect.bottom - elementRect.bottom - this.padding;
 		}
 		

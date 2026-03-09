@@ -11,9 +11,10 @@ function withEventParents(target, cb) {
 }
 
 class FocusManager {
-	volume = 0.2;
 	pointerId = crypto.randomUUID();
+	userid = null;
 	currentFocus = null;
+	focusLayers = {};
 	
 	Keyboard = DefaultKeyboard;
 	PasscodeInput = DefaultPasscodeInput;
@@ -52,6 +53,7 @@ class FocusManager {
 				this.currentFocus = interactable;
 				if(this.currentFocus) {
 					this.currentFocus.hover(this);
+					this.focusLayers[Interactions.getCurrentLayer().id] = this.currentFocus;
 				}
 			}
 		}
@@ -60,6 +62,7 @@ class FocusManager {
 		if(this.currentFocus) {
 			this.currentFocus.unhover(this);
 			this.currentFocus = null;
+			delete this.focusLayers[Interactions.getCurrentLayer().id];
 		}
 	}
 	beginInteract() {
@@ -78,6 +81,15 @@ class FocusManager {
 			this.currentFocus.unhover(this);
 			this.currentFocus = null;
 		}
+		const focusedOnLayer = this.focusLayers[Interactions.getCurrentLayer().id];
+		if(focusedOnLayer) {
+			this.hover(focusedOnLayer.element);
+		}
+	}
+	
+	remove() {
+		const thisIndex = Interactions.focusManagers.indexOf(this);
+		Interactions.focusManagers.splice(thisIndex, 1);
 	}
 	
 	replaceAttribute(attr, target) {

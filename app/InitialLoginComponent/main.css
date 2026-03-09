@@ -1,4 +1,14 @@
 
+.usm {
+	transition: 0.2s ease-in-out;
+	transition-property: opacity, transform;
+}
+
+.overlay:not(.available-layer) > .usm {
+	opacity: 0;
+	transform: translateY(2vmin) scale(0.9);
+}
+
 .usm-user-list {
 	position: absolute;
 	left: 50%;

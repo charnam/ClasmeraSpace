@@ -2,6 +2,7 @@
   "dependencies": {
     "@fontsource/dm-sans": "^5.2.8",
     "electron": "^40.8.0",
+    "glslCanvas": "^0.2.6",
     "imperative-html": "^0.1.2"
   }
 }
