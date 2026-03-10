@@ -4,11 +4,13 @@ class InteractionLayer {
 	id = crypto.randomUUID();
 	element = null;
 	acceptsInput = true;
+	isResetLayer = false;
 	
 	musicNode = new Audio();
 	set music(value) {
 		this.musicNode.src = value;
 		this.musicNode.play();
+		Interactions.updateMusic();
 	}
 	get music() {
 		return this.musicNode.src;
@@ -23,10 +25,14 @@ class InteractionLayer {
 	}
 	musicIsPlaying = false;
 	
-	constructor(element) {
+	constructor(element, options = {}) {
 		this.musicNode.volume = 0.0;
 		this.musicNode.loop = true;
 		this.element = element;
+		if(options.isResetLayer) {
+			this.isResetLayer = options.isResetLayer;
+		}
+		
 	}
 	
 	async fadeInMusic() {

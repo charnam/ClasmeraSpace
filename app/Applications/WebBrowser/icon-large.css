@@ -1,4 +1,33 @@
+@import url("./icon.css");
 
-.web-browser-icon.app-icon-large {
-	
+@keyframes web-browser-icon-animate-background {
+	0% {
+		background-position: 0vmin -4vmin;
+	}
+	100% {
+		background-position: -4vmin 0vmin;
+	}
+}
+
+.icon-web-browser.app-icon-large .app-icon-background {
+	perspective: 20vmin;
+	inset: 0;
+	z-index: 100;
+}
+.icon-web-browser.app-icon-large .app-icon-background:before {
+	content: "";
+	-webkit-mask-image: -webkit-radial-gradient(bottom right, circle, black, #fff0 70%);
+	background:
+		repeating-linear-gradient(to right, #fff, #fff 0.5vmin, #fff0 0.5vmin, #fff0 4vmin),
+		repeating-linear-gradient(to bottom, #fff, #fff 0.5vmin, #fff0 0.5vmin, #fff0 4vmin);
+	animation: web-browser-icon-animate-background 10s linear infinite;
+	opacity: 0.7;
+	position: absolute;
+	inset: 0;
+	filter: brightness(0);
+	transform: rotateY(-20deg) rotateX(20deg);
+}
+.icon-web-browser.app-icon-large .app-icon-foreground:after {
+	content: "Internet";
+	font-size: 6vmin;
 }

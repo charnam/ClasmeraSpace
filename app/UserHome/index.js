@@ -85,7 +85,8 @@ class UserHome extends Overlay {
 				const renderedIcon = icon.renderTo(applicationsList);
 				new Interactable(renderedIcon, {
 					activate: manager => {
-						
+						const app = new App();
+						app.open();
 					}
 				})
 			}

@@ -1,0 +1,20 @@
+.icon-web-browser .app-icon-background {
+	background: linear-gradient(to bottom right, #027, #259);
+	position: absolute;
+	inset: 0;
+}
+.icon-web-browser .app-icon-foreground {
+	display: flex;
+	flex-direction: column;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	text-align: center;
+}
+.icon-web-browser .app-icon-foreground:before {
+	content: "\F3EF";
+	font-family: "bootstrap-icons";
+	font-size: 10vmin;
+	filter: drop-shadow(0 0.5vmin 0.5vmin #0009);
+	text-align: center;
+}

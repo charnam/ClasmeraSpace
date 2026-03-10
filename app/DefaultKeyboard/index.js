@@ -21,7 +21,7 @@ class DefaultKeyboard extends Keyboard {
 	
 	render() {
 		const keyboardEl = super.render();
-		keyboardEl.classList.add("popup-default");
+		keyboardEl.classList.add("base-popup");
 		keyboardEl.classList.add("keyboard-default");
 		
 		let keyboardPrompt,

@@ -2,6 +2,7 @@
 @import url("../node_modules/@fontsource/dm-sans/latin-italic.css");
 @import url("../node_modules/@fontsource/dm-sans/latin-ext.css");
 @import url("../node_modules/@fontsource/dm-sans/latin-ext-italic.css");
+@import url("../node_modules/bootstrap-icons/font/bootstrap-icons.css");
 
 body, #root {
 	position: fixed;
@@ -14,6 +15,14 @@ body {
 	user-select: none;
 	font-family: arial;
 	color: white;
+}
+[hover] {
+	outline: #fff8 0.5vmin solid;
+	outline-offset: 0.5vmin;
+}
+
+[active] {
+	opacity: 0.9;
 }
 
 input {
