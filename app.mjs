@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 import Registry from './system/Registry.mjs';
 import path from 'path';
 import { existsSync, mkdirSync } from 'fs';
+import { readdir } from 'fs/promises';
 
 if(!existsSync("./data/")) {
 	mkdirSync("data");
@@ -11,12 +12,17 @@ if(!existsSync("./data/blobs/")) {
 	mkdirSync("data/blobs");
 }
 
+if(!existsSync("./data/applications/")) {
+	mkdirSync("data/applications");
+}
+
 function createWindow() {
 	const win = new BrowserWindow({
 		backgroundColor: "black",
 		frame: false,
 		webPreferences: {
-			preload: path.join(path.resolve(path.dirname('')), "system/preload.js")
+			preload: path.join(path.resolve(path.dirname('')), "system/preload.js"),
+			webviewTag: true
 		}
 	});
 	
@@ -24,6 +30,10 @@ function createWindow() {
 }
 
 app.whenReady().then(createWindow)
+
+ipcMain.handle('getApps', async (_event) => {
+	return await readdir("./data/applications");
+});
 
 ipcMain.handle('readRegistry', (_event, query) => {
 	return Registry.getKey(query.key, query.fallback);

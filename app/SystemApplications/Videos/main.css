@@ -1,0 +1,9 @@
+
+.videos-app-header {
+	justify-content: space-between;
+}
+
+.videos-app-backend-switch-container {
+	display: flex;
+	gap: inherit;
+}

@@ -1,6 +1,6 @@
 import Interactions from "./Interactions.js";
-import DefaultKeyboard from "../DefaultKeyboard/index.js";
-import DefaultPasscodeInput from "../DefaultPasscodeInput/index.js";
+import DefaultKeyboard from "../renderable/DefaultKeyboard/index.js";
+import DefaultPasscodeInput from "../renderable/DefaultPasscodeInput/index.js";
 
 
 function withEventParents(target, cb) {

@@ -1,7 +1,7 @@
 import "./pointers/index.js";
-import Overlay from "./Overlay/index.js";
-import BackgroundShader from "./BackgroundShader/index.js";
-import InitialLoginComponent from "./InitialLoginComponent/index.js";
+import Overlay from "./renderable/Overlay/index.js";
+import BackgroundShader from "./renderable/BackgroundShader/index.js";
+import InitialLoginComponent from "./renderable/InitialLoginComponent/index.js";
 
 const background = new BackgroundShader();
 const InitialLogin = new InitialLoginComponent();

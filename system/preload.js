@@ -6,3 +6,7 @@ contextBridge.exposeInMainWorld('__REGISTRY', {
 	getBlob: (key) => ipcRenderer.invoke('readRegistryBlob', {key}),
 	setBlob: (key, value) => ipcRenderer.invoke('writeRegistryBlob', {key, value}),
 })
+
+contextBridge.exposeInMainWorld('__APPS', {
+	scan: () => ipcRenderer.invoke("getApps")
+})

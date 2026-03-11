@@ -1,0 +1,42 @@
+@import url("./icon.css");
+
+@keyframes icon-videos-animate-background {
+	0% {
+		background-position: calc(var(--repeating-background-size-x) / 2) 0, 0 calc(var(--repeating-background-size-y) / 2);
+	}
+	100% {
+		background-position: calc(var(--repeating-background-size-x) / 2 * 3) var(--repeating-background-size-y), calc(0px - var(--repeating-background-size-x)) calc(var(--repeating-background-size-y) * 1.5);
+	}
+}
+
+.icon-videos.app-icon-large .app-icon-background {
+	perspective: 30vmin;
+	inset: 0;
+	z-index: 100;
+}
+.icon-videos.app-icon-large .app-icon-background:before {
+	content: "";
+	-webkit-mask-image: -webkit-radial-gradient(bottom center, circle, black, #fff2 40%, #fff0 70%);
+	background-image:
+		url("./icon-background.svg"),
+		url("./icon-background.svg");
+	
+	--repeating-background-size-v: 14vmin;
+	
+	--repeating-background-size-x: calc(var(--repeating-background-size-v) - (var(--repeating-background-size-v) / 95 * 5));
+	--repeating-background-size-y: calc(var(--repeating-background-size-v) / 16 * 9 * 2);
+	
+	background-size: var(--repeating-background-size-x) var(--repeating-background-size-y);
+	background-repeat: repeat;
+	
+	animation: icon-videos-animate-background 16s linear infinite;
+	opacity: 0.7;
+	position: absolute;
+	inset: 0;
+	filter: brightness(0);
+	transform: rotateX(20deg);
+}
+.icon-videos.app-icon-large .app-icon-foreground:after {
+	content: "Videos";
+	font-size: 6vmin;
+}

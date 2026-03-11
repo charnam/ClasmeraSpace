@@ -19,6 +19,7 @@ body {
 [hover] {
 	outline: #fff8 0.5vmin solid;
 	outline-offset: 0.5vmin;
+	cursor: pointer;
 }
 
 [active] {
@@ -83,4 +84,51 @@ input {
 	text-shadow: 0 0.2vmin 0.2vmin #0008;
 	border: 0.5vmin solid #fff2;
 	animation: base-popup-enter 0.2s ease-in-out;
+}
+.base-pillbutton {
+	padding: 2vmin 4vmin;
+	font-size: 3.2vmin;
+	border-radius: 10vmin;
+	display: flex;
+	align-items: center;
+}
+.base-pillbutton.bi,
+.base-pillbutton[class^="bi-"],
+.base-pillbutton[class*=" bi-"] {
+	aspect-ratio: 1 / 1;
+	justify-content: center;
+	padding: 2vmin;
+	font-size: 4vmin;
+}
+
+.base-pillbutton[hover] {
+	background: #fff2;
+}
+.base-pillbutton[active] {
+	background: #fff1;
+}
+
+.base-header {
+	height: 14vmin;
+	display: flex;
+	align-items: center;
+	box-sizing: border-box;
+	padding: 2vmin;
+	gap: 2vmin;
+}
+.base-header > * {
+	height: 100%;
+	box-sizing: border-box;
+}
+
+#root > :not(.available-layer) {
+	z-index: -10;
+}
+
+#root > .active-layer {
+	z-index: 10;
+}
+
+#root > .disappear-animation {
+	z-index: 20;
 }
