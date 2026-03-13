@@ -1,0 +1,1 @@
+export default window.__VIDEO_SOURCES;

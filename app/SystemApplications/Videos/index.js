@@ -1,6 +1,9 @@
 import { HTML } from "imperative-html";
 import Application from "../Application/index.js";
 import Interactable from "../../util/Interactable.js";
+import Tabbed from "../../util/Tabbed.js";
+import VideoSources from "./sources/sources.js";
+import OverlayMenu from "../../renderable/OverlayMenu/index.js";
 
 class Videos extends Application {
 	static LargeIcon = class LargeApplicationIcon extends Application.LargeIcon {
@@ -34,19 +37,29 @@ class Videos extends Application {
 		let videosContainer,
 			videosHeader,
 			videosQuit,
-			videosBackendSwitchContainer,
-			videosOptions;
+			videosSourceSwitchContainer,
+			videosSourceTabs,
+			videosSourceOptions,
+			videosMainMenu;
 		
 		app.append(
 			videosContainer = new HTML.div({class: "videos-app-main-scroller"},
 				videosHeader = new HTML.div({class: "base-header videos-app-header"},
-					videosQuit = new HTML.div({class: "base-pillbutton videos-app-quit-button bi-x-lg"}),
-					videosBackendSwitchContainer = new HTML.div({class: "videos-app-backend-switch-container"}),
-					videosOptions = new HTML.div({class: "base-pillbutton videos-app-options-button bi-gear-fill"}),
+					new HTML.div(
+						videosQuit = new HTML.div({class: "base-pillbutton videos-app-quit-button bi-x-lg"}),
+					),
+					videosSourceSwitchContainer = new HTML.div({class: "videos-app-source-switch-container"}),
+					new HTML.div(
+						videosSourceOptions = new HTML.div({class: "base-pillbutton videos-app-source-options-button bi-gear-fill"}),
+						videosMainMenu = new HTML.div({class: "base-pillbutton videos-app-menu-button bi-list"}),
+					)
 				),
-				videosBackends
+				videosSourceTabs = new HTML.div({class: "base-tabbed"},
+				)
 			)
 		);
+		
+		this.tabbed = new Tabbed(videosSourceTabs);
 		
 		new Interactable(videosQuit, {
 			activate: () => {
@@ -54,17 +67,61 @@ class Videos extends Application {
 			}
 		});
 		
-		new Interactable(videosOptions, {
+		new Interactable(videosSourceOptions, {
 			activate: () => {
 			}
 		});
 		
-		this.updateRendered();
+		new Interactable(videosMainMenu, {
+			activate: () => {
+				const menu = new OverlayMenu({
+					menu: [
+						{
+							text: "Party Mode",
+							callback: () => {
+								
+							}
+						}
+					]
+				});
+				menu.open();
+			}
+		})
+		
+		this.updateSources(videosContainer);
+		this.updateRendered(videosContainer);
 		return app;
 	}
 	
+	updateSources(element) {
+		const videosSourceSwitchContainer = element.querySelector(".videos-app-source-switch-container")
+		
+		this.tabbed.element.innerHTML = "";
+		videosSourceSwitchContainer.innerHTML = "";
+		
+		for(let [id, source] of Object.entries(VideoSources.all)) {
+			const tabButton = new HTML.div({class: "base-pillbutton"})
+			const tabContent = new HTML.div({class: "base-tabbed-tab", tabid: id});
+			
+			tabButton.innerText = source.name;
+			
+			new Interactable(tabButton, {
+				activate: () => {
+					this.tabbed.setTab(id);
+				}
+			})
+			
+			tabContent.append(new HTML.div("Hello world!"));
+			
+			this.tabbed.element.append(tabContent);
+			videosSourceSwitchContainer.append(tabButton);
+		}
+		
+		this.tabbed.setTab(0);
+		
+	}
+	
 	updateRendered(element) {
-		const videosBackendSwitchContainer = element.querySelector(".videos-app-backend-switch-container")
 	}
 	
 }

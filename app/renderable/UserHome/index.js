@@ -41,28 +41,32 @@ class UserHome extends Overlay {
 		
 		new Scrollable(applicationsList);
 		
-		this.updateRendered(homeScreen);
-		
-		new Interactable(userButton, {
-			activate: manager => {
-				const menu = new OverlayMenu({
-					title: "Account",
-					menu: [
-						{
-							text: "Log out",
-							callback: () => this.remove()
-						},
-						{
-							text: "Options",
-							callback: manager => {
-								this.userid
-							}
-						},
-					]
-				});
-				menu.open();
-			}
-		});
+		(async () => {
+			
+			await this.updateRendered(homeScreen);
+			
+			new Interactable(userButton, {
+				activate: manager => {
+					const menu = new OverlayMenu({
+						title: "Account",
+						menu: [
+							{
+								text: "Log out",
+								callback: () => this.remove()
+							},
+							{
+								text: "Options",
+								callback: manager => {
+									this.userid
+								}
+							},
+						]
+					});
+					menu.open();
+				}
+			});
+			
+		})();
 		
 		const updateTime = () => {
 			timeDisplay.innerText = new Date().toLocaleTimeString([], {hour: "numeric", minute: "2-digit"})

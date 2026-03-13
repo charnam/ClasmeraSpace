@@ -121,6 +121,23 @@ input {
 	box-sizing: border-box;
 }
 
+.base-tabbed {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+.base-tabbed-tab {
+	inset: 0;
+	position: absolute;
+	opacity: 0;
+}
+.base-tabbed-tab.visible-tab {
+	opacity: 1;
+}
+
 #root > :not(.available-layer) {
 	z-index: -10;
 }

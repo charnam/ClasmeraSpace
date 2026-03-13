@@ -2,8 +2,11 @@
 .videos-app-header {
 	justify-content: space-between;
 }
-
-.videos-app-backend-switch-container {
+.videos-app-header > * {
 	display: flex;
 	gap: inherit;
+}
+.videos-app-header > * > * {
+	height: 100%;
+	box-sizing: border-box;
 }
