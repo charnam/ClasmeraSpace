@@ -39,6 +39,11 @@ class Scrollable {
 		}
 	}
 	
+	stopScrolling() {
+		this.currentScrollTarget.x = this.element.scrollLeft;
+		this.currentScrollTarget.y = this.element.scrollTop;
+	}
+	
 	scrollTo(x, y) {
 		this.currentScrollTarget.x = x;
 		this.currentScrollTarget.y = y;
@@ -52,6 +57,9 @@ class Scrollable {
 	scrollToInclude(element) {
 		const containerRect = this.element.getBoundingClientRect();
 		const elementRect = element.getBoundingClientRect();
+		
+		this.stopScrolling();
+		
 		let scrollAmountX = 0;
 		let scrollAmountY = 0;
 		

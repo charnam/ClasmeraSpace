@@ -43,7 +43,7 @@ class Videos extends Application {
 			videosMainMenu;
 		
 		app.append(
-			videosContainer = new HTML.div({class: "videos-app-main-scroller"},
+			videosContainer = new HTML.div({class: "videos-app-main-container"},
 				videosHeader = new HTML.div({class: "base-header videos-app-header"},
 					new HTML.div(
 						videosQuit = new HTML.div({class: "base-pillbutton videos-app-quit-button bi-x-lg"}),
@@ -67,6 +67,7 @@ class Videos extends Application {
 			}
 		});
 		
+		/*
 		new Interactable(videosSourceOptions, {
 			activate: () => {
 			}
@@ -86,7 +87,7 @@ class Videos extends Application {
 				});
 				menu.open();
 			}
-		})
+		})*/
 		
 		this.updateSources(videosContainer);
 		this.updateRendered(videosContainer);
@@ -99,11 +100,12 @@ class Videos extends Application {
 		this.tabbed.element.innerHTML = "";
 		videosSourceSwitchContainer.innerHTML = "";
 		
-		for(let [id, source] of Object.entries(VideoSources.all)) {
+		for(let [id, Source] of Object.entries(VideoSources.all)) {
 			const tabButton = new HTML.div({class: "base-pillbutton"})
 			const tabContent = new HTML.div({class: "base-tabbed-tab", tabid: id});
 			
-			tabButton.innerText = source.name;
+			tabButton.innerText = Source.name;
+			const source = new Source();
 			
 			new Interactable(tabButton, {
 				activate: () => {
@@ -111,7 +113,7 @@ class Videos extends Application {
 				}
 			})
 			
-			tabContent.append(new HTML.div("Hello world!"));
+			tabContent.append(source.render());
 			
 			this.tabbed.element.append(tabContent);
 			videosSourceSwitchContainer.append(tabButton);

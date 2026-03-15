@@ -5,6 +5,7 @@ class Download {
 	static async create() {
 		const id = crypto.randomUUID();
 		current[id] = new Download(this);
+		current[id].id = id;
 		return id;
 	}
 	
@@ -19,10 +20,13 @@ class Download {
 		
 	}
 	
+	id = "";
+	
 	progress = null;
 	stage = 0;
 	stages = 1;
 	complete = false;
+	blob = null;
 }
 
 export default Download;

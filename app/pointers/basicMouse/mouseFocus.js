@@ -28,7 +28,7 @@ window.addEventListener("mouseup", event => {
 
 setInterval(() => {
 	if(lastMouseInteraction < Date.now() - 3000) {
-		document.body.style.cursor = "none";
+		document.body.setAttribute("style", "cursor: none !important;");
 		if(mouseFocus !== keyboardFocus) {
 			mouseFocus.unhover();
 		}

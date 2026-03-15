@@ -1,7 +1,6 @@
 import { HTML } from "imperative-html";
 import SingleInstanceRenderable from "../../util/SingleInstanceRenderable.js";
 import Interactions from "../../util/Interactions.js";
-import InteractionLayer from "../../util/InteractionLayer.js";
 import Overlay from "../../renderable/Overlay/index.js";
 
 class Application extends Overlay {

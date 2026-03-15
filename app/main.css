@@ -19,7 +19,7 @@ body {
 [hover] {
 	outline: #fff8 0.5vmin solid;
 	outline-offset: 0.5vmin;
-	cursor: pointer;
+	/*cursor: pointer;*/
 }
 
 [active] {
@@ -108,17 +108,32 @@ input {
 	background: #fff1;
 }
 
-.base-header {
-	height: 14vmin;
+.base-header,
+.base-sidebar {
 	display: flex;
 	align-items: center;
 	box-sizing: border-box;
 	padding: 2vmin;
 	gap: 2vmin;
+	flex: none;
+}
+.base-header {
+	height: 14vmin;
+}
+.base-sidebar {
+	width: 14vmin;
+	flex-direction: column;
+}
+
+.base-header > *,
+.base-sidebar > * {
+	box-sizing: border-box;
 }
 .base-header > * {
 	height: 100%;
-	box-sizing: border-box;
+}
+.base-sidebar > * {
+	width: 100%;
 }
 
 .base-tabbed {
@@ -134,7 +149,8 @@ input {
 	position: absolute;
 	opacity: 0;
 }
-.base-tabbed-tab.visible-tab {
+.base-tabbed-tab.visible-tab,
+.base-tabbed:not(:has(.visible-tab)) .base-tabbed-tab:first-child {
 	opacity: 1;
 }
 

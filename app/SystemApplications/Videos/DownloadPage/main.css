@@ -1,0 +1,72 @@
+@keyframes videos-app-video-download-page-fade-in {
+	0% {
+		opacity: 0;
+		transform: translateY(10%);
+	}
+	100% {
+		opacity: 1;
+		transform: translateY(0%);
+	}
+}
+
+.videos-app-video-download-page {
+	background: linear-gradient(to bottom, hsl(var(--base-accent-color), 40%, 70%), hsl(var(--base-accent-color), 20%, 30%) 100%);
+	position: absolute;
+	inset: 0;
+	
+	animation: videos-app-video-download-page-fade-in 0.2s ease-out;
+	display: flex;
+	
+	padding: 11vmin;
+	gap: 4vmin;
+	box-sizing: border-box;
+}
+
+.videos-app-video-download-page-back-button {
+	position: absolute;
+	top: 2vmin;
+	left: 2vmin;
+}
+.videos-app-video-download-page-button {
+	font-size: 4vmin;
+	padding: 1vmin 2vmin;
+	text-align: center;
+}
+
+.videos-app-video-download-page-description {
+	box-sizing: border-box;
+	padding: 2vmin;
+	background: #0006;
+	width: 100%;
+	height: 100%;
+	border-radius: 2vmin;
+}
+
+.videos-app-video-download-page-buttons {
+	display: flex;
+	margin-top: 2vmin;
+	justify-content: flex-end;
+}
+
+.videos-app-video-download-page-left-side {
+	display: flex;
+	flex-direction: column;
+	width: 60%;
+	box-sizing: border-box;
+	flex: none;
+}
+.videos-app-video-download-page-right-side {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	box-sizing: border-box;
+}
+.videos-app-video-download-page-thumbnail {
+	aspect-ratio: 16 / 9;
+	background: black;
+	border-radius: 2vmin;
+	box-shadow: 0 1vmin 5vmin #0008, inset 0 0 0.2vmin #0004;
+	background-size: contain;
+	background-position: center;
+	background-repeat: no-repeat;
+}

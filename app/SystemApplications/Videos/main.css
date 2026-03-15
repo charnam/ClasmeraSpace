@@ -1,4 +1,25 @@
 
+.videos-app-main-container {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+.videos-app-source-tabbed-container {
+	display: flex;
+	width: 100%;
+	height: 100%;
+}
+
+.videos-app-source-tabbed-sidebar {
+	padding-top: 0;
+}
+
+.videos-app-source-tab {
+	padding: 2vmin;
+	box-sizing: border-box;
+	overflow: hidden;
+}
 .videos-app-header {
 	justify-content: space-between;
 }
@@ -9,4 +30,51 @@
 .videos-app-header > * > * {
 	height: 100%;
 	box-sizing: border-box;
+}
+
+.videos-app-video-grid {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+}
+
+.videos-app-video {
+	display: flex;
+	flex-direction: column;
+	padding: 2vmin;
+	border-radius: 2vmin;
+	align-items: flex-start;
+	justify-content: flex-start;
+}
+
+.videos-app-video-thumbnail {
+	background-color: black;
+	object-fit: contain;
+	width: 100%;
+	height: 100%;
+	aspect-ratio: 16 / 9;
+	border-radius: 2vmin;
+}
+
+.videos-app-video-title, .videos-app-video-author-name {
+	text-overflow: ellipsis;
+	overflow: hidden;
+	font-size: 0.6em;
+	padding: 0.2vmin;
+}
+.videos-app-video-title {
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+	-webkit-box-orient: vertical;
+}
+.videos-app-video-author-name {
+	color: gray;
+	white-space: nowrap;
+}
+
+.videos-app-video-details {
+	padding-top: 0.2vmin;
+	display: flex;
+	flex-direction: column;
+	height: 100%;
 }

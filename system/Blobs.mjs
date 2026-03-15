@@ -1,17 +1,43 @@
+import mime from "mime";
 import { randomUUID } from "crypto";
-import { readFile, writeFile } from "fs/promises";
+import { readFile, rename, writeFile } from "fs/promises";
 
 class Blobs {
 	static path = "data/blobs";
 	
 	static async getById(uuid) {
-		uuid = uuid.replace(/[^a-zA-Z0-9\-_]/g, "");
-		return await readFile(`${this.path}/${uuid}`);
+		try {
+			uuid = uuid.replace(/[^a-zA-Z0-9\-_]/g, "");
+			const fileContent = await readFile(`${this.path}/${uuid}`);
+			const fileMeta = JSON.parse(await readFile(`${this.path}/${uuid}.meta`));
+			return {
+				meta: fileMeta,
+				content: fileContent
+			};
+		} catch(err) {
+			return null;
+		}
 	}
 	
-	static async store(arrayBuffer) {
+	static async writeMetadata(uuid, data) {
+		await writeFile(`${this.path}/${uuid}.meta`, JSON.stringify(data));
+	}
+	
+	static async store(arrayBuffer, type) {
 		const uuid = randomUUID();
-		writeFile(`${this.path}/${uuid}`, arrayBuffer);
+		
+		await writeFile(`${this.path}/${uuid}`, Buffer.from(arrayBuffer));
+		await this.writeMetadata(uuid, {type})
+		
+		return uuid;
+	}
+	static async storeFile(path) {
+		const uuid = randomUUID();
+		const targetPath = `${this.path}/${uuid}`;
+		
+		await rename(path, targetPath);
+		await this.writeMetadata(uuid, {type: mime.getType(path)});
+		
 		return uuid;
 	}
 }
