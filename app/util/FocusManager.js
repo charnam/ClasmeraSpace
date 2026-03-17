@@ -45,6 +45,23 @@ class FocusManager {
 		}
 	}
 	
+	buttonPress(button) {
+		Interactions.getCurrentLayer().onButtonPress(button, this);
+	}
+	
+	buttonRelease(button) {
+		Interactions.getCurrentLayer().onButtonRelease(button, this);
+	}
+	
+	hoverAt(x, y) {
+		const element = document.elementFromPoint(x, y);
+		if(element) {
+			this.hover(element);
+		} else {
+			this.unhover();
+		}
+	}
+	
 	hover(element) {
 		const interactable = Interactions.getInteractable(element);
 		if(interactable) {

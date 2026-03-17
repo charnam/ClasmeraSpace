@@ -5,6 +5,8 @@ class VisualOverlay extends Overlay {
 	style = [...this.style, "app/renderable/VisualOverlay/main.css"];
 	animateDisappearDuration = 1000;
 	
+	enableSounds = true;
+	
 	static sounds = new SoundManager("app/sounds/ui", {
 		"open": "overlay-open.wav",
 		"close": "overlay-close.wav",
@@ -13,12 +15,16 @@ class VisualOverlay extends Overlay {
 	render() {
 		const overlay = super.render();
 		overlay.classList.add("visual-overlay");
-		VisualOverlay.sounds.playSound("open", 0.2);
+		if(this.enableSounds) {
+			VisualOverlay.sounds.playSound("open", 0.2);
+		}
 		return overlay;
 	}
 	
 	async remove() {
-		VisualOverlay.sounds.playSound("close", 0.2);
+		if(this.enableSounds) {
+			VisualOverlay.sounds.playSound("close", 0.2);
+		}
 		await super.remove();
 	}
 }

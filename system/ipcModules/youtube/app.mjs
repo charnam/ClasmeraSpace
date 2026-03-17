@@ -14,7 +14,7 @@ function getLargestThumbnail(thumbnails) {
 
 ipcMain.handle("youtubeSearch", async (_event, query) => {
 	const search = await innertube.search(query.query, {type: "video"});
-	console.log(search.results[0]);
+	
 	const results = search.results
 		.filter(result => !result.is_live)
 		.map(result => {
@@ -45,20 +45,11 @@ ipcMain.handle("youtubeSearch", async (_event, query) => {
 			};
 		});
 	
-	console.log(results);
-	
 	return results;
 });
 
 ipcMain.handle("youtubeInfo", async (_event, query) => {
 	const info = (await innertube.getBasicInfo(query.videoURL)).basic_info;
-	const thumbnail = info.thumbnail ? getLargestThumbnail(info.thumbnail) : null;
-	
-	let thumbnailBlob = null;
-	
-	if(thumbnail) {
-		thumbnailBlob = await Blobs.store(await fetch(thumbnail.url).then(e => e.arrayBuffer()))
-	}
 	
 	return {
 		id: info.id,
@@ -66,10 +57,10 @@ ipcMain.handle("youtubeInfo", async (_event, query) => {
 		views: info.view_count,
 		description: info.short_description,
 		duration: info.duration,
-		thumbnail: thumbnailBlob,
+		thumbnail: getLargestThumbnail(info.thumbnail)?.url,
 		author: {
 			id: info.channel_id,
-			name: info.author
+			name: info.author,
 		},
 	}
 });

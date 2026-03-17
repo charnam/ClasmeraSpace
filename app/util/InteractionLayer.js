@@ -74,6 +74,31 @@ class InteractionLayer {
 			return true;
 		}
 	}
+	
+	onButtonPress(button, manager) {
+		if(!this.acceptsInputFrom(manager)) {
+			return false;
+		}
+		
+		if(button == "left") {
+			manager.moveFocus("left");
+		}
+		if(button == "right") {
+			manager.moveFocus("right");
+		}
+		if(button == "up") {
+			manager.moveFocus("up");
+		}
+		if(button == "down") {
+			manager.moveFocus("down");
+		}
+	}
+	onButtonRelease(button, manager) {
+		if(!this.acceptsInputFrom(manager)) {
+			return false;
+		}
+		
+	}
 }
 
 export default InteractionLayer;

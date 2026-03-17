@@ -3,6 +3,8 @@ import Youtube from "../../../../util/system/ipcModules/Youtube.js";
 import VideoSource from "../VideoSource/index.js";
 import Interactable from "../../../../util/Interactable.js";
 import DownloadPage from "../../DownloadPage/index.js";
+import format_timestamp from "../../../../util/simple/format_timestamp.js";
+import LoadingScreen from "../../../../renderable/LoadingScreen/index.js";
 
 class YoutubeVideoSource extends VideoSource {
 	static name = "YouTube";
@@ -28,10 +30,15 @@ class YoutubeVideoSource extends VideoSource {
 				videoAuthorName;
 			
 			const videoEl = new HTML.div({class: "base-pillbutton videos-app-video"},
-				new HTML.img({
-					class: "videos-app-video-thumbnail",
-					src: video.thumbnail
-				}),
+				new HTML.div(
+					{
+						class: "videos-app-video-thumbnail",
+						style: `background-image: url("${video.thumbnail}")`
+					},
+					new HTML.div({class: "videos-app-video-duration"},
+						format_timestamp(video.duration)
+					)
+				),
 				new HTML.div({class: "videos-app-video-details"},
 					videoTitle = new HTML.div({class: "videos-app-video-title"}),
 					videoAuthorName = new HTML.div({class: "videos-app-video-author-name"})
@@ -42,11 +49,17 @@ class YoutubeVideoSource extends VideoSource {
 			videoAuthorName.innerText = video.author?.name;
 			
 			new Interactable(videoEl, {
-				activate: () => {
+				activate: async () => {
+					const loading = new LoadingScreen();
+					
+					loading.open();
+					const fullVideo = await Youtube.info(video.id)
+					loading.remove();
+					
 					const page = new DownloadPage({
-						video,
+						video: fullVideo,
 						download: async (progress) => {
-							const blob = await Youtube.downloadBlob(video.id, progress);
+							const blob = await Youtube.downloadToBlob(video.id, progress);
 						}
 					});
 					page.open();

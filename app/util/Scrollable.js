@@ -1,3 +1,5 @@
+import Interactable from "./Interactable.js";
+import InteractionLayer from "./InteractionLayer.js";
 import Interactions from "./Interactions.js";
 
 class Scrollable {
@@ -6,6 +8,9 @@ class Scrollable {
 	
 	padding = 80;
 	maximumSpeed = Infinity;
+	buttonScrollSpeed = 10;
+	
+	layer = new InteractionLayer();
 	
 	constructor(element, details = {}) {
 		this.element = element;
@@ -13,12 +18,36 @@ class Scrollable {
 		if(details.padding) {
 			this.padding = details.padding;
 		}
+		if(details.selectable) {
+			this.layer.element = element;
+			new Interactable(element, {
+				activate: () => {
+					Interactions.addLayer(this.layer);
+					
+					this.layer.onButtonPress = (button, manager) => {
+						if(button == "up") {
+							this.scrollBy(0, -this.buttonScrollSpeed);
+						}
+						if(button == "down") {
+							this.scrollBy(0, this.buttonScrollSpeed);
+						}
+						if(button == "left") {
+							this.scrollBy(-this.buttonScrollSpeed, 0);
+						}
+						if(button == "right") {
+							this.scrollBy(this.buttonScrollSpeed, 0);
+						}
+					}
+				}
+			})
+		}
 		
 		this.animate();
 	}
 	
 	animate() {
 		if(this.element) {
+			this.validateScrollPosition();
 			this.element.scrollTop +=
 				Math.min(
 					Math.max(
@@ -42,6 +71,11 @@ class Scrollable {
 	stopScrolling() {
 		this.currentScrollTarget.x = this.element.scrollLeft;
 		this.currentScrollTarget.y = this.element.scrollTop;
+	}
+	
+	validateScrollPosition() {
+		this.currentScrollTarget.x = Math.max(0, Math.min(this.currentScrollTarget.x, this.element.scrollWidth - this.element.clientWidth));
+		this.currentScrollTarget.y = Math.max(0, Math.min(this.currentScrollTarget.y, this.element.scrollHeight - this.element.clientHeight));
 	}
 	
 	scrollTo(x, y) {

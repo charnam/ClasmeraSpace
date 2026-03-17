@@ -40,6 +40,8 @@
 	width: 100%;
 	height: 100%;
 	border-radius: 2vmin;
+	overflow: hidden;
+	word-break: break-word;
 }
 
 .videos-app-video-download-page-buttons {
@@ -69,4 +71,16 @@
 	background-size: contain;
 	background-position: center;
 	background-repeat: no-repeat;
+}
+.videos-app-video-download-page-title,
+.videos-app-video-download-page-author-name {
+	padding-top: 2vmin;
+	font-size: 1.2em;
+	text-shadow: 0 0.2vmin 0.6vmin #0008;
+	word-break: break-word;
+}
+.videos-app-video-download-page-author-name {
+	color: #fffc;
+	padding-top: 0.5vmin;
+	font-size: 0.9em;
 }

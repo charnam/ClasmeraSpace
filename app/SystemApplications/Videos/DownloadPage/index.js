@@ -23,6 +23,7 @@ class DownloadPage extends VisualOverlay {
 		const el = super.render();
 		
 		let title,
+			author,
 			description,
 			backButton,
 			buttons;
@@ -35,10 +36,11 @@ class DownloadPage extends VisualOverlay {
 						class: "videos-app-video-download-page-thumbnail",
 						style: `background-image: url('${this.video?.thumbnail}');`
 					}),
-					title = new HTML.div({class: "videos-app-video-download-page-title"})
+					title = new HTML.div({class: "videos-app-video-download-page-title"}),
+					author = new HTML.div({class: "videos-app-video-download-page-author-name"})
 				),
 				new HTML.div({class: "videos-app-video-download-page-right-side"},
-					new HTML.div({
+					description = new HTML.div({
 						class: "videos-app-video-download-page-description"
 					}),
 					buttons = new HTML.div({
@@ -47,6 +49,11 @@ class DownloadPage extends VisualOverlay {
 				)
 			)
 		);
+		
+		title.innerText = this.video.title;
+		author.innerText = this.video.author.name;
+		
+		description.innerText = this.video.description;
 		
 		if(this.download) {
 			const downloadButton = new HTML.div({class: "videos-app-video-download-page-button base-button"},
