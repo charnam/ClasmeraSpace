@@ -1,15 +1,7 @@
 import Interactions from "./Interactions.js";
 import DefaultKeyboard from "../renderable/DefaultKeyboard/index.js";
 import DefaultPasscodeInput from "../renderable/DefaultPasscodeInput/index.js";
-import Input from "./Input.js";
-
-
-function withEventParents(target, cb) {
-	while(target) {
-		cb(target);
-		target = target.parentElement;
-	}
-}
+import callToParents from "./simple/callToParents.js";
 
 class FocusManager {
 	pointerId = crypto.randomUUID();
@@ -32,12 +24,8 @@ class FocusManager {
 		Interactions.focusManagers.push(this);
 	}
 	
-	addInput(...args) {
-		this.inputs.push(new Input(...args));
-	}
-	
-	getInputForRole(role) {
-		return this.inputs.find(input => input.role == role);
+	getInputsByRole(role) {
+		return this.inputs.filter(input => input.satisfiesRole(role));
 	}
 	
 	moveFocus(direction) {
@@ -54,14 +42,6 @@ class FocusManager {
 				scrollable.scrollToInclude(newFocus);
 			}
 		}
-	}
-	
-	buttonPress(button) {
-		Interactions.getCurrentLayer().onButtonPress(button, this);
-	}
-	
-	buttonRelease(button) {
-		Interactions.getCurrentLayer().onButtonRelease(button, this);
 	}
 	
 	hoverAt(x, y) {
@@ -132,7 +112,7 @@ class FocusManager {
 	addAttribute(attr, target) {
 		let selectedElements = [];
 		let modifiedElements = [];
-		withEventParents(target, el => {
+		callToParents(target, el => {
 			if(!Interactions.isInteractable(el)) return;
 			
 			const previousValue = el.getAttribute(attr) ?? "";

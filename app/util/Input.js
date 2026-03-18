@@ -1,31 +1,46 @@
+import Interactions from "./Interactions";
 
 class Input {
-	manager = null;
+	focusManager = null;
 	
-	value = 0;
-	statechange = [];
-	
+	name = "Button";
 	roles = [];
 	
-	constructor(details) {
-		if(details.manager) {
-			this.manager = details.manager;
+	// 0 -- not pressed
+	// 1 -- pressed
+	// Decimals are allowed. 0-1 is the only allowed range.
+	state = 0;
+	
+	wasToggled = false;
+	get isToggled() {
+		return this.state > 0.5;
+	}
+	
+	constructor(focusManager, details = {}) {
+		this.focusManager = focusManager;
+		focusManager.inputs.push(this);
+		
+		if(details.name) {
+			this.name = details.name
 		}
 		if(details.roles) {
 			this.roles = details.roles;
 		}
 	}
 	
-	setState(value) {
-		this.value = value;
-		
-		for(let callback of this.statechange) {
-			callback(this);
-		}
+	satisfiesRole(role) {
+		return this.roles.includes(role);
 	}
 	
-	onStateChange(callback) {
-		this.statechange.push(callback);
+	setState(value) {
+		this.state = value;
+		this.toggleChanged = this.isToggled !== this.wasToggled;
+		Interactions.getCurrentLayer().sendInput(this);
+		this.wasToggled = this.isToggled;
+	}
+	
+	getState() {
+		return this.state;
 	}
 }
 

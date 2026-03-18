@@ -75,29 +75,37 @@ class InteractionLayer {
 		}
 	}
 	
-	onButtonPress(button, manager) {
-		if(!this.acceptsInputFrom(manager)) {
+	sendInput(input) {
+		if(!this.acceptsInputFrom(input.focusManager)) {
 			return false;
 		}
 		
-		if(button == "left") {
-			manager.moveFocus("left");
+		if(this.inputOverride) {
+			this.inputOverride(input);
+		} else if(input.toggleStateChanged) {
+			if(input.isToggled) {
+				if(input.satisfiesRole("UP")) {
+					input.focusManager.moveFocus("up");
+				}
+				if(input.satisfiesRole("DOWN")) {
+					input.focusManager.moveFocus("down");
+				}
+				if(input.satisfiesRole("LEFT")) {
+					input.focusManager.moveFocus("left");
+				}
+				if(input.satisfiesRole("RIGHT")) {
+					input.focusManager.moveFocus("right");
+				}
+				
+				if(input.satisfiesRole("SELECT")) {
+					input.focusManager.beginInteract();
+				}
+			} else {
+				if(input.satisfiesRole("SELECT")) {
+					input.focusManager.endInteract();
+				}
+			}
 		}
-		if(button == "right") {
-			manager.moveFocus("right");
-		}
-		if(button == "up") {
-			manager.moveFocus("up");
-		}
-		if(button == "down") {
-			manager.moveFocus("down");
-		}
-	}
-	onButtonRelease(button, manager) {
-		if(!this.acceptsInputFrom(manager)) {
-			return false;
-		}
-		
 	}
 }
 

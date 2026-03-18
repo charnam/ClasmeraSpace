@@ -24,6 +24,10 @@ class Scrollable {
 				activate: () => {
 					Interactions.addLayer(this.layer);
 					
+					this.layer.inputOverride = input => {
+						
+					}
+					
 					this.layer.onButtonPress = (button, manager) => {
 						if(button == "up") {
 							this.scrollBy(0, -this.buttonScrollSpeed);

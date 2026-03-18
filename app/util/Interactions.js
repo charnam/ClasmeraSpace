@@ -1,4 +1,5 @@
 import InteractionLayer from "./InteractionLayer.js";
+import callToParents from "./simple/callToParents.js";
 
 class Interactions {
 	static focusManagers = [];
@@ -79,12 +80,12 @@ class Interactions {
 	}
 	
 	static getInteractable(element) {
-		let testTarget = element;
 		let target = null;
-		while(!target && testTarget) {
-			target = this.getDirectInteractable(testTarget);
-			testTarget = testTarget.parentElement;
-		}
+		callToParents(element, () => {
+			if(!target) {
+				target = this.getDirectInteractable(testTarget);
+			}
+		})
 		return target;
 	}
 	
@@ -93,12 +94,12 @@ class Interactions {
 	}
 	
 	static getScrollable(element) {
-		let testTarget = element;
 		let target = null;
-		while(!target && testTarget) {
-			target = this.getDirectScrollable(testTarget);
-			testTarget = testTarget.parentElement;
-		}
+		callToParents(element, () => {
+			if(!target) {
+				target = this.getDirectScrollable(testTarget);
+			}
+		})
 		return target;
 	}
 	
