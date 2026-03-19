@@ -1,4 +1,4 @@
-import Interactions from "./Interactions";
+import Interactions from "./Interactions.js";
 
 class Input {
 	focusManager = null;
@@ -12,6 +12,7 @@ class Input {
 	state = 0;
 	
 	wasToggled = false;
+	toggleStateChanged = false;
 	get isToggled() {
 		return this.state > 0.5;
 	}
@@ -34,7 +35,7 @@ class Input {
 	
 	setState(value) {
 		this.state = value;
-		this.toggleChanged = this.isToggled !== this.wasToggled;
+		this.toggleStateChanged = this.isToggled !== this.wasToggled;
 		Interactions.getCurrentLayer().sendInput(this);
 		this.wasToggled = this.isToggled;
 	}

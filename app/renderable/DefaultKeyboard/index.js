@@ -99,24 +99,32 @@ class DefaultKeyboard extends Keyboard {
 		);
 		
 		new Interactable(leftKey, {
+			roles: ["KEYBOARD_LEFT"],
 			preactivate: () => {
 				
 			}
 		});
 		new Interactable(rightKey, {
+			roles: ["KEYBOARD_RIGHT"],
 			preactivate: () => {
 				
 			}
 		});
 		
 		new Interactable(capsKey, {
-			activate: () => {
+			roles: ["KEYBOARD_SHIFT"],
+			preactivate: focusManager => {
+				// TODO: keyboard shift key works as normal here
+				//if(focusManager.)
+			},
+			activate: focusManager => {
 				this.inCapsMode = !this.inCapsMode;
 				this.update();
 			}
 		});
 		
 		new Interactable(doneKey, {
+			roles: ["KEYBOARD_SUBMIT"],
 			activate: () => {
 				this.close();
 				this.whenFinished();

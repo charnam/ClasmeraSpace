@@ -53,6 +53,10 @@ class InteractionLayer {
 		}
 	}
 	
+	getInteractables() {
+		return Interactions.availableTargets.filter(interactable => this.contains(interactable));
+	}
+	
 	contains(interactable) {
 		return this.element.contains(interactable.element);
 	}
@@ -80,29 +84,44 @@ class InteractionLayer {
 			return false;
 		}
 		
+		const interactables = this.getInteractables()
+			.filter(interactable => interactable.roles.some(role => input.satisfiesRole(role)));
+		
 		if(this.inputOverride) {
 			this.inputOverride(input);
-		} else if(input.toggleStateChanged) {
-			if(input.isToggled) {
-				if(input.satisfiesRole("UP")) {
-					input.focusManager.moveFocus("up");
+		} else if(interactables.length > 0) {
+			if(input.toggleStateChanged) {
+				for(let interactable of interactables) {
+					if(input.isToggled) {
+						interactable.preactivate(input.focusManager);
+					} else {
+						interactable.activate(input.focusManager);
+					}
 				}
-				if(input.satisfiesRole("DOWN")) {
-					input.focusManager.moveFocus("down");
-				}
-				if(input.satisfiesRole("LEFT")) {
-					input.focusManager.moveFocus("left");
-				}
-				if(input.satisfiesRole("RIGHT")) {
-					input.focusManager.moveFocus("right");
-				}
-				
-				if(input.satisfiesRole("SELECT")) {
-					input.focusManager.beginInteract();
-				}
-			} else {
-				if(input.satisfiesRole("SELECT")) {
-					input.focusManager.endInteract();
+			}
+		} else {
+			if(input.toggleStateChanged) {
+				if(input.isToggled) {
+					if(input.satisfiesRole("UP")) {
+						input.focusManager.moveFocus("up");
+					}
+					if(input.satisfiesRole("DOWN")) {
+						input.focusManager.moveFocus("down");
+					}
+					if(input.satisfiesRole("LEFT")) {
+						input.focusManager.moveFocus("left");
+					}
+					if(input.satisfiesRole("RIGHT")) {
+						input.focusManager.moveFocus("right");
+					}
+					
+					if(input.satisfiesRole("SELECT")) {
+						input.focusManager.beginInteract();
+					}
+				} else {
+					if(input.satisfiesRole("SELECT")) {
+						input.focusManager.endInteract();
+					}
 				}
 			}
 		}

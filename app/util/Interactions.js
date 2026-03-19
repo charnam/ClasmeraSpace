@@ -81,7 +81,7 @@ class Interactions {
 	
 	static getInteractable(element) {
 		let target = null;
-		callToParents(element, () => {
+		callToParents(element, testTarget => {
 			if(!target) {
 				target = this.getDirectInteractable(testTarget);
 			}
@@ -95,7 +95,7 @@ class Interactions {
 	
 	static getScrollable(element) {
 		let target = null;
-		callToParents(element, () => {
+		callToParents(element, testTarget => {
 			if(!target) {
 				target = this.getDirectScrollable(testTarget);
 			}
