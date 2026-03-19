@@ -60,6 +60,7 @@ class YoutubeVideoSource extends VideoSource {
 						video: fullVideo,
 						download: async (progress) => {
 							const blob = await Youtube.downloadToBlob(video.id, progress);
+							console.log(blob);
 						}
 					});
 					page.open();

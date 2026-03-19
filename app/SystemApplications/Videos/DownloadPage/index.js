@@ -56,16 +56,33 @@ class DownloadPage extends VisualOverlay {
 		description.innerText = this.video.description;
 		
 		if(this.download) {
+			let downloadButtonIcon;
+			
 			const downloadButton = new HTML.div({class: "videos-app-video-download-page-button base-button"},
-				new HTML.i({class: "bi-download"}),
+				downloadButtonIcon = new HTML.i({class: "bi-download"}),
 				" Download"
 			);
 			
 			new Interactable(downloadButton, {
 				activate: () => {
+					downloadButton.classList.add("progress");
+					downloadButtonIcon.classList.remove("bi-download");
+					downloadButtonIcon.classList.add("bi-arrow-repeat");
+					
 					this.download(progress => {
-						downloadButton.setAttribute("style",
-							`--progress: ${progress}%;`);
+						if(progress.complete) {
+							downloadButton.setAttribute("style", "");
+							
+							downloadButton.classList.remove("progress");
+							downloadButtonIcon.classList.remove("bi-arrow-repeat");
+							downloadButtonIcon.classList.add("bi-download");
+							
+						} else if(progress.stage == 0 || progress.complete) {
+							downloadButton.setAttribute("style", "");
+						} else {
+							downloadButton.setAttribute("style",
+								`--progress: ${((progress.stage - 1) + progress.progress) / progress.stages};`);
+						}
 					});
 				}
 			});

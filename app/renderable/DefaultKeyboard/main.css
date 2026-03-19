@@ -1,4 +1,17 @@
 
+
+@keyframes keyboard-default-input-cursor {
+	0% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.4;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
 .keyboard-default {
 	width: 80vw;
 	aspect-ratio: 11 / 4;
@@ -27,9 +40,37 @@
 	height: 100%;
 }
 
+.keyboard-default-input {
+	display: flex;
+}
+.keyboard-default-input-height-char {
+	opacity: 0;
+	width: 0;
+	overflow: hidden;
+}
+.keyboard-default-input > * {
+	flex: none;
+}
+.keyboard-default-input-cursor {
+	width: 0;
+	overflow: visible;
+}
+.keyboard-default-input-cursor:after {
+	content: "";
+	width: 0.2vmin;
+	height: 100%;
+	background: white;
+	display: inline-block;
+	flex: none;
+	box-shadow: var(--shadow);
+	animation: keyboard-default-input-cursor 0.5s ease-in-out infinite;
+}
+
 .keyboard-default-input,
 .keyboard-default-key,
 .keyboard-default-key-side {
+	white-space: pre;
+	overflow: hidden;
 	padding: 1.2vmin;
 	box-sizing: border-box;
 	margin: var(--key-margin);

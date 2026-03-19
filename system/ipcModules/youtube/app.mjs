@@ -1,9 +1,11 @@
-import { Download, YtDlp } from 'ytdlp-nodejs';
+import { YtDlp } from 'ytdlp-nodejs';
 import Blobs from '../../Blobs.mjs';
+import Download from '../../Download.mjs';
 import { ipcMain } from 'electron';
 import { Innertube, UniversalCache } from 'youtubei.js';
-const innertube = await Innertube.create({ cache: new UniversalCache(false) });
+import { readdir } from 'fs/promises';
 
+const innertube = await Innertube.create({ cache: new UniversalCache(false) });
 const ytdlp = new YtDlp();
 
 function getLargestThumbnail(thumbnails) {
@@ -88,22 +90,26 @@ ipcMain.handle("youtubeDownload", async (_event, query) => {
 				}
 				await Download.update(downloadID, {
 					progress: progress.percentage / 100,
-					stages: Math.max(usedFilenames.length, downloadStages),
+					stages: Math.max(usedFilenames.length, predictedDownloadStages),
 					stage: usedFilenames.length
 				});
-				query.progressCallback(await Download.get(downloadID));
 			}
 		})
 		.run()
 		.then(async () => {
-			const dir = (await readdir(downloadPath)).some(filename => filename !== "." && filename !== "..");
+			const dir = (await readdir(downloadPath)).filter(filename => filename !== "." && filename !== "..");
 			if(dir[0]) {
-				const blobID = await Blobs.storeFile(dir[0]);
-				
+				const blobID = await Blobs.storeFile(`${downloadPath}/${dir[0]}`);
 				Download.update(downloadID, {
 					complete: true,
 					stage: (await Download.get(downloadID)).stages,
 					blob: blobID
+				});
+			} else {
+				Download.update(downloadID, {
+					complete: true,
+					stage: (await Download.get(downloadID)).stages,
+					failed: true
 				});
 			}
 		});

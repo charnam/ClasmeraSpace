@@ -68,6 +68,9 @@ input {
 	transform: scale(1.1) translateY(0.2vmin);
 	z-index: 50;
 }
+.base-button[active]:not([hover]) {
+	transition: none;
+}
 
 @keyframes base-popup-enter {
 	0% {
@@ -81,7 +84,8 @@ input {
 .base-popup {
 	background: radial-gradient(hsl(var(--base-accent-color) 43% 63%), hsl(var(--base-accent-color) 43% 23%));
 	border-radius: 2vmin;
-	text-shadow: 0 0.2vmin 0.2vmin #0008;
+	--shadow: 0 0.2vmin 0.2vmin #0008;
+	text-shadow: var(--shadow);
 	border: 0.5vmin solid #fff2;
 	animation: base-popup-enter 0.2s ease-in-out;
 }
@@ -164,4 +168,18 @@ input {
 
 #root > .disappear-animation {
 	z-index: 20;
+}
+
+
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+.bi-arrow-repeat {
+	animation: spin 2s linear infinite;
 }
