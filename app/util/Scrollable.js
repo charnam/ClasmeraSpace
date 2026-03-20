@@ -5,12 +5,11 @@ import Interactions from "./Interactions.js";
 class Scrollable {
 	element = null;
 	currentScrollTarget = {x: 0, y: 0};
+	currentScrollMovement = {x: 0, y: 0};
 	
 	padding = 80;
 	maximumSpeed = Infinity;
 	buttonScrollSpeed = 10;
-	
-	layer = new InteractionLayer();
 	
 	constructor(element, details = {}) {
 		this.element = element;
@@ -19,27 +18,34 @@ class Scrollable {
 			this.padding = details.padding;
 		}
 		if(details.selectable) {
-			this.layer.element = element;
 			new Interactable(element, {
-				activate: () => {
-					Interactions.addLayer(this.layer);
+				activate: manager => {
+					const layer = new InteractionLayer(element, {affects: manager});
+					Interactions.addLayer(layer);
 					
-					this.layer.inputOverride = input => {
+					manager.addAttribute("scrolling", element);
+					
+					layer.inputOverride = input => {
+						if(input.satisfiesRole("BASE_UP")) {
+							this.currentScrollMovement.y = -this.buttonScrollSpeed * input.isToggled;
+						}
+						if(input.satisfiesRole("BASE_DOWN")) {
+							this.currentScrollMovement.y = this.buttonScrollSpeed * input.isToggled;
+						}
+						if(input.satisfiesRole("BASE_LEFT")) {
+							this.currentScrollMovement.x = -this.buttonScrollSpeed * input.isToggled;
+						}
+						if(input.satisfiesRole("BASE_RIGHT")) {
+							this.currentScrollMovement.x = this.buttonScrollSpeed * input.isToggled;
+						}
 						
-					}
-					
-					this.layer.onButtonPress = (button, manager) => {
-						if(button == "up") {
-							this.scrollBy(0, -this.buttonScrollSpeed);
-						}
-						if(button == "down") {
-							this.scrollBy(0, this.buttonScrollSpeed);
-						}
-						if(button == "left") {
-							this.scrollBy(-this.buttonScrollSpeed, 0);
-						}
-						if(button == "right") {
-							this.scrollBy(this.buttonScrollSpeed, 0);
+						if(!input.isToggled && (
+							input.satisfiesRole("BASE_SELECT") || input.satisfiesRole("BASE_BACK")
+						)) {
+							this.currentScrollMovement.x = 0;
+							this.currentScrollMovement.y = 0;
+							Interactions.removeLayer(layer);
+							manager.clearAttribute("scrolling");
 						}
 					}
 				}
@@ -51,7 +57,11 @@ class Scrollable {
 	
 	animate() {
 		if(this.element) {
+			this.currentScrollTarget.x += this.currentScrollMovement.x;
+			this.currentScrollTarget.y += this.currentScrollMovement.y;
+			
 			this.validateScrollPosition();
+			
 			this.element.scrollTop +=
 				Math.min(
 					Math.max(

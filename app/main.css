@@ -19,11 +19,17 @@ body {
 [hover] {
 	outline: #fff8 0.5vmin solid;
 	outline-offset: 0.5vmin;
-	/*cursor: pointer;*/
 }
 
 [active] {
 	opacity: 0.9;
+}
+
+[scrolling] {
+	outline: #f90c 0.5vmin solid;
+	outline-offset: 0.3vmin;
+	transition: 0.1s ease-in-out;
+	transition-property: outline-offset, outline-color;
 }
 
 input {

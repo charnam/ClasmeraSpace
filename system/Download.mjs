@@ -57,7 +57,7 @@ class Download {
 	stages = 1;
 	complete = false;
 	failed = false;
-	blob = null;
+	data = null;
 }
 
 export default Download;

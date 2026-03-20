@@ -43,8 +43,29 @@
 	content: "\F5D4";
 }
 
-.browser-app webview {
+.browser-app-webview-container {
 	width: 100%;
 	height: 100%;
 	background: black;
+	position: relative;
+}
+.browser-app webview {
+	position: absolute;
+	inset: 0;
+}
+
+.browser-app-cursors {
+	position: absolute;
+	left: 0;
+	top: 0;
+}
+.browser-app-webview-cursor {
+	position: absolute;
+	width: 5vmin;
+	height: 5vmin;
+	background: white;
+	border-radius: 50%;
+	border: 1vmin solid #fff8;
+	box-sizing: border-box;
+	transform: translate(-50%, -50%);
 }

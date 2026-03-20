@@ -31,9 +31,9 @@ class FocusManager {
 	moveFocus(direction) {
 		let newFocus;
 		if(this.currentFocus) {
-			newFocus = Interactions.getInteractableInDirection(this.currentFocus, direction);
+			newFocus = Interactions.getAvailableInteractableInDirection(this, this.currentFocus, direction);
 		} else {
-			newFocus = Interactions.getAvailableTargets()[0].element;
+			newFocus = Interactions.getAvailableTargets(this)[0].element;
 		}
 		if(newFocus) {
 			this.hover(newFocus);
@@ -54,15 +54,19 @@ class FocusManager {
 	}
 	
 	hover(element) {
-		const interactable = Interactions.getInteractable(element);
+		const interactable = Interactions.getInteractable(element, this);
 		if(interactable) {
 			if(this.currentFocus !== interactable) {
 				this.unhover();
 				this.currentFocus = interactable;
 				if(this.currentFocus) {
 					this.currentFocus.hover(this);
-					this.focusLayers[Interactions.getCurrentLayer().id] = this.currentFocus;
+					this.focusLayers[Interactions.getCurrentLayer(this).id] = this.currentFocus;
 				}
+			}
+		} else {
+			if(this.currentFocus) {
+				this.unhover();
 			}
 		}
 	}
@@ -70,7 +74,7 @@ class FocusManager {
 		if(this.currentFocus) {
 			this.currentFocus.unhover(this);
 			this.currentFocus = null;
-			delete this.focusLayers[Interactions.getCurrentLayer().id];
+			delete this.focusLayers[Interactions.getCurrentLayer(this).id];
 		}
 	}
 	beginInteract() {
@@ -85,7 +89,7 @@ class FocusManager {
 	}
 	
 	update() {
-		if(this.currentFocus && !Interactions.isInteractable(this.currentFocus.element)) {
+		if(this.currentFocus && !Interactions.isInteractable(this.currentFocus.element, this)) {
 			this.currentFocus.unhover(this);
 			this.currentFocus = null;
 		}
@@ -101,8 +105,8 @@ class FocusManager {
 	}
 	
 	replaceAttribute(attr, target) {
+		const didClear = this.clearAttribute(attr);
 		const additions = this.addAttribute(attr, target);
-		const didClear = this.clearAttribute(attr, additions.selectedElements);
 		return {
 			additions,
 			didClear
@@ -110,28 +114,17 @@ class FocusManager {
 	}
 	
 	addAttribute(attr, target) {
-		let selectedElements = [];
-		let modifiedElements = [];
-		callToParents(target, el => {
-			if(!Interactions.isInteractable(el)) return;
-			
-			const previousValue = el.getAttribute(attr) ?? "";
-			const pointers = previousValue.split(" ").filter(item => item.length > 0);
-			
-			if(!pointers.includes(this.pointerId)) {
-				pointers.push(this.pointerId);
-			}
-			
-			el.setAttribute(attr, pointers.join(" "));
-			selectedElements.push(el);
-			if(previousValue !== pointers.join(" ")) {
-				modifiedElements.push(el);
-			}
-		});
+		const previousValue = target.getAttribute(attr) ?? "";
+		const pointers = previousValue.split(" ").filter(item => item.length > 0);
+		
+		if(!pointers.includes(this.pointerId)) {
+			pointers.push(this.pointerId);
+		}
+		
+		target.setAttribute(attr, pointers.join(" "));
 		
 		return {
-			modifiedElements,
-			selectedElements
+			modified: previousValue !== pointers.join(" ")
 		};
 	}
 	

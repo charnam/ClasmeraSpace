@@ -4,7 +4,10 @@ class InteractionLayer {
 	id = crypto.randomUUID();
 	element = null;
 	acceptsInput = true;
+	affects = true;
 	isResetLayer = false;
+	
+	inputOverride = null;
 	
 	musicNode = new Audio();
 	set music(value) {
@@ -32,7 +35,9 @@ class InteractionLayer {
 		if(options.isResetLayer) {
 			this.isResetLayer = options.isResetLayer;
 		}
-		
+		if(options.affects !== undefined) {
+			this.affects = options.affects
+		}
 	}
 	
 	async fadeInMusic() {
@@ -58,7 +63,7 @@ class InteractionLayer {
 	}
 	
 	contains(interactable) {
-		return this.element.contains(interactable.element);
+		return this.element !== interactable.element && this.element.contains(interactable.element);
 	}
 	
 	acceptsInputFrom(pointer) {
@@ -76,6 +81,16 @@ class InteractionLayer {
 		}
 		if(this.acceptsInput) {
 			return true;
+		}
+	}
+	
+	shouldAffect(pointer) {
+		if(Array.isArray(this.affects)) {
+			return this.affects.includes(pointer) || this.affects.includes(pointer.id);
+		} else if(typeof this.affects == "boolean") {
+			return this.affects;
+		} else {
+			return this.affects == pointer;
 		}
 	}
 	
@@ -102,24 +117,24 @@ class InteractionLayer {
 		} else {
 			if(input.toggleStateChanged) {
 				if(input.isToggled) {
-					if(input.satisfiesRole("UP")) {
+					if(input.satisfiesRole("BASE_UP")) {
 						input.focusManager.moveFocus("up");
 					}
-					if(input.satisfiesRole("DOWN")) {
+					if(input.satisfiesRole("BASE_DOWN")) {
 						input.focusManager.moveFocus("down");
 					}
-					if(input.satisfiesRole("LEFT")) {
+					if(input.satisfiesRole("BASE_LEFT")) {
 						input.focusManager.moveFocus("left");
 					}
-					if(input.satisfiesRole("RIGHT")) {
+					if(input.satisfiesRole("BASE_RIGHT")) {
 						input.focusManager.moveFocus("right");
 					}
 					
-					if(input.satisfiesRole("SELECT")) {
+					if(input.satisfiesRole("BASE_SELECT")) {
 						input.focusManager.beginInteract();
 					}
 				} else {
-					if(input.satisfiesRole("SELECT")) {
+					if(input.satisfiesRole("BASE_SELECT")) {
 						input.focusManager.endInteract();
 					}
 				}

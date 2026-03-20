@@ -4,6 +4,7 @@ import Download from '../../Download.mjs';
 import { ipcMain } from 'electron';
 import { Innertube, UniversalCache } from 'youtubei.js';
 import { readdir } from 'fs/promises';
+import Registry from '../../Registry.mjs';
 
 const innertube = await Innertube.create({ cache: new UniversalCache(false) });
 const ytdlp = new YtDlp();
@@ -50,9 +51,13 @@ ipcMain.handle("youtubeSearch", async (_event, query) => {
 	return results;
 });
 
-ipcMain.handle("youtubeInfo", async (_event, query) => {
-	const info = (await innertube.getBasicInfo(query.videoURL)).basic_info;
+async function getVideoInfo(id) {
+	const cachedInfo = await Registry.getKey(`applications.videos.sources.youtube.videos.${id}`);
+	if(cachedInfo) {
+		return cachedInfo;
+	}
 	
+	const info = (await innertube.getBasicInfo(id)).basic_info;
 	return {
 		id: info.id,
 		title: info.title,
@@ -65,73 +70,85 @@ ipcMain.handle("youtubeInfo", async (_event, query) => {
 			name: info.author,
 		},
 	}
+}
+
+ipcMain.handle("youtubeInfo", async (_event, query) => {
+	return getVideoInfo(query.videoID);
 });
 
+const downloadingVideos = {};
+
 ipcMain.handle("youtubeDownload", async (_event, query) => {
+	const info = await getVideoInfo(query.videoID);
+	if(!info) {
+		return false;
+	}
+	
+	if(downloadingVideos[query.videoID]) {
+		return downloadingVideos[query.videoID];
+	}
+	
 	const downloadID = await Download.create();
-	const tempID = crypto.randomUUID();
+	downloadingVideos[query.videoID] = downloadID;
 	
-	const downloadPath = `temp/${tempID}`;
+	const existingVideo = await Registry.getKey(`applications.videos.sources.youtube.videos.${info.id}`, {});
 	
-	let predictedDownloadStages = 2;
-	Download.update(downloadID, {
-		stages: predictedDownloadStages,
-	})
-	
-	const usedFilenames = [];
-	
-	ytdlp
-		.download(query.videoURL)
-		.output(downloadPath)
-		.on("progress", async progress => {
-			if(progress.status == "downloading") {
-				if(!usedFilenames.includes(progress.filename)) {
-					usedFilenames.push(progress.filename);
-				}
-				await Download.update(downloadID, {
-					progress: progress.percentage / 100,
-					stages: Math.max(usedFilenames.length, predictedDownloadStages),
-					stage: usedFilenames.length
-				});
-			}
+	if(!existingVideo.blob) {
+		const tempID = crypto.randomUUID();
+		const downloadPath = `temp/${tempID}`;
+		
+		let predictedDownloadStages = 2;
+		Download.update(downloadID, {
+			stages: predictedDownloadStages,
 		})
-		.run()
-		.then(async () => {
-			const dir = (await readdir(downloadPath)).filter(filename => filename !== "." && filename !== "..");
-			if(dir[0]) {
-				const blobID = await Blobs.storeFile(`${downloadPath}/${dir[0]}`);
-				Download.update(downloadID, {
-					complete: true,
-					stage: (await Download.get(downloadID)).stages,
-					blob: blobID
-				});
-			} else {
-				Download.update(downloadID, {
-					complete: true,
-					stage: (await Download.get(downloadID)).stages,
-					failed: true
-				});
-			}
+		
+		const usedFilenames = [];
+		
+		ytdlp
+			.download("https://www.youtube.com/watch?v="+query.videoID)
+			.output(downloadPath)
+			.on("progress", async progress => {
+				if(progress.status == "downloading") {
+					if(!usedFilenames.includes(progress.filename)) {
+						usedFilenames.push(progress.filename);
+					}
+					await Download.update(downloadID, {
+						progress: progress.percentage / 100,
+						stages: Math.max(usedFilenames.length, predictedDownloadStages),
+						stage: usedFilenames.length
+					});
+				}
+			})
+			.run()
+			.then(async () => {
+				const dir = (await readdir(downloadPath)).filter(filename => filename !== "." && filename !== "..");
+				if(dir[0]) {
+					const blobID = await Blobs.storeFile(`${downloadPath}/${dir[0]}`);
+					
+					info.blob = blobID;
+					await Registry.setKey(`applications.videos.sources.youtube.videos.${info.id}`, info);
+					
+					Download.update(downloadID, {
+						complete: true,
+						stage: (await Download.get(downloadID)).stages,
+						data: info
+					});
+				} else {
+					Download.update(downloadID, {
+						complete: true,
+						stage: (await Download.get(downloadID)).stages,
+						failed: true
+					});
+				}
+			});
+		
+	} else {
+		Download.update(downloadID, {
+			complete: true,
+			stage: (await Download.get(downloadID)).stages,
+			data: info
 		});
-	
+	}
 	
 	return downloadID;
-	
-	/*
-	If we stop using ytdlp-nodejs, this is the backup plan.
-	Should fix the possible security vulnerability first though.
-	
-	const downloadProcess = spawn("yt-dlp", ["-o", downloadPath, query.videoURL]);
-	
-	downloadProcess.stdout.on("data", data => {
-		console.log(data);
-	});
-	
-	downloadProcess.on("close", async code => {
-		if(code == 0) {
-			const blobID = await Blobs.storeFile(downloadPath);
-			
-		}
-	})
-	*/
 })

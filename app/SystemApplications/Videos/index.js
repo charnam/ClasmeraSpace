@@ -62,6 +62,7 @@ class Videos extends Application {
 		this.tabbed = new Tabbed(videosSourceTabs);
 		
 		new Interactable(videosQuit, {
+			roles: ["BASE_BACK"],
 			activate: () => {
 				this.remove();
 			}

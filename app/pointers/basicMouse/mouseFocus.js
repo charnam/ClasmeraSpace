@@ -1,5 +1,4 @@
 import FocusManager from "../../util/FocusManager.js";
-import Interactions from "../../util/Interactions.js";
 import keyboardFocus from "./keyboardFocus.js";
 
 const mouseFocus = new FocusManager();
@@ -7,18 +6,12 @@ let lastMouseInteraction = 0;
 
 window.addEventListener("mousemove", event => {
 	lastMouseInteraction = Date.now();
-	if(Interactions.getInteractable(event.target)) {
-		mouseFocus.hover(event.target);
-	} else {
-		mouseFocus.unhover();
-	}
+	mouseFocus.hover(event.target);
 });
 
 window.addEventListener("mousedown", (event) => {
 	lastMouseInteraction = Date.now();
-	if(Interactions.getInteractable(event.target)) {
-		mouseFocus.hover(event.target);
-	}
+	mouseFocus.hover(event.target);
 	mouseFocus.beginInteract();
 });
 window.addEventListener("mouseup", event => {

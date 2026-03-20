@@ -1,12 +1,10 @@
 const { contextBridge, ipcRenderer } = require('electron/renderer');
 
 contextBridge.exposeInMainWorld("__YOUTUBE", {
-	info: (videoURL) => ipcRenderer.invoke("youtubeInfo", {videoURL}),
+	info: (videoID) => ipcRenderer.invoke("youtubeInfo", {videoID}),
 	search: (query) => ipcRenderer.invoke("youtubeSearch", {query}),
-	downloadToBlob: async (videoID, progressCallback) => {
-		const downloadId = await ipcRenderer.invoke("youtubeDownload", {
-			videoURL: "https://www.youtube.com/watch?v="+videoID,
-		});
+	getVideo: async (videoID, progressCallback) => {
+		const downloadId = await ipcRenderer.invoke("youtubeDownload", {videoID});
 		
 		let download = null;
 		do {
@@ -15,6 +13,10 @@ contextBridge.exposeInMainWorld("__YOUTUBE", {
 			await ipcRenderer.invoke("awaitDownloadUpdate", {id: downloadId});
 		} while(!download.complete);
 		
-		return download.blob;
+		if(download.failed) {
+			return false;
+		} else {
+			return download.data;
+		}
 	}
 });

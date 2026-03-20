@@ -1,6 +1,7 @@
 import { HTML } from "imperative-html";
 import VisualOverlay from "../../../renderable/VisualOverlay/index.js";
 import Interactable from "../../../util/Interactable.js";
+import Scrollable from "../../../util/Scrollable.js";
 
 class DownloadPage extends VisualOverlay {
 	style = [...this.style, "app/SystemApplications/Videos/DownloadPage/main.css"];
@@ -59,14 +60,14 @@ class DownloadPage extends VisualOverlay {
 			let downloadButtonIcon;
 			
 			const downloadButton = new HTML.div({class: "videos-app-video-download-page-button base-button"},
-				downloadButtonIcon = new HTML.i({class: "bi-download"}),
-				" Download"
+				downloadButtonIcon = new HTML.i({class: "bi-play"}),
+				" Play"
 			);
 			
 			new Interactable(downloadButton, {
 				activate: () => {
 					downloadButton.classList.add("progress");
-					downloadButtonIcon.classList.remove("bi-download");
+					downloadButtonIcon.classList.remove("bi-play");
 					downloadButtonIcon.classList.add("bi-arrow-repeat");
 					
 					this.download(progress => {
@@ -75,7 +76,7 @@ class DownloadPage extends VisualOverlay {
 							
 							downloadButton.classList.remove("progress");
 							downloadButtonIcon.classList.remove("bi-arrow-repeat");
-							downloadButtonIcon.classList.add("bi-download");
+							downloadButtonIcon.classList.add("bi-play");
 							
 						} else if(progress.stage == 0 || progress.complete) {
 							downloadButton.setAttribute("style", "");
@@ -91,10 +92,15 @@ class DownloadPage extends VisualOverlay {
 		}
 		
 		new Interactable(backButton, {
+			roles: ["BASE_BACK"],
 			activate: () => {
 				this.remove();
 			}
 		})
+		
+		new Scrollable(description, {
+			selectable: true
+		});
 		
 		return el;
 	}

@@ -5,6 +5,9 @@ import Interactable from "../../../../util/Interactable.js";
 import DownloadPage from "../../DownloadPage/index.js";
 import format_timestamp from "../../../../util/simple/format_timestamp.js";
 import LoadingScreen from "../../../../renderable/LoadingScreen/index.js";
+import Registry from "../../../../util/system/Registry.js";
+import VideoPlayer from "../../../../renderable/VideoPlayer/index.js";
+import Blobs from "../../../../util/system/Blobs.js";
 
 class YoutubeVideoSource extends VideoSource {
 	static name = "YouTube";
@@ -59,8 +62,16 @@ class YoutubeVideoSource extends VideoSource {
 					const page = new DownloadPage({
 						video: fullVideo,
 						download: async (progress) => {
-							const blob = await Youtube.downloadToBlob(video.id, progress);
-							console.log(blob);
+							const details = await Youtube.getVideo(video.id, progress);
+							
+							if(document.body.contains(page.element)) {
+								const player = new VideoPlayer({
+									title: details.title,
+									author: details.author.name,
+									blob: await Blobs.get(details.blob)
+								});
+								player.open();
+							}
 						}
 					});
 					page.open();

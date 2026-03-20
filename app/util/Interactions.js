@@ -7,12 +7,21 @@ class Interactions {
 	static availableTargets = [];
 	static availableScrollers = []
 	
-	static getCurrentLayer() {
-		return this.interactionLayers[this.interactionLayers.length-1];
+	
+	static getCurrentLayers() {
+		const layers = [];
+		for(let manager of this.focusManagers) {
+			layers.push(this.getCurrentLayer(manager));
+		}
+		return layers;
 	}
-	static getAvailableTargets() {
+	static getCurrentLayer(manager) {
+		const layers = this.interactionLayers.filter(layer => layer.shouldAffect(manager));
+		return layers[layers.length-1];
+	}
+	static getAvailableTargets(manager) {
 		return this.availableTargets.filter(target =>
-			this.getCurrentLayer().contains(target)
+			this.getCurrentLayer(manager).contains(target)
 		 && target.element.checkVisibility());
 	}
 	static getAvailableLayers() {
@@ -72,31 +81,31 @@ class Interactions {
 		this.availableScrollers.push(scrollable);
 	}
 	
-	static isInteractable(element) {
-		return this.getDirectInteractable(element) !== undefined;
+	static isInteractable(element, manager) {
+		return this.getDirectInteractable(element, manager) !== undefined;
 	}
 	static isLayerAvailable(layer) {
 		return this.getAvailableLayers().includes(layer);
 	}
 	
-	static getInteractable(element) {
+	static getInteractable(element, manager) {
 		let target = null;
 		callToParents(element, testTarget => {
 			if(!target) {
-				target = this.getDirectInteractable(testTarget);
+				target = this.getDirectInteractable(testTarget, manager);
 			}
 		})
 		return target;
 	}
 	
-	static getDirectInteractable(element) {
-		return this.getAvailableTargets().find(target => target.element == element);
+	static getDirectInteractable(element, manager) {
+		return this.getAvailableTargets(manager).find(target => target.element == element);
 	}
 	
 	static getScrollable(element) {
 		let target = null;
 		callToParents(element, testTarget => {
-			if(!target) {
+			if(!target && testTarget !== element) {
 				target = this.getDirectScrollable(testTarget);
 			}
 		})
@@ -108,12 +117,12 @@ class Interactions {
 	}
 	
 	
-	static getInteractableInDirection(target, direction) {
+	static getAvailableInteractableInDirection(manager, target, direction) {
 		const targetEl = target.element
 		const targetRect = targetEl.getBoundingClientRect();
 		const otherTargets = [];
 		
-		for(let otherTarget of this.getAvailableTargets()) {
+		for(let otherTarget of this.getAvailableTargets(manager)) {
 			if(otherTarget.element == targetEl) continue;
 			otherTargets.push({
 				element: otherTarget.element,
@@ -205,13 +214,13 @@ class Interactions {
 }
 
 setInterval(() => {
-	const currentLayer = Interactions.getCurrentLayer();
+	const currentLayers = Interactions.getCurrentLayers();
 	const availableLayers = Interactions.getAvailableLayers();
-	if(currentLayer) {
-		currentLayer.element.classList.add("active-layer");
+	for(let layer of currentLayers) {
+		layer.element.classList.add("active-layer");
 	}
 	for(let element of document.querySelectorAll(".active-layer")) {
-		if(!currentLayer || element !== currentLayer.element) {
+		if(!currentLayers.some(layer => layer.element == element)) {
 			element.classList.remove("active-layer");
 		}
 	}

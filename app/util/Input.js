@@ -36,7 +36,7 @@ class Input {
 	setState(value) {
 		this.state = value;
 		this.toggleStateChanged = this.isToggled !== this.wasToggled;
-		Interactions.getCurrentLayer().sendInput(this);
+		Interactions.getCurrentLayer(this.focusManager).sendInput(this);
 		this.wasToggled = this.isToggled;
 	}
 	

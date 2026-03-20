@@ -129,6 +129,14 @@ class DefaultKeyboard extends Keyboard {
 			doneKey = new HTML.div({class: "base-button keyboard-default-key keyboard-default-key-side"}, "Done")
 		);
 		
+		new Interactable(doneKey, {
+			roles: ["DEFAULT_KEYBOARD_SUBMIT"],
+			activate: () => {
+				this.close();
+				this.whenFinished();
+			}
+		});
+		
 		new Interactable(leftKey, {
 			roles: ["DEFAULT_KEYBOARD_LEFT"],
 			preactivate: () => {
@@ -153,14 +161,6 @@ class DefaultKeyboard extends Keyboard {
 			preactivate: focusManager => {
 				this.inCapsMode = !this.inCapsMode;
 				this.update();
-			}
-		});
-		
-		new Interactable(doneKey, {
-			roles: ["DEFAULT_KEYBOARD_SUBMIT"],
-			activate: () => {
-				this.close();
-				this.whenFinished();
 			}
 		});
 		
