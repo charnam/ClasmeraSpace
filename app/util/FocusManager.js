@@ -11,6 +11,7 @@ class FocusManager {
 	focusLayers = {};
 	
 	inputs = [];
+	cursorIsActive = false;
 	cursorPosition = {x: -1, y: -1};
 	cursorTarget = {x: -1, y: -1};
 	cursorIsClicked = false;
@@ -55,7 +56,14 @@ class FocusManager {
 		this.hoverOverlay.x = this.cursorPosition.x;
 		this.hoverOverlay.y = this.cursorPosition.y;
 		
+		this.hoverOverlay.active = this.cursorIsActive;
+		
 		this.hoverOverlay.updateRendered();
+		
+		if(this.cursorIsActive) {
+			const element = document.elementFromPoint(this.cursorPosition.x, this.cursorPosition.y);
+			this.hover(element);
+		}
 		
 		this.cursorLastFrameTime = Date.now();
 	}
@@ -71,6 +79,7 @@ class FocusManager {
 	}
 	
 	moveFocus(direction) {
+		this.cursorIsActive = false;
 		let newFocus;
 		if(this.currentFocus) {
 			newFocus = Interactions.getAvailableInteractableInDirection(this, this.currentFocus, direction);
@@ -90,16 +99,9 @@ class FocusManager {
 	}
 	
 	hoverAt(x, y) {
-		const element = document.elementFromPoint(x * window.innerWidth, y * window.innerHeight);
-		
 		this.cursorTarget.x = x * window.innerWidth;
 		this.cursorTarget.y = y * window.innerHeight;
-		
-		if(element) {
-			this.hover(element);
-		} else {
-			this.unhover();
-		}
+		this.cursorIsActive = true;
 	}
 	
 	hover(element) {

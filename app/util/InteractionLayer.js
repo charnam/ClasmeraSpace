@@ -8,7 +8,7 @@ class InteractionLayer {
 	isResetLayer = false;
 	
 	inputOverride = null;
-	shouldForceCursor = true;
+	shouldForceCursor = false;
 	
 	musicNode = new Audio();
 	set music(value) {
@@ -53,9 +53,9 @@ class InteractionLayer {
 		const cursorSpeedPerSecond = window.innerHeight / 100 * 30;
 		
 		if(this.shouldForceCursor) {
-			const managers = Interactions.focusManagers.filter(focusManager => this.shouldAffect(focusManager));
-			
-			for(let manager of managers) {
+			for(let manager of Interactions.focusManagers) {
+				if(Interactions.getCurrentLayer(manager) !== this) continue;
+				
 				let cursorMovementX = 0;
 				let cursorMovementY = 0;
 				
@@ -149,8 +149,8 @@ class InteractionLayer {
 		
 		if(this.inputOverride) {
 			this.inputOverride(input);
-		} else if(interactables.length > 0) {
-			if(input.toggleStateChanged) {
+		} else if(input.toggleStateChanged) {
+			if(interactables.length > 0) {
 				for(let interactable of interactables) {
 					if(input.isToggled) {
 						interactable.preactivate(input.focusManager);
@@ -158,9 +158,7 @@ class InteractionLayer {
 						interactable.activate(input.focusManager);
 					}
 				}
-			}
-		} else if(input.toggleStateChanged) {
-			if(!this.shouldForceCursor) {
+			} else if(!this.shouldForceCursor) {
 				if(input.isToggled) {
 					if(input.satisfiesRole("BASE_UP")) {
 						input.focusManager.moveFocus("up");

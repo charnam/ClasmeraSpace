@@ -9,6 +9,7 @@ body, #root {
 	inset: 0;
 	font-size: 2.3vmin;
 	font-family: "DM Sans", Helvetica, Arial, sans-serif;
+	cursor: none;
 }
 
 body {
