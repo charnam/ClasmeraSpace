@@ -32,9 +32,11 @@ class WebViewInteractable extends SingleInstanceRenderable {
 			activate: manager => {
 				const webviewLayer = new InteractionLayer(container, {affects: manager, shouldForceCursor: true});
 				Interactions.addLayer(webviewLayer);
+				let webviewBox = webview.getBoundingClientRect();
 				const updateCursor = () => {
+					webviewBox = webview.getBoundingClientRect();
 					if(Interactions.interactionLayers.includes(webviewLayer)) {
-						webview.sendInputEvent({type: "mouseMove", x: manager.cursorPosition.x, y: manager.cursorPosition.y});
+						webview.sendInputEvent({type: "mouseMove", x: manager.cursorPosition.x - webviewBox.x, y: manager.cursorPosition.y - webviewBox.y});
 						requestAnimationFrame(() => updateCursor());
 					}
 				};
@@ -44,16 +46,16 @@ class WebViewInteractable extends SingleInstanceRenderable {
 						if(input.isToggled) {
 							webview.sendInputEvent({
 								type: "mouseDown",
-								x: cursorPosition.x,
-								y: cursorPosition.y,
+								x: manager.cursorPosition.x - webviewBox.x,
+								y: manager.cursorPosition.y - webviewBox.y,
 								clickCount: 1,
 								button: "left"
 							});
 						} else {
 							webview.sendInputEvent({
 								type: "mouseUp",
-								x: cursorPosition.x,
-								y: cursorPosition.y,
+								x: manager.cursorPosition.x - webviewBox.x,
+								y: manager.cursorPosition.y - webviewBox.y,
 								clickCount: 1,
 								button: "left"
 							});

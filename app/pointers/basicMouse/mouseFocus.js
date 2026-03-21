@@ -5,6 +5,10 @@ import keyboardFocus from "./keyboardFocus.js";
 const mouseFocus = new FocusManager();
 let lastMouseInteraction = 0;
 
+const selectButton = new Input(mouseFocus, {
+	name: "Left Click",
+	roles: ["BASE_SELECT"]
+})
 const backButton = new Input(mouseFocus, {
 	name: "Right Click",
 	roles: ["BASE_BACK"]
@@ -20,7 +24,7 @@ window.addEventListener("mousedown", (event) => {
 	if(event.button == 2) {
 		backButton.setState(1);
 	} else {
-		mouseFocus.beginInteract();
+		selectButton.setState(1);
 	}
 });
 window.addEventListener("mouseup", event => {
@@ -28,7 +32,7 @@ window.addEventListener("mouseup", event => {
 	if(event.button == 2) {
 		backButton.setState(0);
 	} else {
-		mouseFocus.endInteract();
+		selectButton.setState(0);
 	}
 });
 
