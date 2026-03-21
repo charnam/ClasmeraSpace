@@ -60,6 +60,8 @@ class FocusManager {
 		
 		this.hoverOverlay.updateRendered();
 		
+		this.cursorIsActive = this.cursorIsActive || Interactions.getCurrentLayer(this).shouldForceCursor;
+		
 		if(this.cursorIsActive) {
 			const element = document.elementFromPoint(this.cursorPosition.x, this.cursorPosition.y);
 			this.hover(element);

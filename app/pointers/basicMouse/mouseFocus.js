@@ -32,15 +32,4 @@ window.addEventListener("mouseup", event => {
 	}
 });
 
-setInterval(() => {
-	if(lastMouseInteraction < Date.now() - 3000) {
-		document.body.setAttribute("style", "cursor: none !important;");
-		if(mouseFocus !== keyboardFocus) {
-			mouseFocus.unhover();
-		}
-	} else {
-		document.body.style.cursor = "";
-	}
-}, 100)
-
 export default mouseFocus;
