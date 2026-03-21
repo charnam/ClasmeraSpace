@@ -35,7 +35,7 @@ class Video extends Renderable {
 		videoTitle.innerText = this.video.title ?? "";
 		videoAuthorName.innerText = this.video.author?.name ?? "";
 		
-		if(this.video.thumbnail.includes(":")) {
+		if(!this.video.thumbnail || this.video.thumbnail.includes(":")) {
 			videoThumbnail.style.backgroundImage = `url("${this.video.thumbnail}")`;
 		} else {
 			Blobs.get(this.video.thumbnail).then(blob => {

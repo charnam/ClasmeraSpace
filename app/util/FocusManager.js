@@ -75,7 +75,7 @@ class FocusManager {
 	}
 	
 	ensureFocus() {
-		if(!this.currentFocus) {
+		if(!this.currentFocus && !this.cursorIsActive) {
 			this.hover(Interactions.getAvailableTargets(this)[0].element);
 		}
 	}

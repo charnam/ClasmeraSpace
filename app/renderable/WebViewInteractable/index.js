@@ -43,6 +43,7 @@ class WebViewInteractable extends SingleInstanceRenderable {
 				updateCursor();
 				webviewLayer.inputOverride = input => {
 					if(input.satisfiesRole("BASE_SELECT") && input.toggleStateChanged) {
+						manager.cursorIsClicked = input.isToggled;
 						if(input.isToggled) {
 							webview.sendInputEvent({
 								type: "mouseDown",
