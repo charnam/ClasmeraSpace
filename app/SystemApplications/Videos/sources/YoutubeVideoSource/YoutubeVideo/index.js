@@ -1,0 +1,44 @@
+import Video from "../../../Video/index.js";
+import LoadingScreen from "../../../../../renderable/LoadingScreen/index.js";
+import VideoPlayer from "../../../../../renderable/VideoPlayer/index.js";
+import Interactable from "../../../../../util/Interactable.js";
+import Blobs from "../../../../../util/system/Blobs.js";
+import Youtube from "../../../../../util/system/ipcModules/Youtube.js";
+import DownloadPage from "../../../DownloadPage/index.js";
+
+class YoutubeVideo extends Video {
+	render() {
+		const videoEl = super.render();
+		
+		new Interactable(videoEl, {
+			activate: async () => {
+				const loading = new LoadingScreen();
+				
+				loading.open();
+				const fullVideo = await Youtube.info(this.video.id)
+				loading.remove();
+				
+				const page = new DownloadPage({
+					video: fullVideo,
+					download: async (progress) => {
+						const details = await Youtube.getVideo(this.video.id, progress);
+						
+						if(document.body.contains(page.element)) {
+							const player = new VideoPlayer({
+								title: details.title,
+								author: details.author.name,
+								blob: await Blobs.get(details.blob)
+							});
+							player.open();
+						}
+					}
+				});
+				page.open();
+			}
+		})
+		
+		return videoEl;
+	}
+}
+
+export default YoutubeVideo;

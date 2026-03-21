@@ -37,6 +37,10 @@
 	grid-template-columns: repeat(4, 1fr);
 }
 
+.videos-app-search-bar {
+	width: 100%;
+}
+
 .videos-app-video {
 	display: flex;
 	flex-direction: column;

@@ -1,0 +1,15 @@
+#focus-manager-cursors {
+	position: absolute;
+	left: 0;
+	top: 0;
+}
+.focus-manager-cursor {
+	position: absolute;
+	box-sizing: border-box;
+	font-size: 5vmin;
+	--transform: translate(0px, 0px);
+	transform: translate(-2.6vmin, -1vmin) var(--transform);
+	transform-origin: 2vmin 1vmin;
+	filter: drop-shadow(1vmin 1vmin 0.6vmin black) drop-shadow(0.2vmin 0.2vmin 0.5vmin black);
+	pointer-events: none;
+}

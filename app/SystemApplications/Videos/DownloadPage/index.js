@@ -66,6 +66,8 @@ class DownloadPage extends VisualOverlay {
 			
 			new Interactable(downloadButton, {
 				activate: () => {
+					if(downloadButton.classList.contains("progress")) return;
+					
 					downloadButton.classList.add("progress");
 					downloadButtonIcon.classList.remove("bi-play");
 					downloadButtonIcon.classList.add("bi-arrow-repeat");

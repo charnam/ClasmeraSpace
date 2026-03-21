@@ -178,7 +178,7 @@ class Interactions {
 				score += 4000;
 				//score += Math.abs(rect2.left - rect1.right);
 			}
-			score += Math.abs(rect1Center.x - rect2Center.x) * 2;
+			score += Math.abs(rect1Center.x - rect2Center.x) * 0.5;
 		}
 		
 		if(direction == "left" || direction == "right") {
@@ -190,7 +190,7 @@ class Interactions {
 				score += 4000;
 				//score += Math.abs(rect2.top - rect1.bottom);
 			}
-			score += Math.abs(rect1Center.y - rect2Center.y) * 2;
+			score += Math.abs(rect1Center.y - rect2Center.y) * 0.5;
 		}
 		
 		if(direction == "up") {
@@ -206,33 +206,46 @@ class Interactions {
 			score += Math.abs(rect1.right - rect2.x);
 		}
 		
-		//score += Math.sqrt((rect1Center.x - rect2Center.x)**2 + (rect1Center.y - rect2Center.y)**2);
-		
 		return score;
 	}
 	
+	static frameAnimate() {
+		if(this.animateLastFrame < Date.now() - 1000) {
+			this.animateLastFrame = Date.now();
+		}
+		
+		const currentLayers = this.getCurrentLayers();
+		const availableLayers = this.getAvailableLayers();
+		for(let layer of currentLayers) {
+			layer.element.classList.add("active-layer");
+		}
+		for(let element of document.querySelectorAll(".active-layer")) {
+			if(!currentLayers.some(layer => layer.element == element)) {
+				element.classList.remove("active-layer");
+			}
+		}
+		
+		for(let layer of availableLayers) {
+			layer.element.classList.add("available-layer");
+		}
+		for(let element of document.querySelectorAll(".available-layer")) {
+			if(!availableLayers.some(layer => layer.element == element)) {
+				element.classList.remove("available-layer");
+			}
+		}
+		
+		for(let manager of this.focusManagers) {
+			manager.animateCursor();
+		}
+		for(let layer of this.interactionLayers) {
+			layer.animateCursors();
+		}
+		requestAnimationFrame(() => this.frameAnimate());
+	}
 }
 
-setInterval(() => {
-	const currentLayers = Interactions.getCurrentLayers();
-	const availableLayers = Interactions.getAvailableLayers();
-	for(let layer of currentLayers) {
-		layer.element.classList.add("active-layer");
-	}
-	for(let element of document.querySelectorAll(".active-layer")) {
-		if(!currentLayers.some(layer => layer.element == element)) {
-			element.classList.remove("active-layer");
-		}
-	}
-	
-	for(let layer of availableLayers) {
-		layer.element.classList.add("available-layer");
-	}
-	for(let element of document.querySelectorAll(".available-layer")) {
-		if(!availableLayers.some(layer => layer.element == element)) {
-			element.classList.remove("available-layer");
-		}
-	}
-}, 100);
+requestAnimationFrame(() => {
+	Interactions.frameAnimate();
+})
 
 export default Interactions;

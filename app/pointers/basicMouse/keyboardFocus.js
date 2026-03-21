@@ -39,6 +39,42 @@ const keymap = {
 	"Backspace": new Input(keyboardFocus, {
 		name: "Backspace Key",
 		roles: ["BASE_BACK"]
+	}),
+	"BrowserBack": new Input(keyboardFocus, {
+		name: "Back",
+		roles: ["BASE_BACK"]
+	}),
+	"MediaFastForward": new Input(keyboardFocus, {
+		name: "Fast-forward",
+		roles: ["PLAYER_SKIP_FORWARD"]
+	}),
+	"MediaRewind": new Input(keyboardFocus, {
+		name: "Rewind",
+		roles: ["PLAYER_SKIP_BACK"]
+	}),
+	"MediaTrackNext": new Input(keyboardFocus, {
+		name: "Fast-forward",
+		roles: ["PLAYER_SKIP_FORWARD_TRACK"]
+	}),
+	"MediaTrackPrevious": new Input(keyboardFocus, {
+		name: "Rewind",
+		roles: ["PLAYER_SKIP_BACK_TRACK"]
+	}),
+	"MediaPlayPause": new Input(keyboardFocus, {
+		name: "Pause/play",
+		roles: ["PLAYER_PLAY_PAUSE"]
+	}),
+	"BrowserSearch": new Input(keyboardFocus, {
+		name: "Search",
+		roles: ["BASE_SEARCH"]
+	}),
+	"PageUp": new Input(keyboardFocus, {
+		name: "Page Up",
+		roles: ["BASE_SCROLL_UP_PAGE"]
+	}),
+	"PageDown": new Input(keyboardFocus, {
+		name: "Page Down",
+		roles: ["BASE_SCROLL_DOWN_PAGE"]
 	})
 };
 

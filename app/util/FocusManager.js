@@ -2,6 +2,7 @@ import Interactions from "./Interactions.js";
 import DefaultKeyboard from "../renderable/DefaultKeyboard/index.js";
 import DefaultPasscodeInput from "../renderable/DefaultPasscodeInput/index.js";
 import callToParents from "./simple/callToParents.js";
+import FocusManagerCursor from "../renderable/FocusManagerCursor/index.js";
 
 class FocusManager {
 	pointerId = crypto.randomUUID();
@@ -10,6 +11,9 @@ class FocusManager {
 	focusLayers = {};
 	
 	inputs = [];
+	cursorPosition = {x: -1, y: -1};
+	cursorTarget = {x: -1, y: -1};
+	cursorIsClicked = false;
 	
 	Keyboard = DefaultKeyboard;
 	PasscodeInput = DefaultPasscodeInput;
@@ -22,10 +26,48 @@ class FocusManager {
 			this.PasscodeInput = details.PasscodeInput;
 		}
 		Interactions.focusManagers.push(this);
+		
+		this.hoverOverlay = new FocusManagerCursor();
+		this.hoverOverlay.renderTo(document.getElementById("focus-manager-cursors"));
+	}
+	
+	cursorLastFrameTime = Date.now();
+	animateCursor() {
+		const speedMult = 20;
+		const deltaTime = (Date.now() - this.cursorLastFrameTime) / 1000;
+		
+		this.cursorTarget.x = Math.max(0, Math.min(this.cursorTarget.x, window.innerWidth));
+		this.cursorTarget.y = Math.max(0, Math.min(this.cursorTarget.y, window.innerHeight));
+		
+		let deltaX = (this.cursorTarget.x - this.cursorPosition.x) * deltaTime * speedMult;
+		let deltaY = (this.cursorTarget.y - this.cursorPosition.y) * deltaTime * speedMult;
+		
+		this.cursorPosition.x += deltaX;
+		this.cursorPosition.y += deltaY;
+		
+		const squashMult = (this.cursorIsClicked ? 1.0 : 0.2);
+		const xMovTarget = deltaX * squashMult;
+		const yMovTarget = deltaY * squashMult;
+		
+		this.hoverOverlay.xMov += (xMovTarget - this.hoverOverlay.xMov) * deltaTime * speedMult;
+		this.hoverOverlay.yMov += (yMovTarget - this.hoverOverlay.yMov) * deltaTime * speedMult;
+		
+		this.hoverOverlay.x = this.cursorPosition.x;
+		this.hoverOverlay.y = this.cursorPosition.y;
+		
+		this.hoverOverlay.updateRendered();
+		
+		this.cursorLastFrameTime = Date.now();
 	}
 	
 	getInputsByRole(role) {
 		return this.inputs.filter(input => input.satisfiesRole(role));
+	}
+	
+	ensureFocus() {
+		if(!this.currentFocus) {
+			this.hover(Interactions.getAvailableTargets(this)[0].element);
+		}
 	}
 	
 	moveFocus(direction) {
@@ -33,7 +75,10 @@ class FocusManager {
 		if(this.currentFocus) {
 			newFocus = Interactions.getAvailableInteractableInDirection(this, this.currentFocus, direction);
 		} else {
-			newFocus = Interactions.getAvailableTargets(this)[0].element;
+			this.ensureFocus();
+			if(this.currentFocus) {
+				newFocus = this.currentFocus.element;
+			}
 		}
 		if(newFocus) {
 			this.hover(newFocus);
@@ -45,7 +90,11 @@ class FocusManager {
 	}
 	
 	hoverAt(x, y) {
-		const element = document.elementFromPoint(x, y);
+		const element = document.elementFromPoint(x * window.innerWidth, y * window.innerHeight);
+		
+		this.cursorTarget.x = x * window.innerWidth;
+		this.cursorTarget.y = y * window.innerHeight;
+		
 		if(element) {
 			this.hover(element);
 		} else {
@@ -81,11 +130,13 @@ class FocusManager {
 		if(this.currentFocus) {
 			this.currentFocus.preactivate(this);
 		}
+		this.cursorIsClicked = true;
 	}
 	endInteract() {
 		if(this.currentFocus) {
 			this.currentFocus.activate(this);
 		}
+		this.cursorIsClicked = false;
 	}
 	
 	update() {

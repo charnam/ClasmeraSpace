@@ -8,6 +8,7 @@ class InteractionLayer {
 	isResetLayer = false;
 	
 	inputOverride = null;
+	shouldForceCursor = true;
 	
 	musicNode = new Audio();
 	set music(value) {
@@ -38,6 +39,50 @@ class InteractionLayer {
 		if(options.affects !== undefined) {
 			this.affects = options.affects
 		}
+		if(options.shouldForceCursor) {
+			this.shouldForceCursor = options.shouldForceCursor;
+		}
+	}
+	
+	lastCursorAnimateTime = Date.now();
+	animateCursors() {
+		if(this.lastCursorAnimateTime < Date.now() - 1000) {
+			this.lastCursorAnimateTime = Date.now();
+		}
+		const deltaTime = (Date.now() - this.lastCursorAnimateTime) / 1000;
+		const cursorSpeedPerSecond = window.innerHeight / 100 * 30;
+		
+		if(this.shouldForceCursor) {
+			const managers = Interactions.focusManagers.filter(focusManager => this.shouldAffect(focusManager));
+			
+			for(let manager of managers) {
+				let cursorMovementX = 0;
+				let cursorMovementY = 0;
+				
+				for(let input of manager.inputs) {
+					const timeMultiplier = (input.timeSinceToggleChanged / 1000 + 1);
+					if(input.satisfiesRole("BASE_UP")) {
+						cursorMovementY -= input.state * timeMultiplier;
+					}
+					if(input.satisfiesRole("BASE_DOWN")) {
+						cursorMovementY += input.state * timeMultiplier;
+					}
+					if(input.satisfiesRole("BASE_LEFT")) {
+						cursorMovementX -= input.state * timeMultiplier;
+					}
+					if(input.satisfiesRole("BASE_RIGHT")) {
+						cursorMovementX += input.state * timeMultiplier;
+					}
+					
+				}
+				
+				manager.cursorTarget.x += cursorMovementX * cursorSpeedPerSecond * deltaTime;
+				manager.cursorTarget.y += cursorMovementY * cursorSpeedPerSecond * deltaTime;
+			}
+			
+		}
+		
+		this.lastCursorAnimateTime = Date.now();
 	}
 	
 	async fadeInMusic() {
@@ -114,8 +159,8 @@ class InteractionLayer {
 					}
 				}
 			}
-		} else {
-			if(input.toggleStateChanged) {
+		} else if(input.toggleStateChanged) {
+			if(!this.shouldForceCursor) {
 				if(input.isToggled) {
 					if(input.satisfiesRole("BASE_UP")) {
 						input.focusManager.moveFocus("up");
@@ -131,10 +176,19 @@ class InteractionLayer {
 					}
 					
 					if(input.satisfiesRole("BASE_SELECT")) {
+						input.focusManager.ensureFocus();
 						input.focusManager.beginInteract();
 					}
 				} else {
 					if(input.satisfiesRole("BASE_SELECT")) {
+						input.focusManager.endInteract();
+					}
+				}
+			} else {
+				if(input.satisfiesRole("BASE_SELECT")) {
+					if(input.isToggled) {
+						input.focusManager.beginInteract();
+					} else {
 						input.focusManager.endInteract();
 					}
 				}

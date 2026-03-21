@@ -51,6 +51,10 @@ input {
 	--base-accent-color: 270deg;
 }
 
+.base-hidden {
+	display: none;
+}
+
 .base-button {
 	background: linear-gradient(to bottom,
 		hsl(var(--base-accent-color), 20%, 70%) 0%,
@@ -118,6 +122,17 @@ input {
 	background: #fff1;
 }
 
+.base-pillbutton-usertext {
+	align-items: center;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	display: inline-flex;
+	box-sizing: border-box;
+	line-height: 100%;
+}
+
+
 .base-header,
 .base-sidebar {
 	display: flex;
@@ -157,11 +172,13 @@ input {
 .base-tabbed-tab {
 	inset: 0;
 	position: absolute;
-	opacity: 0;
-}
-.base-tabbed-tab.visible-tab,
-.base-tabbed:not(:has(.visible-tab)) .base-tabbed-tab:first-child {
 	opacity: 1;
+	transition: opacity 0.5s ease-in-out;
+}
+.base-tabbed:has(.visible-tab) > .base-tabbed-tab:not(.visible-tab),
+.base-tabbed:not(:has(.visible-tab)) > .base-tabbed-tab:not(:first-child) {
+	display: none;
+	opacity: 0;
 }
 
 #root > :not(.available-layer) {

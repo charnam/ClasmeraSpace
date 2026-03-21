@@ -36,6 +36,11 @@ class DefaultKeyboard extends Keyboard {
 		this.cursorPosition += value.length - originalValue.length;
 	}
 	
+	constructor(details) {
+		super(details);
+		this.cursorPosition = this.currentInput.length;
+	}
+	
 	render() {
 		const keyboardEl = super.render();
 		keyboardEl.classList.add("base-popup");
@@ -60,6 +65,7 @@ class DefaultKeyboard extends Keyboard {
 		keyboardInput.value = this.currentInput;
 		
 		this.renderKeys(keyboardAreas);
+		this.updateRendered(keyboardEl);
 		
 		return keyboardEl;
 	}

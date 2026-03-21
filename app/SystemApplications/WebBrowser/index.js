@@ -4,6 +4,7 @@ import Interactable from "../../util/Interactable.js";
 import OverlayMenu from "../../renderable/OverlayMenu/index.js";
 import Interactions from "../../util/Interactions.js";
 import InteractionLayer from "../../util/InteractionLayer.js";
+import WebViewInteractable from "../../renderable/WebViewInteractable/index.js";
 
 class WebBrowser extends Application {
 	static LargeIcon = class LargeApplicationIcon extends Application.LargeIcon {
@@ -37,7 +38,7 @@ class WebBrowser extends Application {
 		const navBar = new HTML.div({class: "browser-app-nav-bar base-header"},
 			backButton = new HTML.div({class: "browser-app-nav-bar-button base-pillbutton bi-arrow-left"}),
 			forwardButton = new HTML.div({class: "browser-app-nav-bar-button base-pillbutton bi-arrow-right"}),
-			urlBar = new HTML.div({class: "browser-app-url-bar base-pillbutton"}),
+			urlBar = new HTML.div({class: "browser-app-url-bar base-pillbutton base-pillbutton-usertext"}),
 			optionsButton = new HTML.div({class: "browser-app-nav-bar-button base-pillbutton bi-three-dots"}),
 		);
 		
@@ -75,102 +76,20 @@ class WebBrowser extends Application {
 			}
 		})
 		
-		let webview,
-			cursorsEl;
-		
-		const webviewContainer = new HTML.div({class: "browser-app-webview-container"},
-			webview = document.createElement("webview"),
-			cursorsEl = new HTML.div({class: "browser-app-cursors"})
-		);
-		
+		const webview = new WebViewInteractable();
 		webview.src = "https://start.duckduckgo.com/";
+		
+		app.append(
+			navBar,
+			webview.render()
+		);
 		
 		const updateWebview = () => {
 			if(this.element) {
-				webview.setZoomFactor(1.25)
 				urlBar.innerText = webview.src;
 				requestAnimationFrame(updateWebview);
 			}
 		}
-		
-		new Interactable(webviewContainer, {
-			activate: manager => {
-				const webviewLayer = new InteractionLayer(webviewContainer, {affects: manager});
-				Interactions.addLayer(webviewLayer);
-				
-				const cursorEl = new HTML.div({class: "browser-app-webview-cursor"});
-				cursorsEl.append(cursorEl);
-				const cursorPosition = {
-					x: 50, y: 50
-				}
-				const cursorTarget = {
-					x: 50, y: 50
-				}
-				const cursorMovement = {
-					x: 0, y: 0
-				};
-				let cursorIsClicked = false;
-				const speed = 20;
-				const cursorSpeedPerSecond = 10 / window.innerHeight;
-				
-				let lastFrameTime = Date.now();
-				const animateCursor = () => {
-					const webviewSize = webview.getBoundingClientRect();
-					if(Interactions.getCurrentLayer(manager) == webviewLayer) {
-						const deltaTime = (Date.now() - lastFrameTime) / 1000;
-						
-						cursorPosition.x += cursorMovement.x * deltaTime * cursorSpeedPerSecond;
-						cursorPosition.y += cursorMovement.y * deltaTime * cursorSpeedPerSecond;
-						
-						cursorTarget.x = Math.max(0, Math.min(cursorTarget.x, webviewSize.width));
-						cursorTarget.y = Math.max(0, Math.min(cursorTarget.y, webviewSize.height));
-						
-						cursorPosition.x += (cursorTarget.x - cursorPosition.x) * deltaTime * speed;
-						cursorPosition.y += (cursorTarget.y - cursorPosition.y) * deltaTime * speed;
-						
-						cursorEl.style.left = cursorPosition.x + "px";
-						cursorEl.style.top = cursorPosition.y + "px";
-						
-						requestAnimationFrame(animateCursor);
-					}
-				}
-				animateCursor();
-				
-				webviewLayer.inputOverride = input => {
-					
-					if(input.satisfiesRole("BASE_LEFT") || input.satisfiesRole("BASE_RIGHT")) {
-						cursorMovement.x = 0;
-					}
-					if(input.satisfiesRole("BASE_UP") || input.satisfiesRole("BASE_DOWN")) {
-						cursorMovement.y = 0;
-					}
-					
-					if(input.satisfiesRole("BASE_UP")) {
-						cursorMovement.y -= input.value;
-					}
-					if(input.satisfiesRole("BASE_DOWN")) {
-						cursorMovement.y += input.value;
-					}
-					if(input.satisfiesRole("BASE_LEFT")) {
-						cursorMovement.x -= input.value;
-					}
-					if(input.satisfiesRole("BASE_RIGHT")) {
-						cursorMovement.x += input.value;
-					}
-					
-					if(input.satisfiesRole("BASE_BACK")) {
-						Interactions.removeLayer(webviewLayer);
-						cursorIsClicked = false;
-						cursorEl.remove();
-					}
-				}
-			}
-		});
-		
-		app.append(
-			navBar,
-			webviewContainer
-		);
 		
 		setTimeout(() => {
 			updateWebview();

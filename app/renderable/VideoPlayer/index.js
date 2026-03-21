@@ -73,16 +73,19 @@ class VideoPlayer extends VisualOverlay {
 		
 		videoPlayer.setAttribute("video-player-osd", "");
 		
-		let lastPlayActivationChange = Date.now();
-		const queueHideOSD = manager => {
-			setTimeout(() => {
-				if(!videoEl.paused && lastPlayActivationChange < Date.now() - 2000) {
-					manager.clearAttribute("video-player-osd");
-				}
-			}, 2000);
-		}
-		const showOSD = manager => {
-			manager.addAttribute("video-player-osd", videoPlayer, false);
+		let lastActivationChange = Date.now();
+		const checkOSD = manager => {
+			if([...document.querySelectorAll("[hover]")].every(el => el == playPauseEl) && !videoEl.paused) {
+				lastActivationChange = Date.now();
+				setTimeout(() => {
+					if(lastActivationChange < Date.now() - 2000) {
+						manager.clearAttribute("video-player-osd");
+					}
+				}, 2008);
+			} else {
+				lastActivationChange = Date.now();
+				manager.addAttribute("video-player-osd", videoPlayer, false);
+			}
 		}
 		
 		const updatePlayButton = playing => {
@@ -98,23 +101,20 @@ class VideoPlayer extends VisualOverlay {
 		new Interactable(playPauseEl, {
 			roles: ["PLAYER_PLAY_PAUSE", "PLAYER_PLAY", "PLAYER_PAUSE"],
 			unhover: manager => {
-				console.log("unhover");
-				lastPlayActivationChange = Date.now();
-				showOSD(manager);
+				checkOSD(manager);
 			},
 			hover: manager => {
-				queueHideOSD(manager);
+				checkOSD(manager);
 			},
 			activate: manager => {
 				if(videoEl.paused) {
 					videoEl.play();
 					updatePlayButton(true);
-					queueHideOSD(manager);
 				} else {
 					videoEl.pause();
 					updatePlayButton(false);
-					showOSD(manager);
 				}
+				checkOSD(manager);
 			}
 		});
 		
@@ -149,7 +149,7 @@ class VideoPlayer extends VisualOverlay {
 		}
 		setTimeout(() => {
 			updateTimestamp();
-		}, 1000)
+		}, 100)
 		
 		if(this.title) {
 			titleEl.innerText = this.title;

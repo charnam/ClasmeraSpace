@@ -13,8 +13,12 @@ class Input {
 	
 	wasToggled = false;
 	toggleStateChanged = false;
+	toggleStateChangedAt = 0;
 	get isToggled() {
 		return this.state > 0.5;
+	}
+	get timeSinceToggleChanged() {
+		return Date.now() - this.toggleStateChangedAt;
 	}
 	
 	constructor(focusManager, details = {}) {
@@ -36,6 +40,9 @@ class Input {
 	setState(value) {
 		this.state = value;
 		this.toggleStateChanged = this.isToggled !== this.wasToggled;
+		if(this.toggleStateChanged) {
+			this.toggleStateChangedAt = Date.now();
+		}
 		Interactions.getCurrentLayer(this.focusManager).sendInput(this);
 		this.wasToggled = this.isToggled;
 	}
