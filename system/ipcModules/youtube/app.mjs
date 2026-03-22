@@ -19,7 +19,7 @@ ipcMain.handle("youtubeSearch", async (_event, query) => {
 	const search = await innertube.search(query.query, {type: "video"});
 	
 	const results = search.results
-		.filter(result => !result.is_live)
+		.filter(result => !result.is_live && result.length_text)
 		.map(result => {
 			let duration = 0;
 			let views = 0;
@@ -36,6 +36,7 @@ ipcMain.handle("youtubeSearch", async (_event, query) => {
 			
 			return {
 				id: result.video_id,
+				source: "YoutubeVideoSource",
 				title: result.title?.text,
 				views: views,
 				duration,
@@ -52,7 +53,8 @@ ipcMain.handle("youtubeSearch", async (_event, query) => {
 });
 
 async function getVideoInfo(id) {
-	const cachedInfo = await Registry.getKey(`applications.videos.sources.youtube.videos.${id}`);
+	console.log(`applications.videos.downloads.youtube-${id}`);
+	const cachedInfo = await Registry.getKey(`applications.videos.downloads.youtube-${id}`);
 	if(cachedInfo) {
 		return cachedInfo;
 	}
@@ -60,6 +62,7 @@ async function getVideoInfo(id) {
 	const info = (await innertube.getBasicInfo(id)).basic_info;
 	return {
 		id: info.id,
+		source: "YoutubeVideoSource",
 		title: info.title,
 		views: info.view_count,
 		description: info.short_description,
@@ -91,9 +94,10 @@ ipcMain.handle("youtubeDownload", async (_event, query) => {
 	const downloadID = await Download.create();
 	downloadingVideos[query.videoID] = downloadID;
 	
-	const existingVideo = await Registry.getKey(`applications.videos.sources.youtube.videos.${info.id}`, {});
+	console.log(`applications.videos.downloads.youtube-${info.id}`);
+	const existingVideo = await Registry.getKey(`applications.videos.downloads.youtube-${info.id}`, {});
 	
-	if(!existingVideo.blob) {
+	if(!existingVideo.blob || !(await Blobs.getById(existingVideo.blob))) {
 		const tempID = crypto.randomUUID();
 		const downloadPath = `temp/${tempID}`;
 		
@@ -123,9 +127,8 @@ ipcMain.handle("youtubeDownload", async (_event, query) => {
 			.then(async () => {
 				const dir = (await readdir(downloadPath)).filter(filename => filename !== "." && filename !== "..");
 				if(dir[0]) {
-					const blobID = await Blobs.storeFile(`${downloadPath}/${dir[0]}`);
-					
-					info.blob = blobID;
+					info.thumbnail = await Blobs.store(await fetch(info.thumbnail).then(res => res.arrayBuffer()));
+					info.blob = await Blobs.storeFile(`${downloadPath}/${dir[0]}`);
 					await Registry.setKey(`applications.videos.sources.youtube.videos.${info.id}`, info);
 					
 					Download.update(downloadID, {

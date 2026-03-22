@@ -1,15 +1,21 @@
 import mime from "mime";
 import { randomUUID } from "crypto";
+import { existsSync } from "fs";
 import { readFile, rename, writeFile } from "fs/promises";
 
 class Blobs {
 	static path = "data/blobs";
 	
 	static async getById(uuid) {
+		const filepath = `${this.path}/${uuid}`;
+		if(!existsSync(filepath)) {
+			return null;
+		}
+		
 		try {
 			uuid = uuid.replace(/[^a-zA-Z0-9\-_]/g, "");
-			const fileContent = await readFile(`${this.path}/${uuid}`);
-			const fileMeta = JSON.parse(await readFile(`${this.path}/${uuid}.meta`));
+			const fileContent = await readFile(filepath);
+			const fileMeta = JSON.parse(await readFile(`${filepath}.meta`));
 			return {
 				meta: fileMeta,
 				content: fileContent

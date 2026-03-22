@@ -11,7 +11,7 @@ if(!existsSync("./data/blobs/")) {
 }
 
 if(!existsSync("./data/overrides/")) {
-	mkdirSync("data/overrrides");
+	mkdirSync("data/overrides");
 }
 
 if(!existsSync("./temp/")) {

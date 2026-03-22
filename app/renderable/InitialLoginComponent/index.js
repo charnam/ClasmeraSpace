@@ -11,25 +11,6 @@ class InitialLoginComponent extends Renderable {
 		super();
 	}
 	
-	static async getUsers() {
-		const users = Object.values(await Registry.getKey("user"));
-		return users.sort((a, b) => a.name < b.name ? -1 : (a.name == b.name ? 0 : 1));
-	}
-	static async createUser(name) {
-		const id = crypto.randomUUID();
-		await Registry.setKey(`user.${id}`, {
-			id,
-			name
-		});
-		await verifyUser(id);
-		return id;
-	}
-	static async verifyUser(id) {
-		const user = await Registry.getKey(`user.${id}`);
-		
-		return true;
-	}
-	
 	render() {
 		const usm = super.render();
 		usm.classList.add("usm");
@@ -45,7 +26,7 @@ class InitialLoginComponent extends Renderable {
 	async renderUsers(target) {
 		target.innerHTML = "";
 		
-		const users = await this.constructor.getUsers();
+		const users = Object.values(await Registry.getKey("user"));
 		
 		for(let user of users) {
 			let userIcon, userName;

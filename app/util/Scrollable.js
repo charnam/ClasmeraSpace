@@ -26,16 +26,16 @@ class Scrollable {
 					manager.addAttribute("scrolling", element);
 					
 					layer.inputOverride = input => {
-						if(input.satisfiesRole("BASE_UP")) {
+						if(input.satisfiesRole("BASE_UP") || input.satisfiesRole("BASE_SCROLL_UP")) {
 							this.currentScrollMovement.y = -this.buttonScrollSpeed * input.isToggled;
 						}
-						if(input.satisfiesRole("BASE_DOWN")) {
+						if(input.satisfiesRole("BASE_DOWN") || input.satisfiesRole("BASE_SCROLL_DOWN")) {
 							this.currentScrollMovement.y = this.buttonScrollSpeed * input.isToggled;
 						}
-						if(input.satisfiesRole("BASE_LEFT")) {
+						if(input.satisfiesRole("BASE_LEFT") || input.satisfiesRole("BASE_SCROLL_LEFT")) {
 							this.currentScrollMovement.x = -this.buttonScrollSpeed * input.isToggled;
 						}
-						if(input.satisfiesRole("BASE_RIGHT")) {
+						if(input.satisfiesRole("BASE_RIGHT") || input.satisfiesRole("BASE_SCROLL_RIGHT")) {
 							this.currentScrollMovement.x = this.buttonScrollSpeed * input.isToggled;
 						}
 						

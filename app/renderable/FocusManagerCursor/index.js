@@ -18,6 +18,12 @@ class FocusManagerCursor extends SingleInstanceRenderable {
 	}
 	
 	updateRendered() {
+		if(this.active) {
+			this.element.classList.add("focus-manager-cursor-active")
+		} else {
+			this.element.classList.remove("focus-manager-cursor-active")
+		}
+		
 		this.element.setAttribute("style", 
 			`
 			opacity: ${this.active ? 1 : 0};

@@ -3,6 +3,7 @@ import DefaultKeyboard from "../renderable/DefaultKeyboard/index.js";
 import DefaultPasscodeInput from "../renderable/DefaultPasscodeInput/index.js";
 import callToParents from "./simple/callToParents.js";
 import FocusManagerCursor from "../renderable/FocusManagerCursor/index.js";
+import SoundManager from "./SoundManager.js";
 
 class FocusManager {
 	pointerId = crypto.randomUUID();
@@ -11,13 +12,58 @@ class FocusManager {
 	focusLayers = {};
 	
 	inputs = [];
-	cursorIsActive = false;
+	
+	cursorSmoothing = 0.3;
+	
 	cursorPosition = {x: -1, y: -1};
 	cursorTarget = {x: -1, y: -1};
-	cursorIsClicked = false;
+	
+	lastActiveAt = 0;
+	get isActive() {
+		return this.lastActiveAt > Date.now() - 3000;
+	}
+	set isActive(value) {
+		if(value) {
+			this.lastActiveAt = Date.now();
+		} else {
+			this.lastActiveAt = 0;
+		}
+	}
+	
+	_cursorIsClicked = false;
+	cursorClickedAt = 0;
+	set cursorIsClicked(value) {
+		if(this._cursorIsClicked !== value) {
+			this._cursorIsClicked = value;
+			this.cursorClickedAt = Date.now();
+		}
+	}
+	get cursorIsClicked() {
+		return this._cursorIsClicked;
+	}
+	
+	
+	cursorWasActive = false;
+	cursorActiveAt = 0;
+	set cursorIsActive(value) {
+		if(value == false) {
+			this.cursorActiveAt = 0;
+		} else {
+			this.cursorActiveAt = Date.now();
+		}
+	}
+	get cursorIsActive() {
+		return (this.cursorActiveAt > Date.now() - 3000)
+	}
 	
 	Keyboard = DefaultKeyboard;
 	PasscodeInput = DefaultPasscodeInput;
+	
+	static sound = new SoundManager("./app/sounds/interaction", {
+		click: "back.wav"
+	});
+	
+	sound = FocusManager.sound;
 	
 	constructor(details = {}) {
 		if(details.Keyboard) {
@@ -32,41 +78,40 @@ class FocusManager {
 		this.hoverOverlay.renderTo(document.getElementById("focus-manager-cursors"));
 	}
 	
-	cursorLastFrameTime = Date.now();
+	cursorLastFrameTime = 0;
 	animateCursor() {
-		const speedMult = 20;
-		const deltaTime = (Date.now() - this.cursorLastFrameTime) / 1000;
+		const speedMult = Math.min(1, this.cursorSmoothing * Math.min(0.5, (Date.now() - this.cursorLastFrameTime) / 1000 * 120));
 		
 		this.cursorTarget.x = Math.max(0, Math.min(this.cursorTarget.x, window.innerWidth));
 		this.cursorTarget.y = Math.max(0, Math.min(this.cursorTarget.y, window.innerHeight));
 		
-		let deltaX = (this.cursorTarget.x - this.cursorPosition.x) * deltaTime * speedMult;
-		let deltaY = (this.cursorTarget.y - this.cursorPosition.y) * deltaTime * speedMult;
+		let deltaX = (this.cursorTarget.x - this.cursorPosition.x) * speedMult;
+		let deltaY = (this.cursorTarget.y - this.cursorPosition.y) * speedMult;
 		
 		this.cursorPosition.x += deltaX;
 		this.cursorPosition.y += deltaY;
 		
 		const squashMult = (this.cursorIsClicked ? 1.0 : 0.2);
-		const xMovTarget = deltaX * squashMult;
-		const yMovTarget = deltaY * squashMult;
-		
-		this.hoverOverlay.xMov += (xMovTarget - this.hoverOverlay.xMov) * deltaTime * speedMult;
-		this.hoverOverlay.yMov += (yMovTarget - this.hoverOverlay.yMov) * deltaTime * speedMult;
+		const xMovTarget = Math.max(-10, Math.min(deltaX * squashMult, 10));
+		const yMovTarget = Math.max(-4, Math.min(deltaY * squashMult, 4));
 		
 		this.hoverOverlay.x = this.cursorPosition.x;
 		this.hoverOverlay.y = this.cursorPosition.y;
-		
+		this.hoverOverlay.xMov += (xMovTarget - this.hoverOverlay.xMov) * speedMult;
+		this.hoverOverlay.yMov += (yMovTarget - this.hoverOverlay.yMov) * speedMult;
 		this.hoverOverlay.active = this.cursorIsActive;
-		
 		this.hoverOverlay.updateRendered();
-		
-		this.cursorIsActive = this.cursorIsActive || Interactions.getCurrentLayer(this).shouldForceCursor;
 		
 		if(this.cursorIsActive) {
 			const element = document.elementFromPoint(this.cursorPosition.x, this.cursorPosition.y);
 			this.hover(element);
 		}
 		
+		if(this.cursorWasActive && !this.cursorIsActive) {
+			this.unhover();
+		}
+		
+		this.cursorWasActive = this.cursorIsActive;
 		this.cursorLastFrameTime = Date.now();
 	}
 	
@@ -82,6 +127,7 @@ class FocusManager {
 	
 	moveFocus(direction) {
 		this.cursorIsActive = false;
+		this.cursorWasActive = false;
 		let newFocus;
 		if(this.currentFocus) {
 			newFocus = Interactions.getAvailableInteractableInDirection(this, this.currentFocus, direction);
@@ -135,6 +181,7 @@ class FocusManager {
 			this.currentFocus.preactivate(this);
 		}
 		this.cursorIsClicked = true;
+		this.isActive = true;
 	}
 	endInteract() {
 		if(this.currentFocus) {

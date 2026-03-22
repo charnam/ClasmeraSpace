@@ -34,17 +34,19 @@ class Video extends Renderable {
 		
 		videoTitle.innerText = this.video.title ?? "";
 		videoAuthorName.innerText = this.video.author?.name ?? "";
-		
-		if(!this.video.thumbnail || this.video.thumbnail.includes(":")) {
-			videoThumbnail.style.backgroundImage = `url("${this.video.thumbnail}")`;
-		} else {
-			Blobs.get(this.video.thumbnail).then(blob => {
-				const url = URL.createObjectURL(blob);
-				videoThumbnail.style.backgroundImage = `url("${url}")`;
-			})
-		}
+		Video.getThumbnail(this.video).then(thumbnail => videoThumbnail.style.backgroundImage = `url("${thumbnail}")`);
 		
 		return videoEl;
+	}
+	
+	static async getThumbnail(video) {
+		if(!video) return false;
+		if(!video.thumbnail || video.thumbnail.includes(":")) {
+			return video.thumbnail;
+		}
+		
+		const blob = await Blobs.get(video.thumbnail);
+		return URL.createObjectURL(blob);
 	}
 }
 

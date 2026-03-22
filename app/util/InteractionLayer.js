@@ -73,7 +73,10 @@ class InteractionLayer {
 					if(input.satisfiesRole("BASE_RIGHT")) {
 						cursorMovementX += input.state * timeMultiplier;
 					}
-					
+				}
+				
+				if(Math.abs(cursorMovementX) > 0 || Math.abs(cursorMovementY) > 0) {
+					manager.cursorIsActive = true;
 				}
 				
 				manager.cursorTarget.x += cursorMovementX * cursorSpeedPerSecond * deltaTime;

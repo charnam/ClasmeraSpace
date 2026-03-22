@@ -2,6 +2,7 @@ import { HTML } from "imperative-html";
 import VisualOverlay from "../../../renderable/VisualOverlay/index.js";
 import Interactable from "../../../util/Interactable.js";
 import Scrollable from "../../../util/Scrollable.js";
+import Video from "../Video/index.js";
 
 class DownloadPage extends VisualOverlay {
 	style = [...this.style, "app/SystemApplications/Videos/DownloadPage/main.css"];
@@ -27,15 +28,15 @@ class DownloadPage extends VisualOverlay {
 			author,
 			description,
 			backButton,
-			buttons;
+			buttons,
+			thumbnailEl;
 		
 		el.append(
 			new HTML.div({class: "videos-app-video-download-page"},
 				backButton = new HTML.div({class: "videos-app-video-download-page-back-button base-pillbutton bi-arrow-left"}),
 				new HTML.div({class: "videos-app-video-download-page-left-side"},
-					new HTML.div({
+					thumbnailEl = new HTML.div({
 						class: "videos-app-video-download-page-thumbnail",
-						style: `background-image: url('${this.video?.thumbnail}');`
 					}),
 					title = new HTML.div({class: "videos-app-video-download-page-title"}),
 					author = new HTML.div({class: "videos-app-video-download-page-author-name"})
@@ -55,6 +56,7 @@ class DownloadPage extends VisualOverlay {
 		author.innerText = this.video.author.name;
 		
 		description.innerText = this.video.description;
+		Video.getThumbnail(this.video).then(url => thumbnailEl.style.backgroundImage = `url("${url}")`);
 		
 		if(this.download) {
 			let downloadButtonIcon;

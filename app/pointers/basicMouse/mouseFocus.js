@@ -13,6 +13,35 @@ const backButton = new Input(mouseFocus, {
 	name: "Right Click",
 	roles: ["BASE_BACK"]
 })
+const scrollUp = new Input(mouseFocus, {
+	name: "Scroll-wheel up",
+	roles: ["BASE_SCROLL_UP"]
+})
+const scrollDown = new Input(mouseFocus, {
+	name: "Scroll-wheel down",
+	roles: ["BASE_SCROLL_DOWN"]
+})
+
+
+const scrollChangedCheck = input => {
+	input._mouseScrollChangedCheck = Date.now();
+	setTimeout(() => {
+		if(input._mouseScrollChangedCheck < Date.now() - 200) {
+			input.setState(0);
+		}
+	}, 200);
+}
+window.addEventListener("wheel", event => {
+	const scrollSpeed = Math.abs(event.deltaY) * 0.05;
+	if(event.deltaY > 0) {
+		scrollDown.setState(scrollSpeed);
+		scrollChangedCheck(scrollDown);
+	}
+	if(event.deltaY < 0) {
+		scrollUp.setState(scrollSpeed);
+		scrollChangedCheck(scrollUp);
+	}
+});
 
 window.addEventListener("mousemove", event => {
 	lastMouseInteraction = Date.now();

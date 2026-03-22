@@ -12,4 +12,10 @@
 	transform-origin: 2vmin 1vmin;
 	filter: drop-shadow(1vmin 1vmin 0.6vmin black) drop-shadow(0.2vmin 0.2vmin 0.5vmin black);
 	pointer-events: none;
+	transition: opacity 0.5s ease-in-out;
+	opacity: 0;
+}
+.focus-manager-cursor.focus-manager-cursor-active {
+	transition: opacity 0.2s ease-in-out;
+	opacity: 1;
 }

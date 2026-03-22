@@ -70,13 +70,6 @@ class WebViewInteractable extends SingleInstanceRenderable {
 			}
 		});
 		
-		function animate() {
-			webview.blur();
-			document.body.focus();
-			requestAnimationFrame(animate);
-		}
-		animate();
-		
 		webview.addEventListener("did-navigate", () => {
 			this._src = webview.src;
 			webview.setZoomFactor(1.25);
