@@ -13,7 +13,7 @@ class FocusManager {
 	
 	inputs = [];
 	
-	cursorSmoothing = 0.3;
+	cursorSmoothing = 0.6;
 	
 	cursorPosition = {x: -1, y: -1};
 	cursorTarget = {x: -1, y: -1};

@@ -39,8 +39,8 @@ class InitialLoginComponent extends Renderable {
 				activate: async focusManager => {
 					//const response = await focusManager.Keyboard.ask({prompt: "Enter your password."});
 					
-					const home = new UserHome(user.id);
 					focusManager.userid = user.id;
+					const home = new UserHome(user.id);
 					home.open();
 				}
 			});

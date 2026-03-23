@@ -1,0 +1,38 @@
+@import url("./icon.css");
+
+@keyframes icon-system-settings-animate {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+.icon-system-settings.app-icon-large .app-icon-background {
+	perspective: 30vmin;
+	inset: 0;
+	z-index: 100;
+}
+.icon-system-settings.app-icon-large .app-icon-background:before {
+	content: "\F3E3";
+	
+	font-family: bootstrap-icons;
+	font-size: 45vmin;
+	
+	animation: icon-system-settings-animate 240s linear infinite;
+	opacity: 0.2;
+	position: absolute;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	bottom: -15vmin;
+	right: 2vmin;
+	
+	color: black;
+	filter: blur(0.4vmin);
+}
+.icon-system-settings.app-icon-large .app-icon-foreground:after {
+	content: "System Settings";
+	font-size: 4vmin;
+}

@@ -1,0 +1,8 @@
+
+.system-settings-tab-bar {
+	display: flex;
+}
+
+.system-settings .base-header {
+	justify-content: space-between;
+}

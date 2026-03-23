@@ -2,8 +2,9 @@
 class Tabbed {
 	element = null;
 	
-	constructor(element, details) {
+	constructor(element) {
 		this.element = element;
+		element.classList.add("base-tabbed");
 	}
 	
 	setTab(id) {

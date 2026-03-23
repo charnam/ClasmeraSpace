@@ -1,0 +1,12 @@
+
+.tabbed-container-header {
+	display: flex;
+}
+.tabbed-container-tab-buttons {
+	display: flex;
+}
+
+.tabbed-container-tab-buttons.tabbed-container-direction-vertical {
+	flex-direction: column;
+}
+

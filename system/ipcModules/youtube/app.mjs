@@ -35,7 +35,8 @@ ipcMain.handle("youtubeSearch", async (_event, query) => {
 			}
 			
 			return {
-				id: result.video_id,
+				id: "youtube-"+result.video_id,
+				source_id: result.video_id,
 				source: "YoutubeVideoSource",
 				title: result.title?.text,
 				views: views,
@@ -61,7 +62,8 @@ async function getVideoInfo(id) {
 	
 	const info = (await innertube.getBasicInfo(id)).basic_info;
 	return {
-		id: info.id,
+		id: "youtube-"+info.id,
+		source_id: info.id,
 		source: "YoutubeVideoSource",
 		title: info.title,
 		views: info.view_count,
@@ -94,7 +96,6 @@ ipcMain.handle("youtubeDownload", async (_event, query) => {
 	const downloadID = await Download.create();
 	downloadingVideos[query.videoID] = downloadID;
 	
-	console.log(`applications.videos.downloads.youtube-${info.id}`);
 	const existingVideo = await Registry.getKey(`applications.videos.downloads.youtube-${info.id}`, {});
 	
 	if(!existingVideo.blob || !(await Blobs.getById(existingVideo.blob))) {
@@ -129,7 +130,7 @@ ipcMain.handle("youtubeDownload", async (_event, query) => {
 				if(dir[0]) {
 					info.thumbnail = await Blobs.store(await fetch(info.thumbnail).then(res => res.arrayBuffer()));
 					info.blob = await Blobs.storeFile(`${downloadPath}/${dir[0]}`);
-					await Registry.setKey(`applications.videos.sources.youtube.videos.${info.id}`, info);
+					await Registry.setKey(`applications.videos.downloads.youtube-${info.id}`, info);
 					
 					Download.update(downloadID, {
 						complete: true,

@@ -5,6 +5,7 @@ import Interactable from "../../util/Interactable.js";
 import Applications from "../../util/Applications.js";
 import Scrollable from "../../util/Scrollable.js";
 import OverlayMenu from "../OverlayMenu/index.js";
+import SystemSettings from "../../SystemApplications/SystemSettings/index.js";
 
 class UserHome extends Overlay {
 	userid = null;
@@ -55,9 +56,11 @@ class UserHome extends Overlay {
 								callback: () => this.remove()
 							},
 							{
-								text: "Options",
-								callback: manager => {
-									this.userid
+								text: "Profile",
+								callback: async manager => {
+									if(this.userid == manager.userid) {
+										
+									}
 								}
 							},
 						]

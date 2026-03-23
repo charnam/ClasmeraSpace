@@ -15,7 +15,7 @@ class VideoSource extends SingleInstanceRenderable {
 		
 		target.append(
 			new HTML.div({class: "videos-app-source-tabbed-sidebar base-sidebar"}),
-			tabbed = new HTML.div({class: "videos-app-source-tabbed base-tabbed"})
+			tabbed = new HTML.div({class: "videos-app-source-tabbed"})
 		)
 		
 		this.tabbed = new Tabbed(tabbed);

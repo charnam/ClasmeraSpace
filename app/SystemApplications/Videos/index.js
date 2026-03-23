@@ -3,7 +3,6 @@ import Application from "../Application/index.js";
 import Interactable from "../../util/Interactable.js";
 import Tabbed from "../../util/Tabbed.js";
 import VideoSources from "./sources/sources.js";
-import OverlayMenu from "../../renderable/OverlayMenu/index.js";
 
 class Videos extends Application {
 	static LargeIcon = class LargeApplicationIcon extends Application.LargeIcon {
@@ -54,8 +53,7 @@ class Videos extends Application {
 						videosMainMenu = new HTML.div({class: "base-pillbutton videos-app-menu-button bi-list"}),
 					)
 				),
-				videosSourceTabs = new HTML.div({class: "base-tabbed"},
-				)
+				videosSourceTabs = new HTML.div({class: "base-tabbed"})
 			)
 		);
 		
