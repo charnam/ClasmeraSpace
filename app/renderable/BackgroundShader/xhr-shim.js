@@ -3,7 +3,7 @@
  * environment. This JavaScript file is included in its place, in order to
  * fix GlslCanvas.
  * 
- * I really looked, for a while, trying to find a library which had no flaws,
+ * I really looked, for a while, trying to find a flawless shader rendering library,
  * but unfortunately this was the best I could get. I'm too tired for this.
  */
 

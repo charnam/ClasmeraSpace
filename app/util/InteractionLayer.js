@@ -12,8 +12,13 @@ class InteractionLayer {
 	
 	musicNode = new Audio();
 	set music(value) {
-		this.musicNode.src = value;
-		this.musicNode.play();
+		if(value !== "disabled") {
+			this.musicNode.src = value;
+			this.musicNode.play();
+		} else {
+			this.musicNode.src = "";
+			this.musicNode.pause();
+		}
 		Interactions.updateMusic();
 	}
 	get music() {

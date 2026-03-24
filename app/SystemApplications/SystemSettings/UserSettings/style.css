@@ -1,0 +1,31 @@
+
+.system-settings-app-user-settings {
+	transform: translateX(30vmin) scale(0.8);
+	opacity: 0;
+	transition: 0.2s ease-in-out;
+	transition-property: transform, opacity;
+}
+
+.system-settings-app-user-settings.active-layer {
+	transform: translateX(0vmin);
+	opacity: 1;
+}
+
+.system-settings-app-user-settings-content {
+	display: grid;
+	grid-template-areas:
+		"icon name"
+		"icon permissions";
+	grid-template-columns: 1fr 4fr;
+}
+
+.system-settings-app-user-settings-user-icon {
+	display: flex;
+	aspect-ratio: 1 / 1;
+	position: relative;
+	padding: 4vmin;
+}
+
+.system-settings-app-user-settings-user-icon .base-user-icon {
+	width: 100%;
+}

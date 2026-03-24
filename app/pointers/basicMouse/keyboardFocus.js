@@ -42,7 +42,7 @@ const keymap = {
 	}),
 	"BrowserBack": new Input(keyboardFocus, {
 		name: "Back",
-		roles: ["BASE_BACK"]
+		roles: ["BASE_BACK", "DEFAULT_KEYBOARD_BACKSPACE"]
 	}),
 	"MediaFastForward": new Input(keyboardFocus, {
 		name: "Fast-forward",

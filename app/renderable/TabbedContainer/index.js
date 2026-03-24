@@ -1,3 +1,4 @@
+import { HTML } from "imperative-html";
 import Renderable from "../../util/Renderable.js";
 import Tabbed from "../../util/Tabbed.js";
 import Tab from "./Tab/index.js";
@@ -38,12 +39,20 @@ class TabbedContainer extends Renderable {
 		const target = super.render();
 		target.classList.add("tabbed-container");
 		
+		let header;
+		
 		target.append(
-			new HTML.div({class: "base-header tabbed-container-header"},
+			header = new HTML.div({class: "tabbed-container-header"},
 				this.renderTabButtons()
 			),
 			this.renderTabContents()
 		);
+		
+		if(this.direction == "vertical") {
+			header.classList.add("base-sidebar");
+		} else {
+			header.classList.add("base-header");
+		}
 		
 		return target;
 	}

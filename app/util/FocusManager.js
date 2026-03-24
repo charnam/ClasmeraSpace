@@ -13,7 +13,7 @@ class FocusManager {
 	
 	inputs = [];
 	
-	cursorSmoothing = 0.6;
+	cursorSmoothing = 0.3;
 	
 	cursorPosition = {x: -1, y: -1};
 	cursorTarget = {x: -1, y: -1};
@@ -60,7 +60,6 @@ class FocusManager {
 	PasscodeInput = DefaultPasscodeInput;
 	
 	static sound = new SoundManager("./app/sounds/interaction", {
-		click: "back.wav"
 	});
 	
 	sound = FocusManager.sound;
@@ -80,7 +79,8 @@ class FocusManager {
 	
 	cursorLastFrameTime = 0;
 	animateCursor() {
-		const speedMult = Math.min(1, this.cursorSmoothing * Math.min(0.5, (Date.now() - this.cursorLastFrameTime) / 1000 * 120));
+		const deltaTime = Math.min(0.5, (Date.now() - this.cursorLastFrameTime) / 1000);
+		const speedMult = Math.min(1, this.cursorSmoothing * deltaTime * 120);
 		
 		this.cursorTarget.x = Math.max(0, Math.min(this.cursorTarget.x, window.innerWidth));
 		this.cursorTarget.y = Math.max(0, Math.min(this.cursorTarget.y, window.innerHeight));
@@ -97,8 +97,8 @@ class FocusManager {
 		
 		this.hoverOverlay.x = this.cursorPosition.x;
 		this.hoverOverlay.y = this.cursorPosition.y;
-		this.hoverOverlay.xMov += (xMovTarget - this.hoverOverlay.xMov) * speedMult;
-		this.hoverOverlay.yMov += (yMovTarget - this.hoverOverlay.yMov) * speedMult;
+		this.hoverOverlay.xMov += (xMovTarget - this.hoverOverlay.xMov) / deltaTime / 400;
+		this.hoverOverlay.yMov += (yMovTarget - this.hoverOverlay.yMov) / deltaTime / 400;
 		this.hoverOverlay.active = this.cursorIsActive;
 		this.hoverOverlay.updateRendered();
 		

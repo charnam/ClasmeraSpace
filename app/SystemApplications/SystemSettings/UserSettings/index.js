@@ -3,9 +3,11 @@ import LoadingScreen from "../../../renderable/LoadingScreen/index.js";
 import Overlay from "../../../renderable/Overlay/index.js";
 import UserIcon from "../../../renderable/UserIcon/index.js";
 import Registry from "../../../util/system/Registry.js";
+import Interactable from "../../../util/Interactable.js";
 
 class UserSettings extends Overlay {
 	style = [...this.style, "app/SystemApplications/SystemSettings/UserSettings/style.css"];
+	animateDisappearDuration = 1000;
 	
 	constructor(userid) {
 		super();
@@ -15,6 +17,7 @@ class UserSettings extends Overlay {
 	
 	render() {
 		const container = super.render();
+		container.classList.add("system-settings-app-user-settings");
 		
 		let closeButton,
 			header;
@@ -25,6 +28,14 @@ class UserSettings extends Overlay {
 			),
 			new HTML.div({class: "system-settings-app-user-settings-content"})
 		);
+		new Interactable(closeButton, {
+			roles: ["BASE_BACK"],
+			activate: () => {
+				this.remove();
+			}
+		})
+		
+		this.updateRendered(container);
 		
 		return container;
 	}
@@ -42,8 +53,10 @@ class UserSettings extends Overlay {
 		content.append(
 			new HTML.div({class: "system-settings-app-user-settings-user-icon"},
 				new UserIcon(user.id).render()
-			)
-		)
+			),
+			new HTML.div({class: "system-settings-app-user-settings-user-name"}),
+			new HTML.div({class: "system-settings-app-user-settings-option-list"})
+		);
 		
 		
 		loader.remove();

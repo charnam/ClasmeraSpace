@@ -4,6 +4,7 @@ import VideoSource from "../VideoSource/index.js";
 import YoutubeVideo from "./YoutubeVideo/index.js";
 import Interactable from "../../../../util/Interactable.js";
 import LoadingScreen from "../../../../renderable/LoadingScreen/index.js";
+import Scrollable from "../../../../util/Scrollable.js";
 
 class YoutubeVideoSource extends VideoSource {
 	static name = "YouTube";
@@ -11,14 +12,15 @@ class YoutubeVideoSource extends VideoSource {
 	render() {
 		const el = super.render();
 		
-		this.addFeaturedTab(el);
-		this.addSearchTab(el);
+		this.addFeaturedTab();
+		this.addSearchTab();
 		
 		return el;
 	}
 	
-	async addFeaturedTab(parent) {
-		const tab = this.addTab("bi-feather", "featured", parent);
+	async addFeaturedTab() {
+		const tab = this.tabbed.createTab({icon: "bi-feather", id: "featured", name: "Featured"}).render();
+		new Scrollable(tab);
 		
 		const videosContainer = new HTML.div({class: "videos-app-video-grid"});
 		
@@ -31,8 +33,9 @@ class YoutubeVideoSource extends VideoSource {
 		tab.append(videosContainer);
 	}
 	
-	async addSearchTab(parent) {
-		const tab = this.addTab("bi-search", "search", parent);
+	async addSearchTab() {
+		const tab = this.tabbed.createTab({icon: "bi-search", id: "search", name: "Search"}).render();
+		new Scrollable(tab);
 		
 		const videosSearchBar = new HTML.div({class: "videos-app-search-bar base-pillbutton base-pillbutton-usertext"},
 			"Search here..."

@@ -24,6 +24,7 @@ body {
 
 [active] {
 	opacity: 0.9;
+	z-index: 200;
 }
 
 [scrolling] {
@@ -52,7 +53,7 @@ input {
 	--base-accent-color: 270deg;
 }
 
-.base-hidden {
+.base-hidden, .base-system-hidden {
 	display: none;
 }
 
@@ -176,7 +177,7 @@ input {
 	opacity: 1;
 	transition: opacity 0.5s ease-in-out;
 }
-.base-tabbed:has(.visible-tab) > .base-tabbed-tab:not(.visible-tab),
+.base-tabbed:has(> .visible-tab) > .base-tabbed-tab:not(.visible-tab),
 .base-tabbed:not(:has(.visible-tab)) > .base-tabbed-tab:not(:first-child) {
 	display: none;
 	opacity: 0;
@@ -206,4 +207,35 @@ input {
 
 .bi-arrow-repeat {
 	animation: spin 2s linear infinite;
+}
+
+[hovertitle]:after {
+	content: attr(hovertitle);
+	position: absolute;
+	top: 90%;
+	background: linear-gradient(to bottom, #222c, #000c);
+	transform: scale(0.5) translateY(1vmin);
+	opacity: 0;
+	transition: 0.12s ease-in-out;
+	transition-property: opacity, transform;
+	border-radius: 1vmin;
+	padding: 0.2vmin 1vmin;
+	box-shadow: 0 1vmin 2vmin #0005;
+	pointer-events: none;
+	backdrop-filter: blur(2vmin);
+	z-index: 1000;
+}
+
+[hovertitle][hover]:after {
+	opacity: 1;
+	transform: scale(1);
+}
+
+[hovertitle] {
+	position: relative;
+}
+
+.base-sidebar *[hovertitle]:after {
+	top: unset;
+	left: 120%;
 }

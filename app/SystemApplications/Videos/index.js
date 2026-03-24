@@ -3,6 +3,7 @@ import Application from "../Application/index.js";
 import Interactable from "../../util/Interactable.js";
 import Tabbed from "../../util/Tabbed.js";
 import VideoSources from "./sources/sources.js";
+import TabbedContainer from "../../renderable/TabbedContainer/index.js";
 
 class Videos extends Application {
 	static LargeIcon = class LargeApplicationIcon extends Application.LargeIcon {
@@ -22,21 +23,16 @@ class Videos extends Application {
 		}
 	}
 	
-	static downloads = {};
-	static startDownload(source) {
-		
-	}
-	
-	
 	style = [...this.style, "app/SystemApplications/Videos/main.css"];
 	render() {
 		const app = super.render();
 		app.classList.add("videos-app");
 		
+		this.tabbed = new TabbedContainer();
+		
 		let videosContainer,
 			videosHeader,
 			videosQuit,
-			videosSourceSwitchContainer,
 			videosSourceTabs,
 			videosSourceOptions,
 			videosMainMenu;
@@ -47,17 +43,16 @@ class Videos extends Application {
 					new HTML.div(
 						videosQuit = new HTML.div({class: "base-pillbutton videos-app-quit-button bi-x-lg"}),
 					),
-					videosSourceSwitchContainer = new HTML.div({class: "videos-app-source-switch-container"}),
+					this.tabbed.renderTabButtons(),
 					new HTML.div(
 						videosSourceOptions = new HTML.div({class: "base-pillbutton videos-app-source-options-button bi-gear-fill"}),
 						videosMainMenu = new HTML.div({class: "base-pillbutton videos-app-menu-button bi-list"}),
 					)
 				),
-				videosSourceTabs = new HTML.div({class: "base-tabbed"})
+				this.tabbed.renderTabContents()
 			)
 		);
 		
-		this.tabbed = new Tabbed(videosSourceTabs);
 		
 		new Interactable(videosQuit, {
 			roles: ["BASE_BACK"],
@@ -94,32 +89,14 @@ class Videos extends Application {
 	}
 	
 	updateSources(element) {
-		const videosSourceSwitchContainer = element.querySelector(".videos-app-source-switch-container")
-		
-		this.tabbed.element.innerHTML = "";
-		videosSourceSwitchContainer.innerHTML = "";
+		this.tabbed.tabs.innerHTML = ""
+		this.tabbed.tabButtons.innerHTML = ""
 		
 		for(let [id, Source] of Object.entries(VideoSources.all)) {
-			const tabButton = new HTML.div({class: "base-pillbutton"})
-			const tabContent = new HTML.div({class: "base-tabbed-tab", tabid: id});
-			
-			tabButton.innerText = Source.name;
+			const tab = this.tabbed.createTab({id, name: Source.name}).render();
 			const source = new Source();
-			
-			new Interactable(tabButton, {
-				activate: () => {
-					this.tabbed.setTab(id);
-				}
-			})
-			
-			tabContent.append(source.render());
-			
-			this.tabbed.element.append(tabContent);
-			videosSourceSwitchContainer.append(tabButton);
+			tab.append(source.render());
 		}
-		
-		this.tabbed.setTab(0);
-		
 	}
 	
 	updateRendered(element) {

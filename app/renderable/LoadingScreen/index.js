@@ -1,5 +1,6 @@
 import { HTML } from "imperative-html";
 import VisualOverlay from "../VisualOverlay/index.js";
+import Interactions from "../../util/Interactions.js";
 
 class LoadingScreen extends VisualOverlay {
 	style = [...this.style, "app/renderable/LoadingScreen/main.css"];
@@ -16,7 +17,9 @@ class LoadingScreen extends VisualOverlay {
 	}
 	
 	openIn(timeout) {
-		this.loadTimeout = setTimeout(() => this.open(), timeout);
+		this.open();
+		this.element.classList.add("base-hidden");
+		this.loadTimeout = setTimeout(() => this.element.classList.remove("base-hidden"), timeout);
 	}
 	
 	open() {

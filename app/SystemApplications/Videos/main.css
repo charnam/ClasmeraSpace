@@ -11,11 +11,11 @@
 	height: 100%;
 }
 
-.videos-app-source-tabbed-sidebar {
+.videos-app-source-tabbed-container .base-sidebar {
 	padding-top: 0;
 }
 
-.videos-app-source-tab {
+.videos-app-source-tabbed-container .base-tabbed-tab {
 	padding: 2vmin;
 	box-sizing: border-box;
 	overflow: hidden;

@@ -18,7 +18,14 @@ class Tab extends SingleInstanceRenderable {
 	}
 	
 	render() {
-		const tabButton = new HTML.div({class: "tabbed-container-tab-button base-pillbutton "+this.tabIcon, hovertitle: this.tabName});
+		const tabButton = new HTML.div({class: "tabbed-container-tab-button base-pillbutton"});
+		if(this.tabIcon) {
+			tabButton.classList.add(this.tabIcon);
+			tabButton.setAttribute("hovertitle", this.tabName);
+		} else {
+			tabButton.innerText = this.tabName;
+		}
+		
 		const tabContents = super.render();
 		
 		this.container.tabs.append(tabContents);

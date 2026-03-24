@@ -43,14 +43,14 @@ class SystemSettings extends Application {
 			this.tabbedContainer.renderTabContents()
 		));
 		
+		this.addTabs();
+		
 		new Interactable(closeButton, {
 			roles: ["BASE_BACK"],
 			activate: () => {
 				this.remove();
 			}
 		});
-		
-		this.addTabs();
 		
 		return target;
 	}
@@ -70,7 +70,7 @@ class SystemSettings extends Application {
 			let userEl,
 				userName;
 			
-			usersTabEl.append(
+			userList.append(
 				userEl = new HTML.div({class: "base-pillbutton system-settings-app-user-settings-user"},
 					new UserIcon(user).render(),
 					userName = new HTML.div({class: "system-settings-app-user-settings-user-name"})
@@ -87,26 +87,6 @@ class SystemSettings extends Application {
 		}
 		
 		loader.remove();
-	}
-	
-	
-	addTab(icon, id) {
-		const tabButton = new HTML.div({class: "system-settings-tab-button base-pillbutton "+icon});
-		const tabContents = new HTML.div({class: "system-settings-tab-content", tabid: id});
-		
-		this.tabBar.append(tabButton);
-		this.tabs.append(tabContents);
-		
-		new Interactable(tabButton, {
-			activate: () => {
-				this.tabbed.setTab(id);
-			}
-		})
-		
-		return {
-			button: tabButton,
-			contents: tabContents,
-		};
 	}
 	
 	updateRendered() {

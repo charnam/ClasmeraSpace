@@ -19,23 +19,29 @@ class Renderable {
 	}
 	
 	render() {
-		for(let style of this.style) {
-			this.loadStyle(style);
-		}
+		const renderedElement = new HTML.div({class: "component base-system-hidden"});
+		Promise.all(this.style.map(style => this.loadStyle(style))).then(() => {
+			renderedElement.classList.remove("base-system-hidden");
+		})
 		
-		const renderedElement = new HTML.div({class: "component"});
 		this.boundTo.push(renderedElement);
 		return renderedElement;
 	}
 	
 	loadStyle(style) {
-		const thisStyle = style;
-		const styleElements = document.querySelectorAll("link[rel=\"stylesheet\"]");
-		
-		if(![...styleElements].some(element => element.getAttribute("href") == thisStyle)) {
-			const link = new HTML.link({rel: "stylesheet", href: thisStyle});
-			document.head.appendChild(link);
-		}
+		return new Promise(res => {
+			const thisStyle = style;
+			const styleElements = document.querySelectorAll("link[rel=\"stylesheet\"]");
+			
+			if(![...styleElements].some(element => element.getAttribute("href") == thisStyle)) {
+				const link = new HTML.link({rel: "stylesheet", href: thisStyle});
+				document.head.appendChild(link);
+				link.onload = link.onerror = () => res();
+			} else {
+				res();
+			}
+			
+		})
 	}
 	
 	updateRendered(element) {

@@ -44,12 +44,12 @@ class WebBrowser extends Application {
 		
 		new Interactable(backButton, {
 			activate: () => {
-				webview.goBack();
+				webview.el.goBack();
 			}
 		})
 		new Interactable(forwardButton, {
 			activate: () => {
-				webview.goForward();
+				webview.el.goForward();
 			}
 		})
 		new Interactable(urlBar, {

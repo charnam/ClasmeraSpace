@@ -20,8 +20,8 @@ class BackgroundShader extends Renderable {
 	}
 	
 	static resizeLoop(canvas) {
-		canvas.width = window.innerWidth / 4;
-		canvas.height = window.innerHeight / 4;
+		canvas.width = window.innerWidth / 8 * window.devicePixelRatio;
+		canvas.height = window.innerHeight / 8 * window.devicePixelRatio;
 		requestAnimationFrame(() => this.resizeLoop(canvas));
 	}
 	

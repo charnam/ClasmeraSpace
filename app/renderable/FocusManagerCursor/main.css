@@ -6,7 +6,7 @@
 .focus-manager-cursor {
 	position: absolute;
 	box-sizing: border-box;
-	font-size: 5vmin;
+	font-size: 6vmin;
 	--transform: translate(0px, 0px);
 	transform: translate(-2.6vmin, -1vmin) var(--transform);
 	transform-origin: 2vmin 1vmin;

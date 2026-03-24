@@ -15,13 +15,13 @@ class YoutubeVideo extends Video {
 				const loading = new LoadingScreen();
 				
 				loading.open();
-				const fullVideo = await Youtube.info(this.video.id)
+				const fullVideo = await Youtube.info(this.video.source_id)
 				loading.remove();
 				
 				const page = new DownloadPage({
 					video: fullVideo,
 					download: async (progress) => {
-						const details = await Youtube.getVideo(this.video.id, progress);
+						const details = await Youtube.getVideo(this.video.source_id, progress);
 						
 						if(document.body.contains(page.element)) {
 							const player = new VideoPlayer({

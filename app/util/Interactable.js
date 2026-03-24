@@ -10,7 +10,6 @@ class Interactable {
 	roles = [];
 	
 	static sound = new SoundManager("./app/sounds/interaction", {
-		back: "back.wav",
 		interact_start: "interact-start.wav",
 		interact_end: "interact-end.wav",
 		keyboard: "keyboard.wav",

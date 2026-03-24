@@ -26,6 +26,8 @@ class WebViewInteractable extends SingleInstanceRenderable {
 			cursorsEl = new HTML.div({class: "webview-cursors"})
 		);
 		
+		this.el = webview;
+		
 		webview.src = this.src;
 		
 		new Interactable(container, {

@@ -3,8 +3,9 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="Content-Security-Policy" content="script-src 'nonce-importmap' 'self';">
 		<title>Clasmera SPACE</title>
-		<script type="importmap">
+		<script type="importmap" nonce="importmap">
 			{
 				"imports": {
 					"imperative-html": "./node_modules/imperative-html/dist/esm/elements.js",
