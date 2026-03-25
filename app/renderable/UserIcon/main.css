@@ -5,6 +5,7 @@
 	aspect-ratio: 1 / 1;
 	position: relative;
 	overflow: hidden;
+	flex: none;
 }
 
 .base-user-icon-empty:after {

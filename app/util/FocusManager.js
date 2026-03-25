@@ -121,7 +121,10 @@ class FocusManager {
 	
 	ensureFocus() {
 		if(!this.currentFocus && !this.cursorIsActive) {
-			this.hover(Interactions.getAvailableTargets(this)[0].element);
+			const target = Interactions.getAvailableTargets(this)[0];
+			if(target) {
+				this.hover(target.element);
+			}
 		}
 	}
 	

@@ -5,6 +5,7 @@ class OptionList extends Renderable {
 	options = [];
 	
 	constructor(options = []) {
+		super();
 		this.options = options;
 	}
 	
@@ -13,7 +14,9 @@ class OptionList extends Renderable {
 		listEl.classList.add("option-list");
 		
 		for(let option of this.options) {
-			option.renderTo(listEl);
+			if(option instanceof Renderable) {
+				option.renderTo(listEl);
+			}
 		}
 		
 		return listEl;

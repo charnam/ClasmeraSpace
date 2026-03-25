@@ -6,6 +6,7 @@ import Applications from "../../util/Applications.js";
 import Scrollable from "../../util/Scrollable.js";
 import OverlayMenu from "../OverlayMenu/index.js";
 import SystemSettings from "../../SystemApplications/SystemSettings/index.js";
+import UserProfile from "../UserProfile/index.js";
 
 class UserHome extends Overlay {
 	userid = null;
@@ -58,9 +59,7 @@ class UserHome extends Overlay {
 							{
 								text: "Profile",
 								callback: async manager => {
-									if(this.userid == manager.userid) {
-										
-									}
+									new UserProfile(this.userid, this.userid == manager.userid ? "editor" : "viewer").open();
 								}
 							},
 						]
@@ -99,7 +98,7 @@ class UserHome extends Overlay {
 				const renderedIcon = icon.renderTo(applicationsList);
 				new Interactable(renderedIcon, {
 					activate: manager => {
-						const app = new App();
+						const app = new App(this.userid);
 						app.open();
 					}
 				})
@@ -111,5 +110,7 @@ class UserHome extends Overlay {
 		
 	}
 }
+
+window.UserHome = UserHome;
 
 export default UserHome;

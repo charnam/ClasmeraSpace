@@ -3,9 +3,9 @@ import Application from "../Application/index.js";
 import Interactable from "../../util/Interactable.js";
 import Registry from "../../util/system/Registry.js";
 import UserIcon from "../../renderable/UserIcon/index.js";
-import UserSettings from "./UserSettings/index.js";
 import TabbedContainer from "../../renderable/TabbedContainer/index.js";
 import LoadingScreen from "../../renderable/LoadingScreen/index.js";
+import UserProfile from "../../renderable/UserProfile/index.js";
 
 class SystemSettings extends Application {
 	static LargeIcon = class LargeApplicationIcon extends Application.LargeIcon {
@@ -29,21 +29,21 @@ class SystemSettings extends Application {
 	
 	render() {
 		const target = super.render();
-		target.classList.add("system-settings");
+		target.classList.add("system-settings-app");
 		
 		this.tabbedContainer = new TabbedContainer();
 		
 		let closeButton;
-		target.append(new HTML.div({class: "system-settings-tabbed-container"},
+		target.append(new HTML.div({class: "system-settings-app-tabbed-container"},
 			new HTML.div({class: "base-header"},
-				closeButton = new HTML.div({class: "system-settings-exit-button base-pillbutton bi-x-lg"}),
+				closeButton = new HTML.div({class: "system-settings-app-exit-button base-pillbutton bi-x-lg"}),
 				this.tabbedContainer.renderTabButtons(),
 				new HTML.div({}) // Used for spacing
 			),
 			this.tabbedContainer.renderTabContents()
 		));
 		
-		this.addTabs();
+		this.updateRendered(target);
 		
 		new Interactable(closeButton, {
 			roles: ["BASE_BACK"],
@@ -55,15 +55,18 @@ class SystemSettings extends Application {
 		return target;
 	}
 	
-	async addTabs() {
+	async updateRendered() {
 		const loader = new LoadingScreen();
 		loader.openIn(1000);
+		
+		this.element.querySelector(".tabbed-container-tab-buttons").innerHTML = "";
+		this.element.querySelector(".tabbed-container-tab-contents").innerHTML = "";
 		
 		// Users tab content
 		const usersTab = this.tabbedContainer.createTab({id: "users", icon: "bi-person-circle", name: "Users"});
 		const usersTabEl = usersTab.render();
 		
-		let userList = new HTML.div({class: "system-settings-app-user-settings-user-list"});
+		let userList = new HTML.div({class: "system-settings-app-users-user-list"});
 		usersTabEl.append(userList);
 		
 		for(let user of Object.values(await Registry.getKey("user"), {})) {
@@ -71,15 +74,18 @@ class SystemSettings extends Application {
 				userName;
 			
 			userList.append(
-				userEl = new HTML.div({class: "base-pillbutton system-settings-app-user-settings-user"},
+				userEl = new HTML.div({class: "base-pillbutton system-settings-app-users-user"},
 					new UserIcon(user).render(),
-					userName = new HTML.div({class: "system-settings-app-user-settings-user-name"})
+					userName = new HTML.div({class: "system-settings-app-users-user-name"})
 				)
 			);
 			
 			new Interactable(userEl, {
-				activate: () => {
-					new UserSettings(user.id).open();
+				activate: async () => {
+					const loader = new LoadingScreen();
+					loader.openIn(300);
+					new UserProfile(user.id, (await this.getLaunchingUser()).id == user.id ? "editor" : "manager").open();
+					loader.remove();
 				}
 			});
 			
@@ -87,10 +93,6 @@ class SystemSettings extends Application {
 		}
 		
 		loader.remove();
-	}
-	
-	updateRendered() {
-		
 	}
 }
 

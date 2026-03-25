@@ -18,13 +18,14 @@ class InitialLoginComponent extends Renderable {
 		const userList = new HTML.div({class: "usm-user-list"});
 		usm.appendChild(userList);
 		
-		this.renderUsers(userList);
+		this.updateRendered(usm);
 		
 		return usm;
 	}
 	
-	async renderUsers(target) {
-		target.innerHTML = "";
+	async updateRendered(target) {
+		const userList = target.querySelector(".usm-user-list");
+		userList.innerHTML = "";
 		
 		const users = Object.values(await Registry.getKey("user"));
 		
@@ -48,7 +49,7 @@ class InitialLoginComponent extends Renderable {
 			
 			userName.innerText = user.name;
 			
-			target.appendChild(userElement);
+			userList.appendChild(userElement);
 		}
 		
 	}

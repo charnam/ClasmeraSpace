@@ -1,6 +1,18 @@
 import { HTML } from "imperative-html";
 
 class Renderable {
+	static _all_renderable_instances = [];
+	
+	static get instances() {
+		return this._all_renderable_instances.filter(instance => instance instanceof this);
+	}
+	
+	static updateInstances() {
+		for(let instance of this.instances) {
+			instance.update();
+		}
+	}
+	
 	style = [];
 	boundTo = [];
 	
@@ -10,6 +22,8 @@ class Renderable {
 				this.collectGarbageBoundNodes();
 			}
 		}, 1000);
+		
+		this.constructor._all_renderable_instances.push(this);
 	}
 	
 	renderTo(target) {
@@ -28,8 +42,8 @@ class Renderable {
 		return renderedElement;
 	}
 	
-	loadStyle(style) {
-		return new Promise(res => {
+	async loadStyle(style) {
+		await new Promise(res => {
 			const thisStyle = style;
 			const styleElements = document.querySelectorAll("link[rel=\"stylesheet\"]");
 			
@@ -42,6 +56,8 @@ class Renderable {
 			}
 			
 		})
+		
+		document.body.scrollWidth;
 	}
 	
 	updateRendered(element) {
@@ -49,11 +65,13 @@ class Renderable {
 	}
 	
 	update() {
+		let promises = [];
 		for(let item of this.boundTo) {
 			if(document.contains(item)) {
-				this.updateRendered(item);
+				promises.push(this.updateRendered(item));
 			}
 		}
+		return Promise.all(promises);
 	}
 	
 	collectGarbageBoundNodes() {

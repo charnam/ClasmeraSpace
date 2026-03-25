@@ -49,6 +49,15 @@
 	align-items: flex-start;
 	justify-content: flex-start;
 	overflow: hidden;
+	transition: 0.2s ease-in-out;
+	transition-property: transform, opacity, filter;
+}
+@starting-style {
+	.videos-app-video {
+		transform: translateY(4vmin);
+		opacity: 0;
+		filter: blur(0.2vmin);
+	}
 }
 
 .videos-app-video-thumbnail {

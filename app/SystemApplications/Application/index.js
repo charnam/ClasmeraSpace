@@ -2,6 +2,7 @@ import { HTML } from "imperative-html";
 import SingleInstanceRenderable from "../../util/SingleInstanceRenderable.js";
 import Interactions from "../../util/Interactions.js";
 import Overlay from "../../renderable/Overlay/index.js";
+import Registry from "../../util/system/Registry.js";
 
 class Application extends Overlay {
 	static id = ""; // Auto-replaced with filename due to naming requirement
@@ -41,6 +42,15 @@ class Application extends Overlay {
 	
 	style = [...this.style, "app/SystemApplications/Application/main.css"];
 	animateDisappearDuration = 1000;
+	
+	constructor(launchedBy) {
+		super();
+		this.launchedBy = launchedBy;
+	}
+	
+	async getLaunchingUser() {
+		return await Registry.getKey(`user.${this.launchedBy}`);
+	}
 	
 	render() {
 		const app = super.render();

@@ -31,6 +31,7 @@ class Tab extends SingleInstanceRenderable {
 		this.container.tabs.append(tabContents);
 		
 		tabContents.classList.add("tabbed-container-tab-content");
+		tabContents.classList.add("tabbed-container-direction-"+this.container.direction);
 		tabContents.classList.add("base-tabbed-tab");
 		tabContents.setAttribute("tabid", this.tabId);
 		

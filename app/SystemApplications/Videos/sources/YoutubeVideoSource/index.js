@@ -22,7 +22,8 @@ class YoutubeVideoSource extends VideoSource {
 		const tab = this.tabbed.createTab({icon: "bi-feather", id: "featured", name: "Featured"}).render();
 		new Scrollable(tab);
 		
-		const videosContainer = new HTML.div({class: "videos-app-video-grid"});
+		const videosContainer = new HTML.div({class: "videos-app-video-grid videos-app-video-grid-is-loading"});
+		tab.append(videosContainer);
 		
 		const search = await Youtube.search("cat videos");
 		for(let video of search) {
@@ -30,7 +31,7 @@ class YoutubeVideoSource extends VideoSource {
 			videoRenderable.renderTo(videosContainer);
 		}
 		
-		tab.append(videosContainer);
+		videosContainer.classList.remove("videos-app-video-grid-is-loading");
 	}
 	
 	async addSearchTab() {

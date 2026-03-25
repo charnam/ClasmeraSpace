@@ -1,11 +1,11 @@
 
-.system-settings-tabbed-container {
+.system-settings-app-tabbed-container {
 	display: flex;
 	flex-direction: column;
 	width: 100%;
 	height: 100%;
 }
-.system-settings-tabbed-container .tabbed-container-tab-content {
+.system-settings-app-tabbed-container .tabbed-container-tab-content {
 	max-width: 80vmin;
 	inset: unset;
 	top: 0;
@@ -13,10 +13,21 @@
 	width: 100%;
 }
 
-.system-settings-tab-bar {
+.system-settings-app-tab-bar {
 	display: flex;
 }
 
-.system-settings .base-header {
+.system-settings-app .base-header {
 	justify-content: space-between;
+}
+
+
+.system-settings-app-users-user .base-user-icon {
+	height: 2.2em;
+	margin-right: 3vmin;
+}
+.system-settings-app-users-user-name {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }

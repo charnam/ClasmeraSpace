@@ -1,0 +1,14 @@
+
+.tabbed-container-tab-content.tabbed-container-direction-vertical.base-tabbed-tab-before-passed {
+	transform: translateY(10vmin);
+}
+.tabbed-container-tab-content.tabbed-container-direction-vertical.base-tabbed-tab-after-passed {
+	transform: translateY(-10vmin);
+}
+
+.tabbed-container-tab-content.tabbed-container-direction-horizontal.base-tabbed-tab-before-passed {
+	transform: translateX(10vmin);
+}
+.tabbed-container-tab-content.tabbed-container-direction-horizontal.base-tabbed-tab-after-passed {
+	transform: translateX(-10vmin);
+}

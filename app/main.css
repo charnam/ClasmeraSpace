@@ -53,8 +53,11 @@ input {
 	--base-accent-color: 270deg;
 }
 
-.base-hidden, .base-system-hidden {
+.base-hidden {
 	display: none;
+}
+.base-system-hidden {
+	opacity: 0;
 }
 
 .base-button {
@@ -175,12 +178,15 @@ input {
 	inset: 0;
 	position: absolute;
 	opacity: 1;
-	transition: opacity 0.5s ease-in-out;
+	transition: 0.2s ease-in-out;
+	transition-property: opacity, transform;
 }
-.base-tabbed:has(> .visible-tab) > .base-tabbed-tab:not(.visible-tab),
-.base-tabbed:not(:has(.visible-tab)) > .base-tabbed-tab:not(:first-child) {
-	display: none;
+.base-tabbed:has(> .base-tabbed-visible-tab) > .base-tabbed-tab:not(.base-tabbed-visible-tab),
+.base-tabbed:not(:has(.base-tabbed-visible-tab)) > .base-tabbed-tab:not(:first-child) {
 	opacity: 0;
+	pointer-events: none;
+	transition-duration: 0.1s;
+	transition-timing-function: ease-in;
 }
 
 #root > :not(.available-layer) {
