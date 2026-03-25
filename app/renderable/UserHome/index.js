@@ -7,6 +7,7 @@ import Scrollable from "../../util/Scrollable.js";
 import OverlayMenu from "../OverlayMenu/index.js";
 import SystemSettings from "../../SystemApplications/SystemSettings/index.js";
 import UserProfile from "../UserProfile/index.js";
+import UserIcon from "../UserIcon/index.js";
 
 class UserHome extends Overlay {
 	userid = null;
@@ -80,7 +81,8 @@ class UserHome extends Overlay {
 	}
 	
 	async updateRendered(element) {
-		let userNameEl = element.querySelector(".home-header-user-name"),
+		let userEl = element.querySelector(".home-header-user"),
+			userNameEl = element.querySelector(".home-header-user-name"),
 			applicationsList = element.querySelector(".home-applications-list");
 		
 		applicationsList.innerHTML = "";
@@ -106,7 +108,14 @@ class UserHome extends Overlay {
 		}
 		
 		const user = await Registry.getKey(`user.${this.userid}`);
-		userNameEl.innerText = `Logged in as ${user.name}`;
+		userNameEl.innerText = user.name;
+		
+		const previousIcon = userEl.querySelector(".base-user-icon");
+		if(previousIcon) {
+			previousIcon.remove();
+		}
+		
+		userEl.prepend(new UserIcon(this.userid).render());
 		
 	}
 }

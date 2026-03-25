@@ -1,0 +1,25 @@
+.clasmera-logo {
+	display: flex;
+	flex-direction: column;
+	font-weight: bold;
+	font-size: 18vmin;
+	align-items: center;
+	justify-content: center;
+}
+
+.clasmera-logo:before {
+	content: "CLASMERA";
+	font-size: 0.515em;
+	letter-spacing: 0.36em;
+	text-align: center;
+	height: 0.7em;
+	font-weight: 400;
+}
+
+.clasmera-logo:after {
+	content: "SPACE";
+	font-size: 1em;
+	letter-spacing: 0.2em;
+	height: 1.2em;
+	text-align: center;
+}

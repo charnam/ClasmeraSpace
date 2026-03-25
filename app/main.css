@@ -137,6 +137,12 @@ input {
 	line-height: 100%;
 }
 
+.base-pillbutton .base-user-icon {
+	height: 1em;
+	transform: scale(1.8);
+	margin-right: 3vmin;
+	margin-left: 1vmin;
+}
 
 .base-header,
 .base-sidebar {
