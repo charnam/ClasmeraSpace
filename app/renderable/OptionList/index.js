@@ -17,6 +17,9 @@ class OptionList extends Renderable {
 			if(option instanceof Renderable) {
 				option.renderTo(listEl);
 			}
+			if(option instanceof Element) {
+				listEl.append(option);
+			}
 		}
 		
 		return listEl;

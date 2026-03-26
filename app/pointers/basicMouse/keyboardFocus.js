@@ -7,7 +7,7 @@ import FocusManager from "../../util/FocusManager.js";
 import Input from "../../util/Input.js";
 
 let keyboardFocus = mouseFocus;
-if(await Registry.getKey("system.config.useSeparateKeyboardFocus", false)) {
+if(await Registry.getKey("system.config.focus.separatekeyboardfocus", false)) {
 	keyboardFocus = new FocusManager();
 }
 

@@ -27,3 +27,7 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
+
+.system-settings-app-users-user-list {
+	padding: 4vmin 2vmin;
+}

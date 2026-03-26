@@ -88,11 +88,11 @@ class Videos extends Application {
 		return app;
 	}
 	
-	updateSources(element) {
+	async updateSources(element) {
 		this.tabbed.tabs.innerHTML = ""
 		this.tabbed.tabButtons.innerHTML = ""
 		
-		for(let [id, Source] of Object.entries(VideoSources.all)) {
+		for(let [id, Source] of Object.entries(await VideoSources.getOverridesFor((await this.getLaunchingUser()).id))) {
 			const tab = this.tabbed.createTab({id, name: Source.name}).render();
 			const source = new Source();
 			tab.append(source.render());

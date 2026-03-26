@@ -88,7 +88,7 @@ class UserHome extends Overlay {
 		applicationsList.innerHTML = "";
 		
 		const disabledApplications = await Registry.getKey(`user.${this.userid}.disabledapps`, []);
-		const visibleApplications = Object.values(Applications.all).filter(app => !disabledApplications.includes(app.id));
+		const visibleApplications = Object.values(await Applications.getOverridesFor(this.userid)).filter(app => !disabledApplications.includes(app.id));
 		
 		if(visibleApplications.length == 0) {
 			applicationsList.append(

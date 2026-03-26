@@ -10,6 +10,8 @@ import UserIcon from "../UserIcon/index.js";
 import Registry from "../../util/system/Registry.js";
 import TextOption from "../OptionList/TextOption/index.js";
 import Renderable from "../../util/Renderable.js";
+import ButtonOption from "../OptionList/ButtonOption/index.js";
+import Dialog from "../Dialog/index.js";
 
 class UserProfile extends Overlay {
 	style = [...this.style, "app/renderable/UserProfile/main.css"];
@@ -128,15 +130,47 @@ class UserProfile extends Overlay {
 			nameEl = new HTML.div({class: "user-profile-user-name"}),
 			new OptionList(this.mode == "viewer" ? [] : [
 				...(this.mode == "manager" ? managerList : []),
-				...(this.mode !== "viewer" ? editorList : [])
+				...(this.mode !== "viewer" ? editorList : []),
+				this.mode == "manager" ? new ButtonOption({
+					label: "Delete user...",
+					description: "Permanently remove this user and all associated data from the system.",
+					buttonText: "Delete",
+					activate: async () => {
+						if(await Dialog.ask({
+							prompt: "Are you REALLY sure you'd like to delete this user? This cannot be undone, be careful!",
+							buttons: [
+								{
+									text: "No, don't delete",
+									value: false
+								},
+								{
+									text: "Yes, delete forever!",
+									value: true
+								},
+							]
+						})) {
+							const load = new LoadingScreen();
+							load.open();
+							const users = await Registry.getKey("user");
+							delete users[this.userid];
+							await Registry.setKey("user", users);
+							await this.remove();
+							load.remove();
+							Renderable.updateInstances();
+						}
+					}
+				}) : null
 			]).render()
 		);
 		
-		new Interactable(iconEl, {
-			activate: () => {
-				
-			}
-		});
+		if(admin || await Registry.getKey(`user.${this.userid}.permissions.profilesettings.icon`)) {
+			new Interactable(iconEl, {
+				activate: () => {
+					// TODO: Icon uploading
+					Dialog.showUnfinishedMessage();
+				}
+			});
+		}
 		
 		nameEl.innerText = user.name;
 		

@@ -6,6 +6,11 @@ import UserIcon from "../../renderable/UserIcon/index.js";
 import TabbedContainer from "../../renderable/TabbedContainer/index.js";
 import LoadingScreen from "../../renderable/LoadingScreen/index.js";
 import UserProfile from "../../renderable/UserProfile/index.js";
+import OptionList from "../../renderable/OptionList/index.js";
+import Header from "../../renderable/OptionList/Header/index.js";
+import ToggleOption from "../../renderable/OptionList/ToggleOption/index.js";
+import ButtonOption from "../../renderable/OptionList/ButtonOption/index.js";
+import Renderable from "../../util/Renderable.js";
 
 class SystemSettings extends Application {
 	static LargeIcon = class LargeApplicationIcon extends Application.LargeIcon {
@@ -63,11 +68,42 @@ class SystemSettings extends Application {
 		this.element.querySelector(".tabbed-container-tab-contents").innerHTML = "";
 		
 		// Users tab content
+		const generalTab = this.tabbedContainer.createTab({id: "general", icon: "bi-gear", name: "General"});
+		const generalTabEl = generalTab.render();
+		
+		new OptionList([
+			new Header({text: "General"}),
+			new ToggleOption({
+				label: "Use separate keyboard focus",
+				description: "The mouse and keyboard, by default, become one input device. Enable this setting if you'll have one person at the keyboard, and another person at the mouse. Restart for changes to take effect.",
+				key: "system.config.focus.separatekeyboardfocus"
+			})
+			
+		]).renderTo(generalTabEl);
+		
+		// Users tab content
 		const usersTab = this.tabbedContainer.createTab({id: "users", icon: "bi-person-circle", name: "Users"});
 		const usersTabEl = usersTab.render();
 		
-		let userList = new HTML.div({class: "system-settings-app-users-user-list"});
-		usersTabEl.append(userList);
+		let userList;
+		new OptionList([
+			new Header({text: "Users"}),
+			userList = new HTML.div({class: "system-settings-app-users-user-list"}),
+			new ButtonOption({
+				buttonText: "Add user...",
+				activate: async manager => {
+					const id = crypto.randomUUID();
+					const name = await manager.Keyboard.ask({prompt: "Please enter a username."});
+					
+					await Registry.setKey(`user.${id}`, {
+						id,
+						name,
+					})
+					
+					await Renderable.updateInstances();
+				}
+			})
+		]).renderTo(usersTabEl)
 		
 		for(let user of Object.values(await Registry.getKey("user"), {})) {
 			let userEl,

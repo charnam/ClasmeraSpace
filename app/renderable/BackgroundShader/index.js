@@ -13,7 +13,9 @@ class BackgroundShader extends Renderable {
 		(async () => {
 			const shader = await fetch("app/renderable/BackgroundShader/default.glsl").then(res => res.text());
 			sandbox.load(shader);
-			canvas.classList.add("loaded");
+			setTimeout(() => {
+				canvas.classList.add("loaded");
+			}, 1000);
 			BackgroundShader.resizeLoop(canvas);
 		})();
 		return container;

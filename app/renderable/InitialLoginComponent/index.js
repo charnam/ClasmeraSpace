@@ -3,6 +3,7 @@ import Registry from "../../util/system/Registry.js";
 import Renderable from "../../util/Renderable.js";
 import Interactable from "../../util/Interactable.js";
 import UserHome from "../UserHome/index.js";
+import UserIcon from "../UserIcon/index.js";
 
 class InitialLoginComponent extends Renderable {
 	style = [...this.style, "app/renderable/InitialLoginComponent/main.css"];
@@ -32,7 +33,7 @@ class InitialLoginComponent extends Renderable {
 		for(let user of users) {
 			let userIcon, userName;
 			const userElement = new HTML.div({class: "usm-user"},
-				userIcon = new HTML.div({class: "usm-user-icon"}),
+				userIcon = new UserIcon(user).render(),
 				userName = new HTML.div({class: "usm-user-name"})
 			);
 			

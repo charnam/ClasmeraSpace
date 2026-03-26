@@ -8,9 +8,7 @@ class Renderable {
 	}
 	
 	static updateInstances() {
-		for(let instance of this.instances) {
-			instance.update();
-		}
+		return Promise.all(this.instances.map(instance => instance.update()));
 	}
 	
 	style = [];

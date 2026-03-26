@@ -1,7 +1,7 @@
 import path from 'path';
 import { ipcMain } from "electron";
 import { existsSync } from 'fs';
-import { readdir } from 'fs/promises';
+import { mkdir, readdir } from 'fs/promises';
 
 ipcMain.handle("getOverride", async (_event, query) => {
 	const dirname = query.dirname;
@@ -10,6 +10,7 @@ ipcMain.handle("getOverride", async (_event, query) => {
 	const overridePath = path.join("./data/overrides/", dirname);
 	
 	if(!existsSync(overridePath)) {
+		await mkdir(overridePath);
 		return [];
 	} else {
 		return await readdir(overridePath);

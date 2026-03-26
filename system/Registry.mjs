@@ -11,6 +11,19 @@ let initialRegistry = {
 		}
 	}
 }
+let fallbackRegistry = {
+	user: {
+		name: "(Error)",
+		administrator: false,
+		permissions: {
+			profilesettings: {
+				icon: true,
+				name: true
+			}
+		}
+	}
+}
+
 if(existsSync("./data/registry.json")) {
 	try {
 		const registryFileContent = (await readFile("./data/registry.json")).toString();
@@ -20,6 +33,7 @@ if(existsSync("./data/registry.json")) {
 
 class Registry {
 	static registry = initialRegistry;
+	static fallbackRegistry = fallbackRegistry;
 	
 	static async update() {
 		await writeFile("./data/registry.json", JSON.stringify(this.registry, null, 4));
@@ -43,7 +57,35 @@ class Registry {
 		}
 	}
 	
+	static getKeyFallback(key) {
+		let currentValue = this.registryFallback;
+		const keyTree = key.split(".");
+		
+		while(keyTree.length > 0 && currentValue !== undefined) {
+			currentValue = currentValue[keyTree.shift()];
+		}
+		
+		return currentValue;
+	}
+	
+	static async getFallback(keyname) {
+		let keypath = keyname.split(".");
+		if(keypath[0] == "user" && keypath[1]) {
+			const user = await this.getKey(`${keypath[0]}.${keypath[1]}`, false);
+			console.log(user, keyname)
+			if(!user) {
+				return undefined;
+			} else {
+				keyname = keyname.split(".").toSpliced(1,1).join(".");
+			}
+		}
+		return this.getKeyFallback(keyname);
+	}
+	
 	static async getKey(keyname, fallback) {
+		if(fallback === undefined) {
+			fallback = await this.getFallback(keyname);
+		}
 		const keywrapper = this.getKeyWrapper(keyname);
 		const value = keywrapper.tree[keywrapper.key];
 		return (typeof value !== "undefined") ? value : fallback;
