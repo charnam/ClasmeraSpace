@@ -1,7 +1,7 @@
 import { HTML } from "imperative-html";
 import VisualOverlay from "../VisualOverlay/index.js";
 import Interactable from "../../util/Interactable.js";
-import format_timestamp from "../../util/simple/format_timestamp.js";
+import formatTimestamp from "../../util/simple/formatTimestamp.js";
 
 class VideoPlayer extends VisualOverlay {
 	style = [...this.style, "app/renderable/VideoPlayer/main.css"];
@@ -142,8 +142,8 @@ class VideoPlayer extends VisualOverlay {
 			if(document.body.contains(this.element)) {
 				playbarEl.setAttribute("style", `--progress: ${videoEl.currentTime / videoEl.duration};`);
 				
-				currentTimeEl.innerText = format_timestamp(videoEl.currentTime);
-				durationEl.innerText = format_timestamp(videoEl.duration);
+				currentTimeEl.innerText = formatTimestamp(videoEl.currentTime);
+				durationEl.innerText = formatTimestamp(videoEl.duration);
 				requestAnimationFrame(updateTimestamp);
 			}
 		}

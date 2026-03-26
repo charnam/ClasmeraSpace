@@ -58,7 +58,7 @@ class Registry {
 	}
 	
 	static getKeyFallback(key) {
-		let currentValue = this.registryFallback;
+		let currentValue = this.fallbackRegistry;
 		const keyTree = key.split(".");
 		
 		while(keyTree.length > 0 && currentValue !== undefined) {
@@ -72,7 +72,6 @@ class Registry {
 		let keypath = keyname.split(".");
 		if(keypath[0] == "user" && keypath[1]) {
 			const user = await this.getKey(`${keypath[0]}.${keypath[1]}`, false);
-			console.log(user, keyname)
 			if(!user) {
 				return undefined;
 			} else {

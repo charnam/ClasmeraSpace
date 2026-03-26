@@ -1,6 +1,6 @@
 import { applyToElement, HTML } from "imperative-html";
 import Renderable from "../../../util/Renderable.js";
-import format_timestamp from "../../../util/simple/format_timestamp.js";
+import formatTimestamp from "../../../util/simple/formatTimestamp.js";
 import Blobs from "../../../util/system/Blobs.js";
 
 class Video extends Renderable {
@@ -23,7 +23,7 @@ class Video extends Renderable {
 					class: "videos-app-video-thumbnail",
 				},
 				new HTML.div({class: "videos-app-video-duration"},
-					this.video.duration ? format_timestamp(this.video.duration) : {class: "base-hidden"}
+					this.video.duration ? formatTimestamp(this.video.duration) : {class: "base-hidden"}
 				)
 			),
 			new HTML.div({class: "videos-app-video-details"},

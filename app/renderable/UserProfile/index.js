@@ -108,15 +108,11 @@ class UserProfile extends Overlay {
 		
 		const editorList = [
 			new Header({text: "Profile"}),
-			/*!(admin || await Registry.getKey(`user.${this.userid}.permissions.profilesettings.icon`)) ?null:
-				new ToggleOption({
-					
-				}),*/
-			!(admin || await Registry.getKey(`user.${this.userid}.permissions.profilesettings.name`)) ?null:
+			!(admin || await Registry.getKey(`user.${this.userid}.permissions.profilesettings.name`)) ? null :
 				new TextOption({
-					label: "Username",
+					label: "Name",
 					key: `user.${this.userid}.name`,
-					prompt: "Enter new username...",
+					prompt: "Enter new name...",
 					onchange: () => {
 						Renderable.updateInstances();
 					}

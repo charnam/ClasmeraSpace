@@ -105,6 +105,17 @@ class FocusManager {
 		if(this.cursorIsActive) {
 			const element = document.elementFromPoint(this.cursorPosition.x, this.cursorPosition.y);
 			this.hover(element);
+			const scrollable = Interactions.getScrollable(element)
+			if(scrollable) {
+				for(let input of this.inputs) {
+					if(input.satisfiesRole("BASE_SCROLL_UP")) {
+						scrollable.scrollBy(0, -input.state);
+					}
+					if(input.satisfiesRole("BASE_SCROLL_DOWN")) {
+						scrollable.scrollBy(0, input.state);
+					}
+				}
+			}
 		}
 		
 		if(this.cursorWasActive && !this.cursorIsActive) {

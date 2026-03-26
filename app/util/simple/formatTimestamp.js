@@ -1,5 +1,5 @@
 
-function format_timestamp(total) {
+function formatTimestamp(total) {
 	const seconds = Math.floor(total % 60);
 	const minutes = Math.floor(total / 60) % 60;
 	const hours = Math.floor(total / 60 / 60);
@@ -15,4 +15,4 @@ function format_timestamp(total) {
 	}
 }
 
-export default format_timestamp;
+export default formatTimestamp;

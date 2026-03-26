@@ -11,6 +11,7 @@ import Header from "../../renderable/OptionList/Header/index.js";
 import ToggleOption from "../../renderable/OptionList/ToggleOption/index.js";
 import ButtonOption from "../../renderable/OptionList/ButtonOption/index.js";
 import Renderable from "../../util/Renderable.js";
+import createUser from "../../util/simple/createUser.js";
 
 class SystemSettings extends Application {
 	static LargeIcon = class LargeApplicationIcon extends Application.LargeIcon {
@@ -91,17 +92,7 @@ class SystemSettings extends Application {
 			userList = new HTML.div({class: "system-settings-app-users-user-list"}),
 			new ButtonOption({
 				buttonText: "Add user...",
-				activate: async manager => {
-					const id = crypto.randomUUID();
-					const name = await manager.Keyboard.ask({prompt: "Please enter a username."});
-					
-					await Registry.setKey(`user.${id}`, {
-						id,
-						name,
-					})
-					
-					await Renderable.updateInstances();
-				}
+				activate: createUser
 			})
 		]).renderTo(usersTabEl)
 		

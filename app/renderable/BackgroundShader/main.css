@@ -1,20 +1,22 @@
 
-.background-shader {
-	position: absolute;
-	inset: 0;
-	opacity: 0;
-	transition: opacity 2s ease-in-out;
-	width: 100%;
-	height: 100%;
-}
-
-@starting-style {
-	.background-shader,
-	.background-shader.loaded {
+@keyframes fadeIn {
+	0% {
 		opacity: 0;
+	}
+	100% {
+		opacity: 1;
 	}
 }
 
+.background-shader {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	display: none;
+	animation: fadeIn 2s ease-in-out;
+}
+
 .background-shader.loaded {
-	opacity: 1;
+	display: block;
 }
