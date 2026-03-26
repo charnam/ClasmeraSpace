@@ -1,0 +1,9 @@
+{
+	"user": {
+		"admin": {
+			"id": "admin",
+			"name": "Admin",
+			"administrator": true
+		}
+	}
+}

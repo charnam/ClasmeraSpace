@@ -23,7 +23,7 @@ class Interactions {
 		return this.availableTargets.filter(target =>
 			this.getCurrentLayer(manager).contains(target)
 		 && target.element.checkVisibility()
-		 && target.element.computedStyleMap().get("pointer-events").value !== "none");
+		 && getComputedStyle(target.element).pointerEvents !== "none");
 	}
 	static getAvailableLayers() {
 		const layers = [...this.interactionLayers];

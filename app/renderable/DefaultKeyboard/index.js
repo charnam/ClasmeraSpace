@@ -84,7 +84,7 @@ class DefaultKeyboard extends Keyboard {
 		elBeforeCursor.innerText = textBeforeCursor;
 		elAfterCursor.innerText = textAfterCursor;
 		
-		keyboardInput.scrollIntoViewIfNeeded(cursorEl);
+		keyboardInput.scrollIntoView(cursorEl);
 		
 		const rows = this.inCapsMode ? this.constructor.upperKeys : this.constructor.lowerKeys;
 		

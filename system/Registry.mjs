@@ -2,15 +2,7 @@ import { existsSync } from "fs";
 import { readFile, writeFile } from "fs/promises";
 import Blobs from "./Blobs.mjs";
 
-let initialRegistry = {
-	user: {
-		admin: {
-			id: "admin",
-			name: "Admin",
-			administrator: true
-		}
-	}
-}
+let initialRegistry = (await readFile("./system/registry.json")).toJSON();
 let fallbackRegistry = {
 	user: {
 		name: "(Error)",

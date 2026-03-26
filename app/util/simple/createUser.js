@@ -1,4 +1,5 @@
 import Renderable from "../Renderable.js";
+import Registry from "../system/Registry.js";
 
 async function createUser(manager) {
 	const id = crypto.randomUUID();
