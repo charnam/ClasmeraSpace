@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Clasmera SPACE - Management Interface</title>
+		<link rel="stylesheet" href="./app/main.css" />
+		<link rel="stylesheet" href="./web/main.css" />
+		<script type="importmap" nonce="importmap">
+			{
+				"imports": {
+					"imperative-html": "./node_modules/imperative-html/dist/esm/elements.js",
+					"xhr": "./app/renderable/BackgroundShader/xhr-shim.js",
+					"glslCanvas": "./node_modules/glslCanvas/dist/GlslCanvas.es.js"
+				}
+			}
+		</script>
+	</head>
+	<body>
+		<div id="root"></div>
+		<div id="focus-manager-cursors"></div>
+		<script type="module" src="./web/index.js"></script>
+	</body>
+</html>
