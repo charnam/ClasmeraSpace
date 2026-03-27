@@ -1,12 +1,9 @@
+import ConnectMenu from "../menus/ConnectMenu/index.js";
 
 class ServerConnection {
-	constructor() {}
-	
-	authenticate() {
+	constructor() {
 		
-	}
-	
-	getAuthenticationStatus() {
+		ConnectMenu.connectToServer();
 		
 	}
 	
