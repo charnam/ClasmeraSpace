@@ -1,6 +1,6 @@
 
 .usm {
-	transition: 1s ease-in-out;
+	transition: 2s ease-out;
 	transition-property: opacity, transform;
 }
 
@@ -8,7 +8,7 @@
 	transition: 0.2s ease-in-out;
 	transition-property: opacity, transform;
 	opacity: 0;
-	transform: translateY(2vmin) scale(0.9);
+	transform: translateY(4vmin) scale(0.6);
 }
 
 .usm-user-list {

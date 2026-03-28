@@ -1,10 +1,14 @@
 import express from 'express';
+import Session from './Session.mjs';
+import expressWs from 'express-ws';
 
 const app = express()
-const port = 3000
+const port = 3000;
 
-app.get("/api/session/create", (req, res) => {
-	
+expressWs(app);
+
+app.ws('/api', function(ws, req) {
+	const connection = new Session(ws);
 });
 
 app.use(express.static("public"));

@@ -1,8 +1,9 @@
 import { HTML } from "imperative-html";
-import Overlay from "../../../app/renderable/Overlay/index.js";
 import Dialog from "../../../app/renderable/Dialog/index.js";
 import Interactable from "../../../app/util/Interactable.js";
 import VisualOverlay from "../../../app/renderable/VisualOverlay/index.js";
+import ServerConnection from "../../util/ServerConnection.js";
+import LoadingScreen from "../../../app/renderable/LoadingScreen/index.js";
 
 class ConnectMenu extends VisualOverlay {
 	style = [...this.style, "web/menus/ConnectMenu/main.css"];
@@ -29,29 +30,22 @@ class ConnectMenu extends VisualOverlay {
 		
 		new Interactable(button, {
 			activate: () => {
+				this.callback(input.value);
 			}
 		})
 		
 		return overlay;
 	}
 	
-	static async connectToServer() {
-		const menu = new ConnectMenu();
-		
-		await Dialog.ask({
-			prompt: "When you're ready, click the button below, and a short code will be displayed on the other device.",
-			buttons: [
-				{
-					text: "Show code",
-					value: null
-				}
-			]
+	static getPIN() {
+		return new Promise(res => {
+			const menu = new ConnectMenu({
+				callback: res
+			});
+			menu.open();
 		})
-		
-		menu.open();
-		
-		
 	}
+	
 }
 
 export default ConnectMenu;

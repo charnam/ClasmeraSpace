@@ -5,9 +5,11 @@
     "bootstrap-icons": "^1.13.1",
     "electron": "^40.8.0",
     "express": "^5.2.1",
+    "express-ws": "^5.0.2",
     "glslCanvas": "^0.2.6",
     "imperative-html": "^0.1.2",
     "mime": "^4.1.0",
+    "ws": "^8.20.0",
     "youtubei.js": "^16.0.1",
     "ytdlp-nodejs": "^3.4.4"
   }

@@ -1,13 +1,9 @@
 import "./pointers/index.js";
-import Server from "./util/Server.js";
-import InteractionLayer from "../app/util/InteractionLayer.js";
-import Interactions from "../app/util/Interactions.js";
+import ServerConnection from "./util/ServerConnection.js";
 import MainMenu from "./menus/MainMenu/index.js";
+import ConnectMenu from "./menus/ConnectMenu/index.js";
 
-const root = document.getElementById("root");
-/*const layer = new InteractionLayer(document.body, {isResetLayer: true});
-Interactions.addLayer(layer);*/
+await ServerConnection.createConnection();
+await ConnectMenu.ensureAuthPermission("admin");
 
 new MainMenu().renderTo(root);
-
-new Server();
