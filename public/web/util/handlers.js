@@ -5,7 +5,7 @@ const handlers = {
 	getPin: async () => {
 		return await ConnectMenu.getPIN();
 	},
-	showDialog: async options => {
+	dialog: async options => {
 		return await Dialog.ask(options);
 	}
 };

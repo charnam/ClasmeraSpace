@@ -10,22 +10,41 @@ class Session {
 	actions = {
 		checkPermission: (permission) => false,
 		requestPermission: async (permission) => {
-			let PIN;
-			while(PIN != 1234) {
-				PIN = await this.connection.invoke("getPin");
-			}
+			let userPIN = null;
+			let genPIN;
 			
-			const willParticipate = await this.connection.invoke("showDialog", {
-				prompt: "Hello",
-				buttons: [
-					{
-						text: "Hello",
-						value: "yes"
+			do {
+				genPIN = Math.round(Math.random() * 89999 + 10000);
+				console.log(genPIN);
+				let attempts = 0;
+				while(attempts < 3 && userPIN != genPIN) {
+					if(attempts >= 1 && userPIN != genPIN) {
+						await this.connection.invoke("dialog", {
+							prompt: "Invalid PIN. Please re-read and try again.",
+							buttons: [
+								{
+									text: "OK",
+									value: true
+								}
+							]
+						});
 					}
-				]
-			});
+					userPIN = await this.connection.invoke("getPin");
+					attempts++;
+				}
+				if(userPIN != genPIN) {
+					await this.connection.invoke("dialog", {
+						prompt: "A new PIN must be generated after 3 failed attempts. When you are ready, click the button below.",
+						buttons: [
+							{
+								text: "Retry",
+								value: true
+							}
+						]
+					});
+				}
+			} while(userPIN != genPIN)
 			
-			console.log(willParticipate)
 			return false;
 		}
 	}
