@@ -1,9 +1,9 @@
 import "./pointers/index.js";
-import ServerConnection from "./util/ServerConnection.js";
+import ServerConnection from "./util/serverConnection.js";
 import MainMenu from "./menus/MainMenu/index.js";
-import ConnectMenu from "./menus/ConnectMenu/index.js";
+import ConnectionHelpers from "./util/ConnectionHelpers.js";
 
 await ServerConnection.createConnection();
-await ConnectMenu.ensureAuthPermission("admin");
+await ConnectionHelpers.ensureAuthPermission("admin");
 
 new MainMenu().renderTo(root);

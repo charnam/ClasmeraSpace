@@ -1,8 +1,11 @@
+import LoadingScreen from "../../app/renderable/LoadingScreen/index.js";
+import serverConnection from "./serverConnection.js";
+
 class ConnectionHelpers {
 	static async ensureAuthPermission(permission) {
 		const loader = new LoadingScreen();
-		loader.show();
-		if((await this.invoke("checkPermission", permission))) {
+		loader.open();
+		if((await serverConnection.invoke("checkPermission", permission))) {
 			loader.remove();
 			return;
 		}
@@ -17,7 +20,7 @@ class ConnectionHelpers {
 			]
 		})
 		
-		await this.invoke("requestPermission", permission);
+		await serverConnection.invoke("requestPermission", permission);
 		loader.remove();
 		
 	}

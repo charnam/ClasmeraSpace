@@ -2,7 +2,7 @@ import { HTML } from "imperative-html";
 import Dialog from "../../../app/renderable/Dialog/index.js";
 import Interactable from "../../../app/util/Interactable.js";
 import VisualOverlay from "../../../app/renderable/VisualOverlay/index.js";
-import ServerConnection from "../../util/ServerConnection.js";
+import ServerConnection from "../../util/serverConnection.js";
 import LoadingScreen from "../../../app/renderable/LoadingScreen/index.js";
 
 class ConnectMenu extends VisualOverlay {
