@@ -21,8 +21,6 @@ if(!existsSync("./temp/")) {
 await import("./system/ipcModules/app.mjs");
 await import("./system/ipcModules/generate_preload.mjs");
 
-await import("./system/web/index.mjs");
-
 function createWindow() {
 	const win = new BrowserWindow({
 		backgroundColor: "black",

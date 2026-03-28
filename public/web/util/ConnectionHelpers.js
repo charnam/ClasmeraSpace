@@ -1,3 +1,4 @@
+import Dialog from "../../app/renderable/Dialog/index.js";
 import LoadingScreen from "../../app/renderable/LoadingScreen/index.js";
 import serverConnection from "./serverConnection.js";
 
@@ -9,6 +10,7 @@ class ConnectionHelpers {
 			loader.remove();
 			return;
 		}
+		loader.remove();
 		
 		await Dialog.ask({
 			prompt: "When you're ready, click the button below, and a short code will be displayed on the other device.",
@@ -21,7 +23,6 @@ class ConnectionHelpers {
 		})
 		
 		await serverConnection.invoke("requestPermission", permission);
-		loader.remove();
 		
 	}
 	

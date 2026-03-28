@@ -37,9 +37,8 @@ class Connection {
 			return;
 		}
 		
-		action(message.data, data => {
-			this.reply(message.id, data);
-		});
+		const replyData = await action(message.data)
+		this.reply(message.id, replyData);
 	}
 	
 	request(data) {
