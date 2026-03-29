@@ -1,0 +1,65 @@
+import { HTML } from "imperative-html";
+import Renderable from "../../util/Renderable.js";
+import Tabbed from "../../util/Tabbed.js";
+import Tab from "./Tab/index.js";
+
+class TabbedContainer extends Renderable {
+	style = [...this.style, "app/renderable/TabbedContainer/main.css"];
+	direction = "horizontal";
+	
+	tabButtons = null;
+	tabs = null;
+	
+	tabbed = null;
+	
+	constructor(details = {}) {
+		super();
+		this.direction = details.direction ?? this.direction;
+	}
+	
+	renderTabButtons() {
+		const target = super.render();
+		target.classList.add("tabbed-container-tab-buttons");
+		target.classList.add("tabbed-container-direction-"+this.direction);
+		this.tabButtons = target;
+		return target;
+	}
+	
+	renderTabContents() {
+		const target = super.render();
+		target.classList.add("base-tabbed");
+		target.classList.add("tabbed-container-tab-contents");
+		target.classList.add("tabbed-container-direction-"+this.direction);
+		this.tabs = target;
+		this.tabbed = new Tabbed(this.tabs);
+		return target;
+	}
+	
+	render() {
+		const target = super.render();
+		target.classList.add("tabbed-container");
+		
+		let header;
+		
+		target.append(
+			header = new HTML.div({class: "tabbed-container-header"},
+				this.renderTabButtons()
+			),
+			this.renderTabContents()
+		);
+		
+		if(this.direction == "vertical") {
+			header.classList.add("base-sidebar");
+		} else {
+			header.classList.add("base-header");
+		}
+		
+		return target;
+	}
+	
+	createTab(details) {
+		return new Tab({...details, container: this});
+	}
+}
+
+export default TabbedContainer;

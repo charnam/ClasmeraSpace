@@ -1,0 +1,22 @@
+
+@keyframes loading-screen-spin {
+	0% {
+		transform: var(--transform) rotate(0deg);
+	}
+	100% {
+		transform: var(--transform) rotate(360deg);
+	}
+}
+
+.loading-screen-icon {
+	animation: loading-screen-spin 1s linear infinite;
+	font-size: 10vmin;
+	position: fixed;
+	aspect-ratio: 1 / 1;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	left: 50%;
+	top: 50%;
+	--transform: translate(-50%, -50%);
+}

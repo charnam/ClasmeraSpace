@@ -9,6 +9,7 @@ body, #root {
 	inset: 0;
 	font-size: 2.3vmin;
 	font-family: "DM Sans", Helvetica, Arial, sans-serif;
+	cursor: none;
 }
 
 body {
@@ -19,11 +20,18 @@ body {
 [hover] {
 	outline: #fff8 0.5vmin solid;
 	outline-offset: 0.5vmin;
-	/*cursor: pointer;*/
 }
 
 [active] {
 	opacity: 0.9;
+	z-index: 200;
+}
+
+[scrolling] {
+	outline: #f90c 0.5vmin solid;
+	outline-offset: 0.3vmin;
+	transition: 0.1s ease-in-out;
+	transition-property: outline-offset, outline-color;
 }
 
 input {
@@ -45,6 +53,13 @@ input {
 	--base-accent-color: 270deg;
 }
 
+.base-hidden {
+	display: none;
+}
+.base-system-hidden {
+	opacity: 0;
+}
+
 .base-button {
 	background: linear-gradient(to bottom,
 		hsl(var(--base-accent-color), 20%, 70%) 0%,
@@ -57,16 +72,41 @@ input {
 	transition: 0.1s ease-in-out;
 	transition-property: transform, filter, z-index;
 	z-index: 0;
+	padding: 0.2em 0.5em;
 }
 .base-button[hover] {
 	filter: brightness(1.2);
-	transform: scale(1.3);
+	transform: scale(1.2);
 	z-index: 100;
 }
 .base-button[active] {
 	filter: brightness(0.5);
 	transform: scale(1.1) translateY(0.2vmin);
 	z-index: 50;
+}
+.base-button[active]:not([hover]) {
+	transition: none;
+}
+.base-button:before {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	aspect-ratio: 1 / 1;
+}
+.base-button.progress:before {
+	content: "\F130";
+	font-family: "bootstrap-icons";
+	animation: spin 2s linear infinite;
+}
+
+.base-button:after {
+	content: "";
+	position: absolute;
+	background: linear-gradient(to bottom, #fff9, #fff4);
+	left: 0;
+	top: 0;
+	width: calc(var(--progress) * 100%);
+	height: 100%;
 }
 
 @keyframes base-popup-enter {
@@ -81,7 +121,8 @@ input {
 .base-popup {
 	background: radial-gradient(hsl(var(--base-accent-color) 43% 63%), hsl(var(--base-accent-color) 43% 23%));
 	border-radius: 2vmin;
-	text-shadow: 0 0.2vmin 0.2vmin #0008;
+	--shadow: 0 0.2vmin 0.2vmin #0008;
+	text-shadow: var(--shadow);
 	border: 0.5vmin solid #fff2;
 	animation: base-popup-enter 0.2s ease-in-out;
 }
@@ -106,6 +147,23 @@ input {
 }
 .base-pillbutton[active] {
 	background: #fff1;
+}
+
+.base-pillbutton-usertext {
+	align-items: center;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	display: inline-flex;
+	box-sizing: border-box;
+	line-height: 100%;
+}
+
+.base-pillbutton .base-user-icon {
+	height: 1em;
+	transform: scale(1.8);
+	margin-right: 3vmin;
+	margin-left: 1vmin;
 }
 
 .base-header,
@@ -147,11 +205,16 @@ input {
 .base-tabbed-tab {
 	inset: 0;
 	position: absolute;
-	opacity: 0;
-}
-.base-tabbed-tab.visible-tab,
-.base-tabbed:not(:has(.visible-tab)) .base-tabbed-tab:first-child {
 	opacity: 1;
+	transition: 0.2s ease-in-out;
+	transition-property: opacity, transform;
+}
+.base-tabbed:has(> .base-tabbed-visible-tab) > .base-tabbed-tab:not(.base-tabbed-visible-tab),
+.base-tabbed:not(:has(.base-tabbed-visible-tab)) > .base-tabbed-tab:not(:first-child) {
+	opacity: 0;
+	pointer-events: none;
+	transition-duration: 0.1s;
+	transition-timing-function: ease-in;
 }
 
 #root > :not(.available-layer) {
@@ -164,4 +227,45 @@ input {
 
 #root > .disappear-animation {
 	z-index: 20;
+}
+
+
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+[hovertitle]:after {
+	content: attr(hovertitle);
+	position: absolute;
+	top: 90%;
+	background: linear-gradient(to bottom, #222c, #000c);
+	transform: scale(0.5) translateY(1vmin);
+	opacity: 0;
+	transition: 0.12s ease-in-out;
+	transition-property: opacity, transform;
+	border-radius: 1vmin;
+	padding: 0.2vmin 1vmin;
+	box-shadow: 0 1vmin 2vmin #0005;
+	pointer-events: none;
+	backdrop-filter: blur(2vmin);
+	z-index: 1000;
+}
+
+[hovertitle][hover]:after {
+	opacity: 1;
+	transform: scale(1);
+}
+
+[hovertitle] {
+	position: relative;
+}
+
+.base-sidebar *[hovertitle]:after {
+	top: unset;
+	left: 120%;
 }

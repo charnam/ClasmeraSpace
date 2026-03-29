@@ -20,15 +20,17 @@ class SingleInstanceRenderable extends Renderable {
 			this.element.classList.add("disappear-animation")
 			await new Promise(res => setTimeout(res, this.animateDisappearDuration));
 		}
+		this.boundTo = [];
 	}
 	
 	async remove() {
 		if(this.element) {
+			const el = this.element;
 			await this.beforeRemove();
 			if(this._overlay) {
 				this._overlay.remove();
 			}
-			this.element.remove();
+			el.remove();
 			this.collectGarbageBoundNodes();
 		}
 	}

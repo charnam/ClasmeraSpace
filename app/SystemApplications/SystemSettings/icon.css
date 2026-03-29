@@ -1,0 +1,7 @@
+
+.icon-system-settings .app-icon-background {
+	background: linear-gradient(to top, #222, #333);
+}
+.icon-system-settings .app-icon-foreground:before {
+	content: "\F621";
+}

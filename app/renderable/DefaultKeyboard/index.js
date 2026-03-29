@@ -16,8 +16,30 @@ class DefaultKeyboard extends Keyboard {
 		"ZXCVBNM\"'?"
 	];
 	
+	// lowerKeys is used for naming
+	static keyNames = {
+		",": "COMMA",
+		".": "DOT",
+		"/": "SLASH",
+		";": "SEMICOLON"
+	};
+	
 	style = [...this.style, "app/renderable/DefaultKeyboard/main.css"];
 	inCapsMode = false;
+	cursorPosition = 0;
+	get textBeforeCursor() {
+		return this.currentInput.slice(0, this.cursorPosition);
+	}
+	set textBeforeCursor(value) {
+		const originalValue = this.currentInput.slice(0,this.cursorPosition);
+		this.currentInput = value + this.currentInput.slice(this.cursorPosition);
+		this.cursorPosition += value.length - originalValue.length;
+	}
+	
+	constructor(details) {
+		super(details);
+		this.cursorPosition = this.currentInput.length;
+	}
 	
 	render() {
 		const keyboardEl = super.render();
@@ -30,7 +52,12 @@ class DefaultKeyboard extends Keyboard {
 		
 		keyboardEl.append(
 			keyboardPrompt = new HTML.div({class: "keyboard-default-prompt"}),
-			keyboardInput = new HTML.input({type: "text", class: "keyboard-default-input base-button"}),
+			keyboardInput = new HTML.div({class: "keyboard-default-input base-button"},
+				new HTML.div({class: "keyboard-default-input-height-char"}, "M"),
+				new HTML.div({class: "keyboard-default-input-before-cursor"}),
+				new HTML.div({class: "keyboard-default-input-cursor"}),
+				new HTML.div({class: "keyboard-default-input-after-cursor"})
+			),
 			keyboardAreas = new HTML.div({class: "keyboard-default-areas"})
 		);
 		
@@ -38,6 +65,7 @@ class DefaultKeyboard extends Keyboard {
 		keyboardInput.value = this.currentInput;
 		
 		this.renderKeys(keyboardAreas);
+		this.updateRendered(keyboardEl);
 		
 		return keyboardEl;
 	}
@@ -45,9 +73,18 @@ class DefaultKeyboard extends Keyboard {
 	updateRendered(element) {
 		const keyboardInput = element.querySelector(".keyboard-default-input");
 		
-		if(this.currentInput !== keyboardInput.value) {
-			keyboardInput.value = this.currentInput;
-		}
+		const textBeforeCursor = this.currentInput.slice(0,this.cursorPosition);
+		const textAfterCursor = this.currentInput.slice(this.cursorPosition);
+		
+		const elBeforeCursor = keyboardInput.querySelector(".keyboard-default-input-before-cursor");
+		const elAfterCursor = keyboardInput.querySelector(".keyboard-default-input-after-cursor");
+		
+		const cursorEl = keyboardInput.querySelector(".keyboard-default-input-cursor");
+		
+		elBeforeCursor.innerText = textBeforeCursor;
+		elAfterCursor.innerText = textAfterCursor;
+		
+		keyboardInput.scrollIntoView(cursorEl);
 		
 		const rows = this.inCapsMode ? this.constructor.upperKeys : this.constructor.lowerKeys;
 		
@@ -98,28 +135,38 @@ class DefaultKeyboard extends Keyboard {
 			doneKey = new HTML.div({class: "base-button keyboard-default-key keyboard-default-key-side"}, "Done")
 		);
 		
+		new Interactable(doneKey, {
+			roles: ["DEFAULT_KEYBOARD_SUBMIT"],
+			activate: () => {
+				this.close();
+				this.whenFinished();
+			}
+		});
+		
 		new Interactable(leftKey, {
+			roles: ["DEFAULT_KEYBOARD_LEFT"],
 			preactivate: () => {
-				
+				if(this.cursorPosition > 0) {
+					this.cursorPosition--;
+					this.update();
+				}
 			}
 		});
 		new Interactable(rightKey, {
+			roles: ["DEFAULT_KEYBOARD_RIGHT"],
 			preactivate: () => {
-				
+				if(this.cursorPosition < this.currentInput.length) {
+					this.cursorPosition++;
+					this.update();
+				}
 			}
 		});
 		
 		new Interactable(capsKey, {
-			activate: () => {
+			roles: ["DEFAULT_KEYBOARD_SHIFT"],
+			preactivate: focusManager => {
 				this.inCapsMode = !this.inCapsMode;
 				this.update();
-			}
-		});
-		
-		new Interactable(doneKey, {
-			activate: () => {
-				this.close();
-				this.whenFinished();
 			}
 		});
 		
@@ -137,9 +184,16 @@ class DefaultKeyboard extends Keyboard {
 				keyEl.innerText = keyValue;
 				keyRowEl.appendChild(keyEl);
 				
+				let keyName = keyValue.toUpperCase();
+				
+				if(this.constructor.keyNames[keyValue]) {
+					keyName = this.constructor.keyNames[keyValue];
+				}
+				
 				new Interactable(keyEl, {
+					roles: ["DEFAULT_KEYBOARD_KEY_"+keyName],
 					preactivate: () => {
-						this.currentInput += keyEl.innerText;
+						this.textBeforeCursor += keyEl.innerText;
 						if(this.inCapsMode) {
 							this.inCapsMode = false;
 						}
@@ -160,14 +214,16 @@ class DefaultKeyboard extends Keyboard {
 		);
 		
 		new Interactable(spaceKey, {
+			roles: ["DEFAULT_KEYBOARD_KEY_SPACE"],
 			preactivate: () => {
-				this.currentInput += " ";
+				this.textBeforeCursor += " ";
 				this.update();
 			}
 		});
 		new Interactable(backspaceKey, {
+			roles: ["DEFAULT_KEYBOARD_KEY_BACKSPACE"],
 			preactivate: () => {
-				this.currentInput = this.currentInput.slice(0,-1);
+				this.textBeforeCursor = this.textBeforeCursor.slice(0,-1);
 				this.update();
 			}
 		});

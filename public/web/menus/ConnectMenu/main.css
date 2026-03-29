@@ -1,0 +1,38 @@
+@keyframes connect-menu-appear {
+	0% {
+		transform: translateY(10vmin);
+		opacity: 0;
+	}
+}
+
+.connect-menu {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	justify-content: center;
+	align-content: center;
+	position: fixed;
+	inset: 0;
+	animation: connect-menu-appear 0.5s ease-out;
+}
+
+.connect-menu-connect-title {
+	font-size: 1.5em;
+	max-width: 80vmin;
+}
+
+.connect-menu .base-button {
+	padding: 0.5vmin 2vmin;
+	font-size: 1.5em;
+}
+
+input.connect-menu-connect-input {
+	margin: 2vmin;
+	padding: 1vmin;
+	background: #0004;
+	text-align: center;
+	border-radius: 1vmin;
+	border: 0.2vmin solid #fff3;
+	font-size: 1.8em;
+}

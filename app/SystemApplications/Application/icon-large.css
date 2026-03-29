@@ -1,4 +1,11 @@
-
+@keyframes ensureSkew {
+	0% {
+		transform: var(--transform);
+	}
+	100% {
+		transform: var(--transform);
+	}
+}
 
 .app-icon.app-icon-large {
 	overflow: hidden;
@@ -7,6 +14,7 @@
 	height: 100%;
 	--transform: skewX(-10deg);
 	--reverse-transform: skewX(10deg);
+	animation: ensureSkew 0.2s;
 }
 
 .app-icon.app-icon-large .app-icon-inner {
@@ -16,4 +24,9 @@
 	height: 100%;
 	left: 50%;
 	top: 50%;
+}
+
+.base-app-icon.app-icon-large .app-icon-foreground:after {
+	content: "TestApp";
+	font-size: 6vmin;
 }

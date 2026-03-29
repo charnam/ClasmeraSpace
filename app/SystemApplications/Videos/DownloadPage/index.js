@@ -1,12 +1,17 @@
 import { HTML } from "imperative-html";
 import VisualOverlay from "../../../renderable/VisualOverlay/index.js";
 import Interactable from "../../../util/Interactable.js";
+import Scrollable from "../../../util/Scrollable.js";
+import Video from "../Video/index.js";
+import downloadButtonProgress from "../../../util/simple/downloadButtonProgress.js";
 
 class DownloadPage extends VisualOverlay {
 	style = [...this.style, "app/SystemApplications/Videos/DownloadPage/main.css"];
 	
 	video = null;
 	download = null;
+	
+	buttons = [];
 	
 	constructor(details) {
 		super();
@@ -17,28 +22,33 @@ class DownloadPage extends VisualOverlay {
 		if(details.download) {
 			this.download = details.download;
 		}
+		if(details.buttons) {
+			this.buttons = details.buttons;
+		}
 	}
 	
 	render() {
 		const el = super.render();
 		
 		let title,
+			author,
 			description,
 			backButton,
-			buttons;
+			buttons,
+			thumbnailEl;
 		
 		el.append(
 			new HTML.div({class: "videos-app-video-download-page"},
 				backButton = new HTML.div({class: "videos-app-video-download-page-back-button base-pillbutton bi-arrow-left"}),
 				new HTML.div({class: "videos-app-video-download-page-left-side"},
-					new HTML.div({
+					thumbnailEl = new HTML.div({
 						class: "videos-app-video-download-page-thumbnail",
-						style: `background-image: url('${this.video?.thumbnail}');`
 					}),
-					title = new HTML.div({class: "videos-app-video-download-page-title"})
+					title = new HTML.div({class: "videos-app-video-download-page-title"}),
+					author = new HTML.div({class: "videos-app-video-download-page-author-name"})
 				),
 				new HTML.div({class: "videos-app-video-download-page-right-side"},
-					new HTML.div({
+					description = new HTML.div({
 						class: "videos-app-video-download-page-description"
 					}),
 					buttons = new HTML.div({
@@ -48,29 +58,56 @@ class DownloadPage extends VisualOverlay {
 			)
 		);
 		
-		if(this.download) {
-			const downloadButton = new HTML.div({class: "videos-app-video-download-page-button base-button"},
-				new HTML.i({class: "bi-download"}),
-				" Download"
+		title.innerText = this.video.title;
+		author.innerText = this.video.author.name;
+		
+		description.innerText = this.video.description;
+		Video.getThumbnail(this.video).then(url => thumbnailEl.style.backgroundImage = `url("${url}")`);
+		
+		for(let button of this.buttons) {
+			const buttonEl = new HTML.div({class: "videos-app-video-download-page-button base-button "+(button.icon ?? "")});
+			buttonEl.innerText = button.text;
+			
+			new Interactable(buttonEl, {
+				activate: manager => {
+					button.activate(manager, buttonEl);
+				}
+			})
+			
+			buttons.append(buttonEl);
+		}
+		
+		/*if(this.download) {
+			let downloadButtonIcon;
+			
+			const downloadButton = new HTML.div({class: "videos-app-video-download-page-button base-button bi-play"},
+				"Play"
 			);
 			
 			new Interactable(downloadButton, {
 				activate: () => {
+					if(downloadButton.classList.contains("progress")) return;
+					
+					downloadButton.classList.add("progress");
+					
 					this.download(progress => {
-						downloadButton.setAttribute("style",
-							`--progress: ${progress}%;`);
+						downloadButtonProgress(progress, downloadButton)
 					});
 				}
 			});
 			
-			buttons.append(downloadButton);
-		}
+		}*/
 		
 		new Interactable(backButton, {
+			roles: ["BASE_BACK"],
 			activate: () => {
 				this.remove();
 			}
 		})
+		
+		new Scrollable(description, {
+			selectable: true
+		});
 		
 		return el;
 	}

@@ -7,8 +7,9 @@ class Interactable {
 	interactionVolume = 0.3;
 	selectVolume = this.interactionVolume * 0.3;
 	
+	roles = [];
+	
 	static sound = new SoundManager("./app/sounds/interaction", {
-		back: "back.wav",
 		interact_start: "interact-start.wav",
 		interact_end: "interact-end.wav",
 		keyboard: "keyboard.wav",
@@ -25,6 +26,9 @@ class Interactable {
 		this.unhoverEvent = details.unhover;
 		this.preactivateEvent = details.preactivate;
 		this.activateEvent = details.activate;
+		if(Array.isArray(details.roles)) {
+			this.roles = details.roles;
+		}
 		
 		Interactions.makeSelectable(this);
 	}

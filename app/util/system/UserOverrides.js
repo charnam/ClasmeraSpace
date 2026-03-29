@@ -1,3 +1,2 @@
-const UserOverrides = window.__OVERRIDES;
-
-export default UserOverrides;
+import polyfill from "../../../system/ipcModules/overrides/browser-pollyfill.mjs";
+export default window.__OVERRIDES ?? polyfill;

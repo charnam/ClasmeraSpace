@@ -18,7 +18,9 @@ class Overlay extends SingleInstanceRenderable {
 		const overlay = super.render();
 		overlay.classList.add("overlay");
 		this.layer.element = overlay;
-		Interactions.addLayer(this.layer);
+		if(!Interactions.interactionLayers.includes(this.layer)) {
+			Interactions.addLayer(this.layer);
+		}
 		return overlay;
 	}
 	

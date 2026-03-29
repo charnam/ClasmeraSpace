@@ -1,4 +1,5 @@
 import InteractionLayer from "./InteractionLayer.js";
+import callToParents from "./simple/callToParents.js";
 
 class Interactions {
 	static focusManagers = [];
@@ -6,13 +7,23 @@ class Interactions {
 	static availableTargets = [];
 	static availableScrollers = []
 	
-	static getCurrentLayer() {
-		return this.interactionLayers[this.interactionLayers.length-1];
+	
+	static getCurrentLayers() {
+		const layers = [];
+		for(let manager of this.focusManagers) {
+			layers.push(this.getCurrentLayer(manager));
+		}
+		return layers;
 	}
-	static getAvailableTargets() {
+	static getCurrentLayer(manager) {
+		const layers = this.interactionLayers.filter(layer => layer.shouldAffect(manager));
+		return layers[layers.length-1];
+	}
+	static getAvailableTargets(manager) {
 		return this.availableTargets.filter(target =>
-			this.getCurrentLayer().contains(target)
-		 && target.element.checkVisibility());
+			this.getCurrentLayer(manager).contains(target)
+		 && target.element.checkVisibility()
+		 && getComputedStyle(target.element).pointerEvents !== "none");
 	}
 	static getAvailableLayers() {
 		const layers = [...this.interactionLayers];
@@ -71,34 +82,34 @@ class Interactions {
 		this.availableScrollers.push(scrollable);
 	}
 	
-	static isInteractable(element) {
-		return this.getDirectInteractable(element) !== undefined;
+	static isInteractable(element, manager) {
+		return this.getDirectInteractable(element, manager) !== undefined;
 	}
 	static isLayerAvailable(layer) {
 		return this.getAvailableLayers().includes(layer);
 	}
 	
-	static getInteractable(element) {
-		let testTarget = element;
+	static getInteractable(element, manager) {
 		let target = null;
-		while(!target && testTarget) {
-			target = this.getDirectInteractable(testTarget);
-			testTarget = testTarget.parentElement;
-		}
+		callToParents(element, testTarget => {
+			if(!target) {
+				target = this.getDirectInteractable(testTarget, manager);
+			}
+		})
 		return target;
 	}
 	
-	static getDirectInteractable(element) {
-		return this.getAvailableTargets().find(target => target.element == element);
+	static getDirectInteractable(element, manager) {
+		return this.getAvailableTargets(manager).find(target => target.element == element);
 	}
 	
 	static getScrollable(element) {
-		let testTarget = element;
 		let target = null;
-		while(!target && testTarget) {
-			target = this.getDirectScrollable(testTarget);
-			testTarget = testTarget.parentElement;
-		}
+		callToParents(element, testTarget => {
+			if(!target && testTarget !== element) {
+				target = this.getDirectScrollable(testTarget);
+			}
+		})
 		return target;
 	}
 	
@@ -107,12 +118,12 @@ class Interactions {
 	}
 	
 	
-	static getInteractableInDirection(target, direction) {
+	static getAvailableInteractableInDirection(manager, target, direction) {
 		const targetEl = target.element
 		const targetRect = targetEl.getBoundingClientRect();
 		const otherTargets = [];
 		
-		for(let otherTarget of this.getAvailableTargets()) {
+		for(let otherTarget of this.getAvailableTargets(manager)) {
 			if(otherTarget.element == targetEl) continue;
 			otherTargets.push({
 				element: otherTarget.element,
@@ -168,7 +179,7 @@ class Interactions {
 				score += 4000;
 				//score += Math.abs(rect2.left - rect1.right);
 			}
-			score += Math.abs(rect1Center.x - rect2Center.x) * 2;
+			score += Math.abs(rect1Center.x - rect2Center.x) * 0.5;
 		}
 		
 		if(direction == "left" || direction == "right") {
@@ -180,7 +191,7 @@ class Interactions {
 				score += 4000;
 				//score += Math.abs(rect2.top - rect1.bottom);
 			}
-			score += Math.abs(rect1Center.y - rect2Center.y) * 2;
+			score += Math.abs(rect1Center.y - rect2Center.y) * 0.5;
 		}
 		
 		if(direction == "up") {
@@ -196,33 +207,46 @@ class Interactions {
 			score += Math.abs(rect1.right - rect2.x);
 		}
 		
-		//score += Math.sqrt((rect1Center.x - rect2Center.x)**2 + (rect1Center.y - rect2Center.y)**2);
-		
 		return score;
 	}
 	
+	static frameAnimate() {
+		if(this.animateLastFrame < Date.now() - 1000) {
+			this.animateLastFrame = Date.now();
+		}
+		
+		const currentLayers = this.getCurrentLayers();
+		const availableLayers = this.getAvailableLayers();
+		for(let layer of currentLayers) {
+			layer.element.classList.add("active-layer");
+		}
+		for(let element of document.querySelectorAll(".active-layer")) {
+			if(!currentLayers.some(layer => layer.element == element)) {
+				element.classList.remove("active-layer");
+			}
+		}
+		
+		for(let layer of availableLayers) {
+			layer.element.classList.add("available-layer");
+		}
+		for(let element of document.querySelectorAll(".available-layer")) {
+			if(!availableLayers.some(layer => layer.element == element)) {
+				element.classList.remove("available-layer");
+			}
+		}
+		
+		for(let manager of this.focusManagers) {
+			manager.animateCursor();
+		}
+		for(let layer of this.interactionLayers) {
+			layer.animateCursors();
+		}
+		requestAnimationFrame(() => this.frameAnimate());
+	}
 }
 
-setInterval(() => {
-	const currentLayer = Interactions.getCurrentLayer();
-	const availableLayers = Interactions.getAvailableLayers();
-	if(currentLayer) {
-		currentLayer.element.classList.add("active-layer");
-	}
-	for(let element of document.querySelectorAll(".active-layer")) {
-		if(!currentLayer || element !== currentLayer.element) {
-			element.classList.remove("active-layer");
-		}
-	}
-	
-	for(let layer of availableLayers) {
-		layer.element.classList.add("available-layer");
-	}
-	for(let element of document.querySelectorAll(".available-layer")) {
-		if(!availableLayers.some(layer => layer.element == element)) {
-			element.classList.remove("available-layer");
-		}
-	}
-}, 100);
+requestAnimationFrame(() => {
+	Interactions.frameAnimate();
+})
 
 export default Interactions;

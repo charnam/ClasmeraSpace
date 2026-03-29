@@ -1,14 +1,9 @@
 import Interactions from "./Interactions.js";
 import DefaultKeyboard from "../renderable/DefaultKeyboard/index.js";
 import DefaultPasscodeInput from "../renderable/DefaultPasscodeInput/index.js";
-
-
-function withEventParents(target, cb) {
-	while(target) {
-		cb(target);
-		target = target.parentElement;
-	}
-}
+import callToParents from "./simple/callToParents.js";
+import FocusManagerCursor from "../renderable/FocusManagerCursor/index.js";
+import SoundManager from "./SoundManager.js";
 
 class FocusManager {
 	pointerId = crypto.randomUUID();
@@ -16,8 +11,58 @@ class FocusManager {
 	currentFocus = null;
 	focusLayers = {};
 	
+	inputs = [];
+	
+	cursorSmoothing = 0.3;
+	
+	cursorPosition = {x: -1, y: -1};
+	cursorTarget = {x: -1, y: -1};
+	
+	lastActiveAt = 0;
+	get isActive() {
+		return this.lastActiveAt > Date.now() - 3000;
+	}
+	set isActive(value) {
+		if(value) {
+			this.lastActiveAt = Date.now();
+		} else {
+			this.lastActiveAt = 0;
+		}
+	}
+	
+	_cursorIsClicked = false;
+	cursorClickedAt = 0;
+	set cursorIsClicked(value) {
+		if(this._cursorIsClicked !== value) {
+			this._cursorIsClicked = value;
+			this.cursorClickedAt = Date.now();
+		}
+	}
+	get cursorIsClicked() {
+		return this._cursorIsClicked;
+	}
+	
+	
+	cursorWasActive = false;
+	cursorActiveAt = 0;
+	set cursorIsActive(value) {
+		if(value == false) {
+			this.cursorActiveAt = 0;
+		} else {
+			this.cursorActiveAt = Date.now();
+		}
+	}
+	get cursorIsActive() {
+		return (this.cursorActiveAt > Date.now() - 3000)
+	}
+	
 	Keyboard = DefaultKeyboard;
 	PasscodeInput = DefaultPasscodeInput;
+	
+	static sound = new SoundManager("./app/sounds/interaction", {
+	});
+	
+	sound = FocusManager.sound;
 	
 	constructor(details = {}) {
 		if(details.Keyboard) {
@@ -27,14 +72,84 @@ class FocusManager {
 			this.PasscodeInput = details.PasscodeInput;
 		}
 		Interactions.focusManagers.push(this);
+		
+		this.hoverOverlay = new FocusManagerCursor();
+		this.hoverOverlay.renderTo(document.getElementById("focus-manager-cursors"));
+	}
+	
+	cursorLastFrameTime = 0;
+	animateCursor() {
+		const deltaTime = Math.min(0.5, (Date.now() - this.cursorLastFrameTime) / 1000);
+		const speedMult = Math.min(1, this.cursorSmoothing * deltaTime * 120);
+		
+		this.cursorTarget.x = Math.max(0, Math.min(this.cursorTarget.x, window.innerWidth));
+		this.cursorTarget.y = Math.max(0, Math.min(this.cursorTarget.y, window.innerHeight));
+		
+		let deltaX = (this.cursorTarget.x - this.cursorPosition.x) * speedMult;
+		let deltaY = (this.cursorTarget.y - this.cursorPosition.y) * speedMult;
+		
+		this.cursorPosition.x += deltaX;
+		this.cursorPosition.y += deltaY;
+		
+		const squashMult = (this.cursorIsClicked ? 1.0 : 0.2);
+		const xMovTarget = Math.max(-10, Math.min(deltaX * squashMult, 10));
+		const yMovTarget = Math.max(-4, Math.min(deltaY * squashMult, 4));
+		
+		this.hoverOverlay.x = this.cursorPosition.x;
+		this.hoverOverlay.y = this.cursorPosition.y;
+		this.hoverOverlay.xMov += (xMovTarget - this.hoverOverlay.xMov) / deltaTime / 400;
+		this.hoverOverlay.yMov += (yMovTarget - this.hoverOverlay.yMov) / deltaTime / 400;
+		this.hoverOverlay.active = this.cursorIsActive;
+		this.hoverOverlay.updateRendered();
+		
+		if(this.cursorIsActive) {
+			const element = document.elementFromPoint(this.cursorPosition.x, this.cursorPosition.y);
+			this.hover(element);
+			const scrollable = Interactions.getScrollable(element)
+			if(scrollable) {
+				for(let input of this.inputs) {
+					if(input.satisfiesRole("BASE_SCROLL_UP")) {
+						scrollable.scrollBy(0, -input.state);
+					}
+					if(input.satisfiesRole("BASE_SCROLL_DOWN")) {
+						scrollable.scrollBy(0, input.state);
+					}
+				}
+			}
+		}
+		
+		if(this.cursorWasActive && !this.cursorIsActive) {
+			this.unhover();
+		}
+		
+		this.cursorWasActive = this.cursorIsActive;
+		this.cursorLastFrameTime = Date.now();
+	}
+	
+	getInputsByRole(role) {
+		return this.inputs.filter(input => input.satisfiesRole(role));
+	}
+	
+	ensureFocus() {
+		if(!this.currentFocus && !this.cursorIsActive) {
+			const target = Interactions.getAvailableTargets(this)[0];
+			if(target) {
+				this.hover(target.element);
+			}
+		}
 	}
 	
 	moveFocus(direction) {
+		this.cursorIsActive = false;
+		this.cursorWasActive = false;
 		let newFocus;
 		if(this.currentFocus) {
-			newFocus = Interactions.getInteractableInDirection(this.currentFocus, direction);
+			newFocus = Interactions.getAvailableInteractableInDirection(this, this.currentFocus, direction);
 		} else {
-			newFocus = Interactions.getAvailableTargets()[0].element;
+			this.ensureFocus();
+			if(this.currentFocus) {
+				newFocus = this.currentFocus.element;
+			}
 		}
 		if(newFocus) {
 			this.hover(newFocus);
@@ -45,16 +160,26 @@ class FocusManager {
 		}
 	}
 	
+	hoverAt(x, y) {
+		this.cursorTarget.x = x * window.innerWidth;
+		this.cursorTarget.y = y * window.innerHeight;
+		this.cursorIsActive = true;
+	}
+	
 	hover(element) {
-		const interactable = Interactions.getInteractable(element);
+		const interactable = Interactions.getInteractable(element, this);
 		if(interactable) {
 			if(this.currentFocus !== interactable) {
 				this.unhover();
 				this.currentFocus = interactable;
 				if(this.currentFocus) {
 					this.currentFocus.hover(this);
-					this.focusLayers[Interactions.getCurrentLayer().id] = this.currentFocus;
+					this.focusLayers[Interactions.getCurrentLayer(this).id] = this.currentFocus;
 				}
+			}
+		} else {
+			if(this.currentFocus) {
+				this.unhover();
 			}
 		}
 	}
@@ -62,22 +187,25 @@ class FocusManager {
 		if(this.currentFocus) {
 			this.currentFocus.unhover(this);
 			this.currentFocus = null;
-			delete this.focusLayers[Interactions.getCurrentLayer().id];
+			delete this.focusLayers[Interactions.getCurrentLayer(this).id];
 		}
 	}
 	beginInteract() {
 		if(this.currentFocus) {
 			this.currentFocus.preactivate(this);
 		}
+		this.cursorIsClicked = true;
+		this.isActive = true;
 	}
 	endInteract() {
 		if(this.currentFocus) {
 			this.currentFocus.activate(this);
 		}
+		this.cursorIsClicked = false;
 	}
 	
 	update() {
-		if(this.currentFocus && !Interactions.isInteractable(this.currentFocus.element)) {
+		if(this.currentFocus && !Interactions.isInteractable(this.currentFocus.element, this)) {
 			this.currentFocus.unhover(this);
 			this.currentFocus = null;
 		}
@@ -93,8 +221,8 @@ class FocusManager {
 	}
 	
 	replaceAttribute(attr, target) {
+		const didClear = this.clearAttribute(attr);
 		const additions = this.addAttribute(attr, target);
-		const didClear = this.clearAttribute(attr, additions.selectedElements);
 		return {
 			additions,
 			didClear
@@ -102,28 +230,17 @@ class FocusManager {
 	}
 	
 	addAttribute(attr, target) {
-		let selectedElements = [];
-		let modifiedElements = [];
-		withEventParents(target, el => {
-			if(!Interactions.isInteractable(el)) return;
-			
-			const previousValue = el.getAttribute(attr) ?? "";
-			const pointers = previousValue.split(" ").filter(item => item.length > 0);
-			
-			if(!pointers.includes(this.pointerId)) {
-				pointers.push(this.pointerId);
-			}
-			
-			el.setAttribute(attr, pointers.join(" "));
-			selectedElements.push(el);
-			if(previousValue !== pointers.join(" ")) {
-				modifiedElements.push(el);
-			}
-		});
+		const previousValue = target.getAttribute(attr) ?? "";
+		const pointers = previousValue.split(" ").filter(item => item.length > 0);
+		
+		if(!pointers.includes(this.pointerId)) {
+			pointers.push(this.pointerId);
+		}
+		
+		target.setAttribute(attr, pointers.join(" "));
 		
 		return {
-			modifiedElements,
-			selectedElements
+			modified: previousValue !== pointers.join(" ")
 		};
 	}
 	

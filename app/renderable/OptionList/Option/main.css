@@ -1,0 +1,26 @@
+
+.options-list-option {
+	display: flex;
+	justify-content: space-between;
+	padding: 2vmin;
+}
+
+.options-list-option:has(+ .options-list-option) {
+	border-bottom: 0.5vmin solid #fff2;
+}
+
+.options-list-option-details {
+	display: flex;
+	flex-direction: column;
+}
+.options-list-option-description {
+	color: #fff8;
+}
+.options-list-option-value {
+	width: 25%;
+	flex: none;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: flex-end;
+}

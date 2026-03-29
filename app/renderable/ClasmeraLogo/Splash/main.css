@@ -1,0 +1,28 @@
+
+@keyframes clasmera-logo-splash-animation {
+	0% {
+		opacity: 0;
+	}
+	40% {
+		opacity: 1;
+	}
+	60% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
+}
+
+.clasmera-logo-splash {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 10vmin;
+	animation: clasmera-logo-splash-animation 5s ease-in-out;
+	opacity: 0;
+}
+
+.clasmera-logo-splash .clasmera-logo[hover] {
+	outline: none !important;
+}

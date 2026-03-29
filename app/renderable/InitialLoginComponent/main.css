@@ -1,12 +1,14 @@
 
 .usm {
-	transition: 0.2s ease-in-out;
+	transition: 2s ease-out;
 	transition-property: opacity, transform;
 }
 
 .overlay:not(.available-layer) > .usm {
+	transition: 0.2s ease-in-out;
+	transition-property: opacity, transform;
 	opacity: 0;
-	transform: translateY(2vmin) scale(0.9);
+	transform: translateY(4vmin) scale(0.6);
 }
 
 .usm-user-list {
@@ -34,20 +36,18 @@
 	opacity: 0.5;
 }
 
-.usm-user .usm-user-icon {
-	border-radius: 50%;
+.usm-user .base-user-icon {
 	inset: 1vmin;
-	background: #fff8;
 	position: absolute;
 	transition: 0.1s ease-in-out;
 	transition-property: outline, outline-offset;
 	outline: 0.3vmin solid transparent;
 }
-.usm-user[hover] .usm-user-icon{
+.usm-user[hover] .base-user-icon{
 	outline: 0.3vmin solid #fff8;
 	outline-offset: 0.5vmin;
 }
-.usm-user[active] .usm-user-icon {
+.usm-user[active] .base-user-icon {
 	outline-offset: 0.2vmin;
 }
 
@@ -60,6 +60,7 @@
 	text-overflow: ellipsis;
 	max-width: 100%;
 	transition: margin 0.1s ease-in-out;
+	white-space: nowrap;
 }
 .usm-user[hover] .usm-user-name {
 	margin-top: 1vmin;

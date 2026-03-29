@@ -13,15 +13,17 @@ class BackgroundShader extends Renderable {
 		(async () => {
 			const shader = await fetch("app/renderable/BackgroundShader/default.glsl").then(res => res.text());
 			sandbox.load(shader);
-			canvas.classList.add("loaded");
+			setTimeout(() => {
+				canvas.classList.add("loaded");
+			}, 1000);
 			BackgroundShader.resizeLoop(canvas);
 		})();
 		return container;
 	}
 	
 	static resizeLoop(canvas) {
-		canvas.width = window.innerWidth / 4;
-		canvas.height = window.innerHeight / 4;
+		canvas.width = window.innerWidth / 8 * window.devicePixelRatio;
+		canvas.height = window.innerHeight / 8 * window.devicePixelRatio;
 		requestAnimationFrame(() => this.resizeLoop(canvas));
 	}
 	

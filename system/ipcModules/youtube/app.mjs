@@ -1,9 +1,12 @@
-import { Download, YtDlp } from 'ytdlp-nodejs';
+import { YtDlp } from 'ytdlp-nodejs';
 import Blobs from '../../Blobs.mjs';
+import Download from '../../Download.mjs';
 import { ipcMain } from 'electron';
 import { Innertube, UniversalCache } from 'youtubei.js';
-const innertube = await Innertube.create({ cache: new UniversalCache(false) });
+import { readdir } from 'fs/promises';
+import Registry from '../../Registry.mjs';
 
+const innertube = await Innertube.create({ cache: new UniversalCache(false) });
 const ytdlp = new YtDlp();
 
 function getLargestThumbnail(thumbnails) {
@@ -14,9 +17,9 @@ function getLargestThumbnail(thumbnails) {
 
 ipcMain.handle("youtubeSearch", async (_event, query) => {
 	const search = await innertube.search(query.query, {type: "video"});
-	console.log(search.results[0]);
+	
 	const results = search.results
-		.filter(result => !result.is_live)
+		.filter(result => !result.is_live && result.length_text)
 		.map(result => {
 			let duration = 0;
 			let views = 0;
@@ -32,7 +35,9 @@ ipcMain.handle("youtubeSearch", async (_event, query) => {
 			}
 			
 			return {
-				id: result.video_id,
+				id: "youtube-"+result.video_id,
+				source_id: result.video_id,
+				source: "YoutubeVideoSource",
 				title: result.title?.text,
 				views: views,
 				duration,
@@ -45,96 +50,109 @@ ipcMain.handle("youtubeSearch", async (_event, query) => {
 			};
 		});
 	
-	console.log(results);
-	
 	return results;
 });
 
-ipcMain.handle("youtubeInfo", async (_event, query) => {
-	const info = (await innertube.getBasicInfo(query.videoURL)).basic_info;
-	const thumbnail = info.thumbnail ? getLargestThumbnail(info.thumbnail) : null;
-	
-	let thumbnailBlob = null;
-	
-	if(thumbnail) {
-		thumbnailBlob = await Blobs.store(await fetch(thumbnail.url).then(e => e.arrayBuffer()))
+async function getVideoInfo(id) {
+	console.log(`applications.videos.downloads.youtube-${id}`);
+	const cachedInfo = await Registry.getKey(`applications.videos.downloads.youtube-${id}`);
+	if(cachedInfo) {
+		return cachedInfo;
 	}
 	
+	const info = (await innertube.getBasicInfo(id)).basic_info;
 	return {
-		id: info.id,
+		id: "youtube-"+info.id,
+		source_id: info.id,
+		source: "YoutubeVideoSource",
 		title: info.title,
 		views: info.view_count,
 		description: info.short_description,
 		duration: info.duration,
-		thumbnail: thumbnailBlob,
+		thumbnail: getLargestThumbnail(info.thumbnail)?.url,
 		author: {
 			id: info.channel_id,
-			name: info.author
+			name: info.author,
 		},
 	}
+}
+
+ipcMain.handle("youtubeInfo", async (_event, query) => {
+	return getVideoInfo(query.videoID);
 });
 
+const downloadingVideos = {};
+
 ipcMain.handle("youtubeDownload", async (_event, query) => {
+	const info = await getVideoInfo(query.videoID);
+	if(!info) {
+		return false;
+	}
+	
+	if(downloadingVideos[query.videoID]) {
+		return downloadingVideos[query.videoID];
+	}
+	
 	const downloadID = await Download.create();
-	const tempID = crypto.randomUUID();
+	downloadingVideos[query.videoID] = downloadID;
 	
-	const downloadPath = `temp/${tempID}`;
+	const existingVideo = await Registry.getKey(`applications.videos.downloads.youtube-${info.id}`, {});
 	
-	let predictedDownloadStages = 2;
-	Download.update(downloadID, {
-		stages: predictedDownloadStages,
-	})
-	
-	const usedFilenames = [];
-	
-	ytdlp
-		.download(query.videoURL)
-		.output(downloadPath)
-		.on("progress", async progress => {
-			if(progress.status == "downloading") {
-				if(!usedFilenames.includes(progress.filename)) {
-					usedFilenames.push(progress.filename);
-				}
-				await Download.update(downloadID, {
-					progress: progress.percentage / 100,
-					stages: Math.max(usedFilenames.length, downloadStages),
-					stage: usedFilenames.length
-				});
-				query.progressCallback(await Download.get(downloadID));
-			}
+	if(!existingVideo.blob || !(await Blobs.getById(existingVideo.blob))) {
+		const tempID = crypto.randomUUID();
+		const downloadPath = `temp/${tempID}`;
+		
+		let predictedDownloadStages = 2;
+		Download.update(downloadID, {
+			stages: predictedDownloadStages,
 		})
-		.run()
-		.then(async () => {
-			const dir = (await readdir(downloadPath)).some(filename => filename !== "." && filename !== "..");
-			if(dir[0]) {
-				const blobID = await Blobs.storeFile(dir[0]);
-				
-				Download.update(downloadID, {
-					complete: true,
-					stage: (await Download.get(downloadID)).stages,
-					blob: blobID
-				});
-			}
+		
+		const usedFilenames = [];
+		
+		ytdlp
+			.download("https://www.youtube.com/watch?v="+query.videoID)
+			.output(downloadPath)
+			.on("progress", async progress => {
+				if(progress.status == "downloading") {
+					if(!usedFilenames.includes(progress.filename)) {
+						usedFilenames.push(progress.filename);
+					}
+					await Download.update(downloadID, {
+						progress: progress.percentage / 100,
+						stages: Math.max(usedFilenames.length, predictedDownloadStages),
+						stage: usedFilenames.length
+					});
+				}
+			})
+			.run()
+			.then(async () => {
+				const dir = (await readdir(downloadPath)).filter(filename => filename !== "." && filename !== "..");
+				if(dir[0]) {
+					info.thumbnail = await Blobs.store(await fetch(info.thumbnail).then(res => res.arrayBuffer()));
+					info.blob = await Blobs.storeFile(`${downloadPath}/${dir[0]}`);
+					await Registry.setKey(`applications.videos.downloads.youtube-${info.id}`, info);
+					
+					Download.update(downloadID, {
+						complete: true,
+						stage: (await Download.get(downloadID)).stages,
+						data: info
+					});
+				} else {
+					Download.update(downloadID, {
+						complete: true,
+						stage: (await Download.get(downloadID)).stages,
+						failed: true
+					});
+				}
+			});
+		
+	} else {
+		Download.update(downloadID, {
+			complete: true,
+			stage: (await Download.get(downloadID)).stages,
+			data: info
 		});
-	
+	}
 	
 	return downloadID;
-	
-	/*
-	If we stop using ytdlp-nodejs, this is the backup plan.
-	Should fix the possible security vulnerability first though.
-	
-	const downloadProcess = spawn("yt-dlp", ["-o", downloadPath, query.videoURL]);
-	
-	downloadProcess.stdout.on("data", data => {
-		console.log(data);
-	});
-	
-	downloadProcess.on("close", async code => {
-		if(code == 0) {
-			const blobID = await Blobs.storeFile(downloadPath);
-			
-		}
-	})
-	*/
 })

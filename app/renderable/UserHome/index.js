@@ -5,6 +5,9 @@ import Interactable from "../../util/Interactable.js";
 import Applications from "../../util/Applications.js";
 import Scrollable from "../../util/Scrollable.js";
 import OverlayMenu from "../OverlayMenu/index.js";
+import SystemSettings from "../../SystemApplications/SystemSettings/index.js";
+import UserProfile from "../UserProfile/index.js";
+import UserIcon from "../UserIcon/index.js";
 
 class UserHome extends Overlay {
 	userid = null;
@@ -55,9 +58,9 @@ class UserHome extends Overlay {
 								callback: () => this.remove()
 							},
 							{
-								text: "Options",
-								callback: manager => {
-									this.userid
+								text: "Profile",
+								callback: async manager => {
+									new UserProfile(this.userid, this.userid == manager.userid ? "editor" : "viewer").open();
 								}
 							},
 						]
@@ -78,13 +81,14 @@ class UserHome extends Overlay {
 	}
 	
 	async updateRendered(element) {
-		let userNameEl = element.querySelector(".home-header-user-name"),
+		let userEl = element.querySelector(".home-header-user"),
+			userNameEl = element.querySelector(".home-header-user-name"),
 			applicationsList = element.querySelector(".home-applications-list");
 		
 		applicationsList.innerHTML = "";
 		
 		const disabledApplications = await Registry.getKey(`user.${this.userid}.disabledapps`, []);
-		const visibleApplications = Object.values(Applications.all).filter(app => !disabledApplications.includes(app.id));
+		const visibleApplications = Object.values(await Applications.getOverridesFor(this.userid)).filter(app => !disabledApplications.includes(app.id));
 		
 		if(visibleApplications.length == 0) {
 			applicationsList.append(
@@ -96,7 +100,7 @@ class UserHome extends Overlay {
 				const renderedIcon = icon.renderTo(applicationsList);
 				new Interactable(renderedIcon, {
 					activate: manager => {
-						const app = new App();
+						const app = new App(this.userid);
 						app.open();
 					}
 				})
@@ -104,9 +108,18 @@ class UserHome extends Overlay {
 		}
 		
 		const user = await Registry.getKey(`user.${this.userid}`);
-		userNameEl.innerText = `Logged in as ${user.name}`;
+		userNameEl.innerText = user.name;
+		
+		const previousIcon = userEl.querySelector(".base-user-icon");
+		if(previousIcon) {
+			previousIcon.remove();
+		}
+		
+		userEl.prepend(new UserIcon(this.userid).render());
 		
 	}
 }
+
+window.UserHome = UserHome;
 
 export default UserHome;

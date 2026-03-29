@@ -3,8 +3,9 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="Content-Security-Policy" content="script-src 'nonce-importmap' 'self';">
 		<title>Clasmera SPACE</title>
-		<script type="importmap">
+		<script type="importmap" nonce="importmap">
 			{
 				"imports": {
 					"imperative-html": "./node_modules/imperative-html/dist/esm/elements.js",
@@ -15,8 +16,9 @@
 		</script>
 		<link rel="stylesheet" href="./app/main.css" />
 	</head>
-	<body>
+	<body style="background: black;">
 		<div id="root"></div>
+		<div id="focus-manager-cursors"></div>
 		<script type="module" src="./app/index.js"></script>
 	</body>
 </html>

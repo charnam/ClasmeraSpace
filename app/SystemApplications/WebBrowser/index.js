@@ -2,6 +2,9 @@ import { HTML } from "imperative-html";
 import Application from "../Application/index.js";
 import Interactable from "../../util/Interactable.js";
 import OverlayMenu from "../../renderable/OverlayMenu/index.js";
+import Interactions from "../../util/Interactions.js";
+import InteractionLayer from "../../util/InteractionLayer.js";
+import WebViewInteractable from "../../renderable/WebViewInteractable/index.js";
 
 class WebBrowser extends Application {
 	static LargeIcon = class LargeApplicationIcon extends Application.LargeIcon {
@@ -35,18 +38,18 @@ class WebBrowser extends Application {
 		const navBar = new HTML.div({class: "browser-app-nav-bar base-header"},
 			backButton = new HTML.div({class: "browser-app-nav-bar-button base-pillbutton bi-arrow-left"}),
 			forwardButton = new HTML.div({class: "browser-app-nav-bar-button base-pillbutton bi-arrow-right"}),
-			urlBar = new HTML.div({class: "browser-app-url-bar base-pillbutton"}),
+			urlBar = new HTML.div({class: "browser-app-url-bar base-pillbutton base-pillbutton-usertext"}),
 			optionsButton = new HTML.div({class: "browser-app-nav-bar-button base-pillbutton bi-three-dots"}),
 		);
 		
 		new Interactable(backButton, {
 			activate: () => {
-				webview.goBack();
+				webview.el.goBack();
 			}
 		})
 		new Interactable(forwardButton, {
 			activate: () => {
-				webview.goForward();
+				webview.el.goForward();
 			}
 		})
 		new Interactable(urlBar, {
@@ -60,6 +63,7 @@ class WebBrowser extends Application {
 			}
 		})
 		new Interactable(optionsButton, {
+			roles: ["BASE_BACK"],
 			activate: () => {
 				const menu = new OverlayMenu({
 					menu: [
@@ -73,21 +77,20 @@ class WebBrowser extends Application {
 			}
 		})
 		
-		const webview = document.createElement("webview");
+		const webview = new WebViewInteractable();
 		webview.src = "https://start.duckduckgo.com/";
+		
+		app.append(
+			navBar,
+			webview.render()
+		);
 		
 		const updateWebview = () => {
 			if(this.element) {
-				webview.setZoomFactor(1.25)
 				urlBar.innerText = webview.src;
 				requestAnimationFrame(updateWebview);
 			}
 		}
-		
-		app.append(
-			navBar,
-			webview
-		);
 		
 		setTimeout(() => {
 			updateWebview();
