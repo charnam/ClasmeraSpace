@@ -12,6 +12,7 @@ import TextOption from "../OptionList/TextOption/index.js";
 import Renderable from "../../util/Renderable.js";
 import ButtonOption from "../OptionList/ButtonOption/index.js";
 import Dialog from "../Dialog/index.js";
+import bcrypt from "bcryptjs";
 
 class UserProfile extends Overlay {
 	style = [...this.style, "app/renderable/UserProfile/main.css"];
@@ -117,6 +118,80 @@ class UserProfile extends Overlay {
 						Renderable.updateInstances();
 					}
 				}),
+			new ButtonOption({
+				label: "Reset or modify PIN",
+				description:
+					"The PIN is a sequence of numbers which are used to log in, manage account settings, "
+					+ "or view history in other apps."
+				+ "\nCurrently, there is "+(await Registry.getKey(`user.${this.userid}.pin`) ? "a" : "no")
+					+ " PIN set.",
+				buttonText: "Change PIN",
+				activate: async manager => {
+					const hash = await Registry.getKey(`user.${this.userid}.pin`);
+					if(hash) {
+						const cont = await manager.PasscodeInput.check({prompt: "Enter the original PIN", hash});
+						if(!cont) return;
+					}
+					
+					let newPIN;
+					let ask = true;
+					while(ask) {
+						newPIN = await manager.PasscodeInput.ask({prompt: "Enter a new PIN"});
+						if(newPIN.length == 0) {
+							ask = await Dialog.ask({
+								prompt: "Are you sure you want to leave the PIN blank? Anyone will be able to log in!",
+								buttons: [
+									{
+										text: "Yes",
+										value: false
+									},
+									{
+										text: "No",
+										value: true
+									}
+								]
+							});
+							continue;
+						} else if(newPIN.length < 4) {
+							await Dialog.ask({
+								prompt: "Sorry, but the PIN must be 4 or more digits long. Please try again.",
+								buttons: [
+									{
+										text: "Okay"
+									}
+								]
+							});
+							continue;
+						}
+						let pinCheck = await manager.PasscodeInput.ask({prompt: "Re-enter the PIN"});
+						
+						ask = newPIN !== pinCheck;
+						if(ask) {
+							await Dialog.ask({
+								prompt: "It looks like you've entered two different PINs. Please try again.",
+								buttons: [
+									{
+										text: "Okay"
+									}
+								]
+							})
+						}
+					}
+					
+					const user = await Registry.getKey(`user.${this.userid}`);
+					if(newPIN.length > 0) {
+						const loader = new LoadingScreen();
+						loader.open();
+						user.pin = await bcrypt.hash(newPIN, 12);
+						loader.remove();
+					} else {
+						delete user.pin;
+					}
+					await Registry.setKey(`user.${this.userid}`, user);
+					
+					Renderable.updateInstances();
+				}
+			})
 		];
 		
 		content.append(
@@ -127,35 +202,38 @@ class UserProfile extends Overlay {
 			new OptionList(this.mode == "viewer" ? [] : [
 				...(this.mode == "manager" ? managerList : []),
 				...(this.mode !== "viewer" ? editorList : []),
-				this.mode == "manager" ? new ButtonOption({
-					label: "Delete user...",
-					description: "Permanently remove this user and all associated data from the system.",
-					buttonText: "Delete",
-					activate: async () => {
-						if(await Dialog.ask({
-							prompt: "Are you REALLY sure you'd like to delete this user? This cannot be undone, be careful!",
-							buttons: [
-								{
-									text: "No, don't delete",
-									value: false
-								},
-								{
-									text: "Yes, delete forever!",
-									value: true
-								},
-							]
-						})) {
-							const load = new LoadingScreen();
-							load.open();
-							const users = await Registry.getKey("user");
-							delete users[this.userid];
-							await Registry.setKey("user", users);
-							await this.remove();
-							load.remove();
-							Renderable.updateInstances();
+				...(this.mode == "manager" ? [
+					new Header({text: "Other"}),
+					new ButtonOption({
+						label: "Delete user...",
+						description: "Permanently remove this user and all associated data from the system.",
+						buttonText: "Delete",
+						activate: async () => {
+							if(await Dialog.ask({
+								prompt: "Are you REALLY sure you'd like to delete this user? This cannot be undone, be careful!",
+								buttons: [
+									{
+										text: "No, don't delete",
+										value: false
+									},
+									{
+										text: "Yes, delete forever!",
+										value: true
+									},
+								]
+							})) {
+								const load = new LoadingScreen();
+								load.open();
+								const users = await Registry.getKey("user");
+								delete users[this.userid];
+								await Registry.setKey("user", users);
+								await this.remove();
+								load.remove();
+								Renderable.updateInstances();
+							}
 						}
-					}
-				}) : null
+					})
+				] : [null])
 			]).render()
 		);
 		

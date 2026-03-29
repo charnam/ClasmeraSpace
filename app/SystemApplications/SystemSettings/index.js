@@ -34,6 +34,8 @@ class SystemSettings extends Application {
 		}
 	}
 	
+	static enableCondition = userid => Registry.getKey(`user.${userid}.administrator`);
+	
 	style = [...this.style, "app/SystemApplications/SystemSettings/main.css"];
 	
 	render() {
@@ -44,8 +46,10 @@ class SystemSettings extends Application {
 		
 		let closeButton;
 		target.append(new HTML.div({class: "system-settings-app-tabbed-container"},
-			new HTML.div({class: "base-header"},
-				closeButton = new HTML.div({class: "system-settings-app-exit-button base-pillbutton bi-x-lg"}),
+			new HTML.div({class: "base-header base-justify-true-center"},
+				new HTML.div(
+					closeButton = new HTML.div({class: "system-settings-app-exit-button base-pillbutton bi-x-lg"}),
+				),
 				this.tabbedContainer.renderTabButtons(),
 				new HTML.div({}) // Used for spacing
 			),

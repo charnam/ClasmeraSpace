@@ -20,13 +20,6 @@
 	box-sizing: border-box;
 	overflow: hidden;
 }
-.videos-app-header {
-	justify-content: space-between;
-}
-.videos-app-header > * {
-	display: flex;
-	gap: inherit;
-}
 .videos-app-header > * > * {
 	height: 100%;
 	box-sizing: border-box;

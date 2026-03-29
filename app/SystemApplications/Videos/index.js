@@ -39,7 +39,7 @@ class Videos extends Application {
 		
 		app.append(
 			videosContainer = new HTML.div({class: "videos-app-main-container"},
-				videosHeader = new HTML.div({class: "base-header videos-app-header"},
+				videosHeader = new HTML.div({class: "base-header videos-app-header base-justify-true-center"},
 					new HTML.div(
 						videosQuit = new HTML.div({class: "base-pillbutton videos-app-quit-button bi-x-lg"}),
 					),

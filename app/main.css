@@ -194,6 +194,23 @@ input {
 	width: 100%;
 }
 
+.base-justify-true-center {
+	display: flex;
+	justify-content: space-between;
+}
+.base-justify-true-center > * {
+	display: flex;
+	gap: inherit;
+}
+.base-justify-true-center > :first-child,
+.base-justify-true-center > :last-child {
+	flex-grow: 1;
+	flex-basis: 0;
+}
+.base-justify-true-center > :last-child {
+	justify-content: flex-end;
+}
+
 .base-tabbed {
 	display: flex;
 	justify-content: center;
@@ -210,7 +227,7 @@ input {
 	transition-property: opacity, transform;
 }
 .base-tabbed:has(> .base-tabbed-visible-tab) > .base-tabbed-tab:not(.base-tabbed-visible-tab),
-.base-tabbed:not(:has(.base-tabbed-visible-tab)) > .base-tabbed-tab:not(:first-child) {
+.base-tabbed:not(:has(> .base-tabbed-visible-tab)) > .base-tabbed-tab:not(:first-child) {
 	opacity: 0;
 	pointer-events: none;
 	transition-duration: 0.1s;

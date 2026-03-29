@@ -36,6 +36,10 @@ class Keyboard extends SingleInstanceRenderable {
 		Interactions.removeLayer(this.overlay.layer);
 		this.overlay.remove();
 	}
+	finish() {
+		this.close();
+		this.whenFinished();
+	}
 	
 	static async ask(details) {
 		return new Promise(res => {
