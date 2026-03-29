@@ -3,12 +3,15 @@ import VisualOverlay from "../../../renderable/VisualOverlay/index.js";
 import Interactable from "../../../util/Interactable.js";
 import Scrollable from "../../../util/Scrollable.js";
 import Video from "../Video/index.js";
+import downloadButtonProgress from "../../../util/simple/downloadButtonProgress.js";
 
 class DownloadPage extends VisualOverlay {
 	style = [...this.style, "app/SystemApplications/Videos/DownloadPage/main.css"];
 	
 	video = null;
 	download = null;
+	
+	buttons = [];
 	
 	constructor(details) {
 		super();
@@ -18,6 +21,9 @@ class DownloadPage extends VisualOverlay {
 		}
 		if(details.download) {
 			this.download = details.download;
+		}
+		if(details.buttons) {
+			this.buttons = details.buttons;
 		}
 	}
 	
@@ -58,12 +64,24 @@ class DownloadPage extends VisualOverlay {
 		description.innerText = this.video.description;
 		Video.getThumbnail(this.video).then(url => thumbnailEl.style.backgroundImage = `url("${url}")`);
 		
-		if(this.download) {
+		for(let button of this.buttons) {
+			const buttonEl = new HTML.div({class: "videos-app-video-download-page-button base-button "+(button.icon ?? "")});
+			buttonEl.innerText = button.text;
+			
+			new Interactable(buttonEl, {
+				activate: manager => {
+					button.activate(manager, buttonEl);
+				}
+			})
+			
+			buttons.append(buttonEl);
+		}
+		
+		/*if(this.download) {
 			let downloadButtonIcon;
 			
-			const downloadButton = new HTML.div({class: "videos-app-video-download-page-button base-button"},
-				downloadButtonIcon = new HTML.i({class: "bi-play"}),
-				" Play"
+			const downloadButton = new HTML.div({class: "videos-app-video-download-page-button base-button bi-play"},
+				"Play"
 			);
 			
 			new Interactable(downloadButton, {
@@ -71,29 +89,14 @@ class DownloadPage extends VisualOverlay {
 					if(downloadButton.classList.contains("progress")) return;
 					
 					downloadButton.classList.add("progress");
-					downloadButtonIcon.classList.remove("bi-play");
-					downloadButtonIcon.classList.add("bi-arrow-repeat");
 					
 					this.download(progress => {
-						if(progress.complete) {
-							downloadButton.setAttribute("style", "");
-							
-							downloadButton.classList.remove("progress");
-							downloadButtonIcon.classList.remove("bi-arrow-repeat");
-							downloadButtonIcon.classList.add("bi-play");
-							
-						} else if(progress.stage == 0 || progress.complete) {
-							downloadButton.setAttribute("style", "");
-						} else {
-							downloadButton.setAttribute("style",
-								`--progress: ${((progress.stage - 1) + progress.progress) / progress.stages};`);
-						}
+						downloadButtonProgress(progress, downloadButton)
 					});
 				}
 			});
 			
-			buttons.append(downloadButton);
-		}
+		}*/
 		
 		new Interactable(backButton, {
 			roles: ["BASE_BACK"],

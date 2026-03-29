@@ -13,7 +13,7 @@ class ConnectionHelpers {
 		loader.remove();
 		
 		await Dialog.ask({
-			prompt: "When you're ready, click the button below, and a short code will be displayed on the other device.",
+			prompt: "You need permission to access this menu.\n\nWhen you're ready, click the button below, and a short code will be displayed on the other device.",
 			buttons: [
 				{
 					text: "Show code",

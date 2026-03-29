@@ -29,3 +29,28 @@
 .app-icon-foreground {
 	z-index: 1500;
 }
+
+
+.base-app-icon .app-icon-background {
+	background: linear-gradient(to top, #444, #333);
+}
+.base-app-icon .app-icon-background {
+	position: absolute;
+	inset: 0;
+}
+.base-app-icon .app-icon-foreground {
+	display: flex;
+	flex-direction: column;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	text-align: center;
+}
+.base-app-icon .app-icon-foreground:before {
+	content: "\F10B";
+	font-family: "bootstrap-icons";
+	font-size: 10vmin;
+	filter: drop-shadow(0 0.5vmin 0.5vmin #0009);
+	text-align: center;
+	margin-bottom: 2vmin;
+}

@@ -1,4 +1,5 @@
 
+.tabbed-container-tab-contents:not(:has(> .base-tabbed-visible-tab)) > .tabbed-container-tab-content.tabbed-container-direction-vertical:not(:first-child),
 .tabbed-container-tab-content.tabbed-container-direction-vertical.base-tabbed-tab-before-passed {
 	transform: translateY(10vmin);
 }
@@ -6,6 +7,7 @@
 	transform: translateY(-10vmin);
 }
 
+.tabbed-container-tab-contents:not(:has(> .base-tabbed-visible-tab)) > .tabbed-container-tab-content.tabbed-container-direction-horizontal:not(:first-child),
 .tabbed-container-tab-content.tabbed-container-direction-horizontal.base-tabbed-tab-before-passed {
 	transform: translateX(10vmin);
 }

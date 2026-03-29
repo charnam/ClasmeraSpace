@@ -55,10 +55,13 @@ class Scrollable {
 		this.animate();
 	}
 	
+	lastFrameTime = 0;
 	animate() {
+		let deltaTime = Math.min(Date.now() - this.lastFrameTime, 500) / 1000 * 120;
+		this.lastFrameTime = Date.now();
 		if(this.element) {
-			this.currentScrollTarget.x += this.currentScrollMovement.x;
-			this.currentScrollTarget.y += this.currentScrollMovement.y;
+			this.currentScrollTarget.x += this.currentScrollMovement.x * deltaTime;
+			this.currentScrollTarget.y += this.currentScrollMovement.y * deltaTime;
 			
 			this.validateScrollPosition();
 			
@@ -66,7 +69,7 @@ class Scrollable {
 				Math.min(
 					Math.max(
 						-this.maximumSpeed, 
-						(this.currentScrollTarget.y - this.element.scrollTop) / 10
+						(this.currentScrollTarget.y - this.element.scrollTop) / 10 * deltaTime
 					),
 					this.maximumSpeed
 				);
@@ -74,7 +77,7 @@ class Scrollable {
 				Math.min(
 					Math.max(
 						-this.maximumSpeed,
-						(this.currentScrollTarget.x - this.element.scrollLeft) / 10
+						(this.currentScrollTarget.x - this.element.scrollLeft) / 10 * deltaTime
 					),
 					this.maximumSpeed
 				);

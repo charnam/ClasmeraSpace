@@ -24,6 +24,9 @@ class FocusManagerCursor extends SingleInstanceRenderable {
 			this.element.classList.remove("focus-manager-cursor-active")
 		}
 		
+		if(isNaN(this.xMov)) this.xMov = 0;
+		if(isNaN(this.yMov)) this.yMov = 0;
+		
 		this.element.setAttribute("style", 
 			`
 			opacity: ${this.active ? 1 : 0};

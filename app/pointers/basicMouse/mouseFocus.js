@@ -26,7 +26,7 @@ const scrollDown = new Input(mouseFocus, {
 const scrollChangedCheck = input => {
 	input._mouseScrollChangedCheck = Date.now();
 	setTimeout(() => {
-		if(input._mouseScrollChangedCheck < Date.now() - 200) {
+		if(input._mouseScrollChangedCheck < Date.now() - 150) {
 			input.setState(0);
 		}
 	}, 200);

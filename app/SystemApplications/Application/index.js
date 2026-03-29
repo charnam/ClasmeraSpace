@@ -12,6 +12,7 @@ class Application extends Overlay {
 		render() {
 			const icon = super.render()
 			icon.classList.add("app-icon");
+			icon.classList.add("base-app-icon");
 			icon.append(
 				new HTML.div({class: "app-icon-inner"},
 					new HTML.div({class: "app-icon-foreground"}),

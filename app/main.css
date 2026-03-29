@@ -72,6 +72,7 @@ input {
 	transition: 0.1s ease-in-out;
 	transition-property: transform, filter, z-index;
 	z-index: 0;
+	padding: 0.2em 0.5em;
 }
 .base-button[hover] {
 	filter: brightness(1.2);
@@ -85,6 +86,27 @@ input {
 }
 .base-button[active]:not([hover]) {
 	transition: none;
+}
+.base-button:before {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	aspect-ratio: 1 / 1;
+}
+.base-button.progress:before {
+	content: "\F130";
+	font-family: "bootstrap-icons";
+	animation: spin 2s linear infinite;
+}
+
+.base-button:after {
+	content: "";
+	position: absolute;
+	background: linear-gradient(to bottom, #fff9, #fff4);
+	left: 0;
+	top: 0;
+	width: calc(var(--progress) * 100%);
+	height: 100%;
 }
 
 @keyframes base-popup-enter {
@@ -215,10 +237,6 @@ input {
 	100% {
 		transform: rotate(360deg);
 	}
-}
-
-.bi-arrow-repeat {
-	animation: spin 2s linear infinite;
 }
 
 [hovertitle]:after {

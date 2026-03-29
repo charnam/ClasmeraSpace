@@ -46,6 +46,7 @@ class OverlayMenu extends SingleInstanceRenderable {
 			menuItemEl.innerText = "Cancel"
 			
 			new Interactable(menuItemEl, {
+				roles: ["BASE_BACK"],
 				activate: () => {
 					this.overlay.remove();
 				}

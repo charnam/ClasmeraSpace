@@ -27,8 +27,10 @@ class ConnectMenu extends VisualOverlay {
 		
 		new Interactable(button, {
 			activate: () => {
-				this.callback(input.value);
-				this.remove();
+				if(input.value.length > 0) {
+					this.callback(input.value);
+					this.remove();
+				}
 			}
 		})
 		

@@ -63,6 +63,7 @@ class WebBrowser extends Application {
 			}
 		})
 		new Interactable(optionsButton, {
+			roles: ["BASE_BACK"],
 			activate: () => {
 				const menu = new OverlayMenu({
 					menu: [

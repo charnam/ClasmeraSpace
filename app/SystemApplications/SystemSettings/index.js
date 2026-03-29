@@ -10,8 +10,11 @@ import OptionList from "../../renderable/OptionList/index.js";
 import Header from "../../renderable/OptionList/Header/index.js";
 import ToggleOption from "../../renderable/OptionList/ToggleOption/index.js";
 import ButtonOption from "../../renderable/OptionList/ButtonOption/index.js";
-import Renderable from "../../util/Renderable.js";
 import createUser from "../../util/simple/createUser.js";
+import Option from "../../renderable/OptionList/Option/index.js";
+import Net from "../../util/system/ipcModules/Net.js";
+import SysInfo from "../../util/system/ipcModules/SysInfo.js";
+import Dialog from "../../renderable/Dialog/index.js";
 
 class SystemSettings extends Application {
 	static LargeIcon = class LargeApplicationIcon extends Application.LargeIcon {
@@ -49,7 +52,9 @@ class SystemSettings extends Application {
 			this.tabbedContainer.renderTabContents()
 		));
 		
-		this.updateRendered(target);
+		this.addTabs().then(
+			() => this.updateRendered(target)
+		);
 		
 		new Interactable(closeButton, {
 			roles: ["BASE_BACK"],
@@ -58,17 +63,15 @@ class SystemSettings extends Application {
 			}
 		});
 		
+		
 		return target;
 	}
 	
-	async updateRendered() {
-		const loader = new LoadingScreen();
-		loader.openIn(1000);
-		
+	async addTabs() {
 		this.element.querySelector(".tabbed-container-tab-buttons").innerHTML = "";
 		this.element.querySelector(".tabbed-container-tab-contents").innerHTML = "";
 		
-		// Users tab content
+		// General tab content
 		const generalTab = this.tabbedContainer.createTab({id: "general", icon: "bi-gear", name: "General"});
 		const generalTabEl = generalTab.render();
 		
@@ -96,6 +99,24 @@ class SystemSettings extends Application {
 			})
 		]).renderTo(usersTabEl)
 		
+		// Connectivity tab content
+		const connectivityTab = this.tabbedContainer.createTab({id: "connectivity", icon: "bi-reception-4", name: "Connectivity"});
+		connectivityTab.render();
+		
+		// Info tab content
+		const infoTab = this.tabbedContainer.createTab({id: "info", icon: "bi-info-circle", name: "Information"});
+		infoTab.render();
+	}
+	
+	async updateRendered() {
+		const loader = new LoadingScreen();
+		loader.openIn(1000);
+		
+		// Users tab
+		const userList = this.element.querySelector(".system-settings-app-users-user-list");
+		
+		userList.innerHTML = "";
+		
 		for(let user of Object.values(await Registry.getKey("user"), {})) {
 			let userEl,
 				userName;
@@ -120,6 +141,36 @@ class SystemSettings extends Application {
 		}
 		
 		loader.remove();
+		
+		// Connectivity tab
+		const connectivityTab = this.element.querySelector('[tabid="connectivity"]');
+		connectivityTab.innerHTML = "";
+		new OptionList([
+			new Header({text: "Connectivity"}),
+			new Option({
+				label: "IP Address",
+				description: (await Net.getAddresses()).join("\n")
+			}),
+			new ButtonOption({
+				label: "Wi-Fi and Networking",
+				description: "Connect to Wi-Fi or manage your tethered Internet connection",
+				buttonText: "Open",
+				activate: () => {
+					Dialog.showUnfinishedMessage();
+				}
+			})
+		]).renderTo(connectivityTab);
+		
+		// Info tab
+		const infoTab = this.element.querySelector('[tabid="info"]');
+		infoTab.innerHTML = "";
+		new OptionList([
+			new Header({text: "System Info"}),
+			new Option({
+				label: "Version",
+				description: (await SysInfo.getVersionInfo()).version
+			})
+		]).renderTo(infoTab);
 	}
 }
 

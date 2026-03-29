@@ -2,6 +2,7 @@ import { HTML } from "imperative-html";
 import VisualOverlay from "../VisualOverlay/index.js";
 import Interactable from "../../util/Interactable.js";
 import formatTimestamp from "../../util/simple/formatTimestamp.js";
+import Registry from "../../util/system/Registry.js";
 
 class VideoPlayer extends VisualOverlay {
 	style = [...this.style, "app/renderable/VideoPlayer/main.css"];
@@ -29,6 +30,10 @@ class VideoPlayer extends VisualOverlay {
 		}
 		if(details.loop) {
 			this.loop = details.loop;
+		}
+		
+		if(details.timeKey) {
+			this.timeKey = details.timeKey;
 		}
 		
 		this.layer.music = "disabled";
@@ -138,18 +143,32 @@ class VideoPlayer extends VisualOverlay {
 			}
 		});
 		
+		let lastTimeUpdate = 0;
+		
 		const updateTimestamp = () => {
 			if(document.body.contains(this.element)) {
 				playbarEl.setAttribute("style", `--progress: ${videoEl.currentTime / videoEl.duration};`);
 				
 				currentTimeEl.innerText = formatTimestamp(videoEl.currentTime);
 				durationEl.innerText = formatTimestamp(videoEl.duration);
+				
+				if(lastTimeUpdate < Date.now() - 10000) {
+					lastTimeUpdate = Date.now();
+					if(this.timeKey) {
+						Registry.setKey(this.timeKey, videoEl.currentTime);
+					}
+				}
+				
 				requestAnimationFrame(updateTimestamp);
 			}
 		}
-		setTimeout(() => {
-			updateTimestamp();
-		}, 100)
+		
+		videoEl.onloadedmetadata = async () => {
+			setTimeout(() => updateTimestamp(), 200);
+			if(this.timeKey) {
+				videoEl.currentTime = await Registry.getKey(this.timeKey);
+			}
+		}
 		
 		if(this.title) {
 			titleEl.innerText = this.title;

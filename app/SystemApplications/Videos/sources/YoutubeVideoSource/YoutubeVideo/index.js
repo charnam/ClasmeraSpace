@@ -5,6 +5,7 @@ import Interactable from "../../../../../util/Interactable.js";
 import Blobs from "../../../../../util/system/Blobs.js";
 import Youtube from "../../../../../util/system/ipcModules/Youtube.js";
 import DownloadPage from "../../../DownloadPage/index.js";
+import downloadButtonProgress from "../../../../../util/simple/downloadButtonProgress.js";
 
 class YoutubeVideo extends Video {
 	render() {
@@ -20,18 +21,26 @@ class YoutubeVideo extends Video {
 				
 				const page = new DownloadPage({
 					video: fullVideo,
-					download: async (progress) => {
-						const details = await Youtube.getVideo(this.video.source_id, progress);
-						
-						if(document.body.contains(page.element)) {
-							const player = new VideoPlayer({
-								title: details.title,
-								author: details.author.name,
-								blob: await Blobs.get(details.blob)
-							});
-							player.open();
+					buttons: [
+						{
+							text: "Play",
+							icon: "bi-play",
+							activate: async (_manager, button) => {
+								if(button.classList.contains("progress")) return;
+								
+								const details = await Youtube.getVideo(this.video.source_id, progress => downloadButtonProgress(progress, button));
+								
+								if(document.body.contains(page.element)) {
+									const player = new VideoPlayer({
+										title: details.title,
+										author: details.author.name,
+										blob: await Blobs.get(details.blob)
+									});
+									player.open();
+								}
+							}
 						}
-					}
+					],
 				});
 				page.open();
 			}
