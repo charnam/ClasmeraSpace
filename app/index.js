@@ -1,4 +1,5 @@
 import "./pointers/index.js";
+import "./Overlays/index.js";
 import Overlay from "./renderable/Overlay/index.js";
 import BackgroundShader from "./renderable/BackgroundShader/index.js";
 import InitialLoginComponent from "./renderable/InitialLoginComponent/index.js";

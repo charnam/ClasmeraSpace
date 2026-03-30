@@ -107,6 +107,7 @@ class UserProfile extends Overlay {
 		
 		const admin = this.mode == "manager";
 		
+		const pinHash = await Registry.getKey(`user.${this.userid}.pin`);
 		const editorList = [
 			new Header({text: "Profile"}),
 			!(admin || await Registry.getKey(`user.${this.userid}.permissions.profilesettings.name`)) ? null :
@@ -121,11 +122,11 @@ class UserProfile extends Overlay {
 			new ButtonOption({
 				label: "Reset or modify PIN",
 				description:
-					"The PIN is a sequence of numbers which are used to log in, manage account settings, "
+					"The PIN is a sequence of digits which are used to log in, manage account settings, "
 					+ "or view history in other apps."
-				+ "\nCurrently, there is "+(await Registry.getKey(`user.${this.userid}.pin`) ? "a" : "no")
+				+ "\nCurrently, there is "+(pinHash ? "a" : "no")
 					+ " PIN set.",
-				buttonText: "Change PIN",
+				buttonText: pinHash ? "Change PIN" : "Add PIN",
 				activate: async manager => {
 					const hash = await Registry.getKey(`user.${this.userid}.pin`);
 					if(hash) {
@@ -138,20 +139,45 @@ class UserProfile extends Overlay {
 					while(ask) {
 						newPIN = await manager.PasscodeInput.ask({prompt: "Enter a new PIN"});
 						if(newPIN.length == 0) {
-							ask = await Dialog.ask({
-								prompt: "Are you sure you want to leave the PIN blank? Anyone will be able to log in!",
+							const choice = await Dialog.ask({
+								prompt: "Are you sure you want to delete the PIN?\nThis account will become unlocked.",
 								buttons: [
 									{
-										text: "Yes",
+										text: "Delete PIN",
 										value: false
 									},
 									{
-										text: "No",
+										text: "Re-enter",
 										value: true
+									},
+									{
+										text: "Cancel",
+										value: 2
 									}
 								]
 							});
-							continue;
+							
+							if(choice === 2) {
+								return;
+							} else {
+								ask = choice;
+								if(!ask && await Registry.getKey(`user.${this.userid}.administrator`)) {
+									ask = await Dialog.ask({
+										prompt: "This is an administrator account!\nIf you remove the PIN, the entire system will be accessible without a password. Continue?",
+										buttons: [
+											{
+												text: "Yes, delete",
+												value: false
+											},
+											{
+												text: "Back",
+												value: true
+											},
+										]
+									})
+								}
+								continue;
+							}
 						} else if(newPIN.length < 4) {
 							await Dialog.ask({
 								prompt: "Sorry, but the PIN must be 4 or more digits long. Please try again.",

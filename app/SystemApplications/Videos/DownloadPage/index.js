@@ -3,7 +3,6 @@ import VisualOverlay from "../../../renderable/VisualOverlay/index.js";
 import Interactable from "../../../util/Interactable.js";
 import Scrollable from "../../../util/Scrollable.js";
 import Video from "../Video/index.js";
-import downloadButtonProgress from "../../../util/simple/downloadButtonProgress.js";
 
 class DownloadPage extends VisualOverlay {
 	style = [...this.style, "app/SystemApplications/Videos/DownloadPage/main.css"];

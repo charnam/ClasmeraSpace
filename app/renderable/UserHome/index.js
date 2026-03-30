@@ -5,18 +5,22 @@ import Interactable from "../../util/Interactable.js";
 import Applications from "../../util/Applications.js";
 import Scrollable from "../../util/Scrollable.js";
 import OverlayMenu from "../OverlayMenu/index.js";
-import SystemSettings from "../../SystemApplications/SystemSettings/index.js";
 import UserProfile from "../UserProfile/index.js";
 import UserIcon from "../UserIcon/index.js";
 
 class UserHome extends Overlay {
-	userid = null;
+	static currentUserId = null;
+	
+	get userid() {
+		return this.constructor.currentUserId;
+	}
+	
 	style = [...this.style, "app/renderable/UserHome/main.css"];
 	animateDisappearDuration = 1000;
 	
 	constructor(userid) {
 		super();
-		this.userid = userid;
+		this.constructor.currentUserId = userid;
 		this.layer.music = "app/renderable/UserHome/music.wav";
 		this.layer.isResetLayer = true;
 		this.layer.musicVolume = 0.12;
@@ -118,8 +122,10 @@ class UserHome extends Overlay {
 		userEl.prepend(new UserIcon(this.userid).render());
 		
 	}
+	async remove() {
+		this.constructor.currentUserId = null;
+		return await super.remove();
+	}
 }
-
-window.UserHome = UserHome;
 
 export default UserHome;

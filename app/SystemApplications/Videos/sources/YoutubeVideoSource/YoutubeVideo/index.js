@@ -23,20 +23,29 @@ class YoutubeVideo extends Video {
 					video: fullVideo,
 					buttons: [
 						{
-							text: "Play",
-							icon: "bi-play",
+							text: "Download",
+							icon: "bi-download",
 							activate: async (_manager, button) => {
 								if(button.classList.contains("progress")) return;
 								
 								const details = await Youtube.getVideo(this.video.source_id, progress => downloadButtonProgress(progress, button));
 								
 								if(document.body.contains(page.element)) {
+									let timeKey = null;
+									if(UserHome.currentUserId) {
+										
+									}
+									
 									const player = new VideoPlayer({
 										title: details.title,
 										author: details.author.name,
-										blob: await Blobs.get(details.blob)
+										blob: await Blobs.get(details.blob),
 									});
 									player.open();
+									
+									button.innerText = "Play";
+									button.classList.remove("bi-download");
+									button.classList.add("bi-play")
 								}
 							}
 						}

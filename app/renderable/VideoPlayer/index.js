@@ -3,6 +3,8 @@ import VisualOverlay from "../VisualOverlay/index.js";
 import Interactable from "../../util/Interactable.js";
 import formatTimestamp from "../../util/simple/formatTimestamp.js";
 import Registry from "../../util/system/Registry.js";
+import FocusManager from "../../util/FocusManager.js";
+import Interactions from "../../util/Interactions.js";
 
 class VideoPlayer extends VisualOverlay {
 	style = [...this.style, "app/renderable/VideoPlayer/main.css"];
@@ -76,50 +78,21 @@ class VideoPlayer extends VisualOverlay {
 			),
 		);
 		
-		videoPlayer.setAttribute("video-player-osd", "");
-		
-		let lastActivationChange = Date.now();
-		const checkOSD = manager => {
-			if([...document.querySelectorAll("[hover]")].every(el => el == playPauseEl) && !videoEl.paused) {
-				lastActivationChange = Date.now();
-				setTimeout(() => {
-					if(lastActivationChange < Date.now() - 2000) {
-						manager.clearAttribute("video-player-osd");
-					}
-				}, 2008);
-			} else {
-				lastActivationChange = Date.now();
-				manager.addAttribute("video-player-osd", videoPlayer, false);
-			}
+		if(this.title) {
+			titleEl.innerText = this.title;
 		}
-		
-		const updatePlayButton = playing => {
-			if(playing) {
-				playPauseEl.classList.remove("bi-play");
-				playPauseEl.classList.add("bi-pause");
-			} else {
-				playPauseEl.classList.remove("bi-pause");
-				playPauseEl.classList.add("bi-play");
-			}
+		if(this.author) {
+			authorEl.innerText = this.author;
 		}
 		
 		new Interactable(playPauseEl, {
 			roles: ["PLAYER_PLAY_PAUSE", "PLAYER_PLAY", "PLAYER_PAUSE"],
-			unhover: manager => {
-				checkOSD(manager);
-			},
-			hover: manager => {
-				checkOSD(manager);
-			},
-			activate: manager => {
+			activate: () => {
 				if(videoEl.paused) {
 					videoEl.play();
-					updatePlayButton(true);
 				} else {
 					videoEl.pause();
-					updatePlayButton(false);
 				}
-				checkOSD(manager);
 			}
 		});
 		
@@ -143,8 +116,17 @@ class VideoPlayer extends VisualOverlay {
 			}
 		});
 		
-		let lastTimeUpdate = 0;
+		const updatePlayButton = playing => {
+			if(playing) {
+				playPauseEl.classList.remove("bi-play");
+				playPauseEl.classList.add("bi-pause");
+			} else {
+				playPauseEl.classList.remove("bi-pause");
+				playPauseEl.classList.add("bi-play");
+			}
+		}
 		
+		let lastTimeUpdate = 0;
 		const updateTimestamp = () => {
 			if(document.body.contains(this.element)) {
 				playbarEl.setAttribute("style", `--progress: ${videoEl.currentTime / videoEl.duration};`);
@@ -159,6 +141,15 @@ class VideoPlayer extends VisualOverlay {
 					}
 				}
 				
+				for(let manager of Interactions.focusManagers) {
+					if(manager.cursorIsActive || manager.isActive || videoEl.paused) {
+						manager.addAttribute("video-player-osd", videoPlayer, false);
+					} else {
+						manager.clearAttribute("video-player-osd");
+					}
+				}
+				
+				updatePlayButton(!videoEl.paused);
 				requestAnimationFrame(updateTimestamp);
 			}
 		}
@@ -170,15 +161,9 @@ class VideoPlayer extends VisualOverlay {
 			}
 		}
 		
-		if(this.title) {
-			titleEl.innerText = this.title;
-		}
-		if(this.author) {
-			authorEl.innerText = this.author;
-		}
+		videoPlayer.setAttribute("video-player-osd", "");
 		
 		overlay.append(videoPlayer);
-		
 		return overlay;
 	}
 }
