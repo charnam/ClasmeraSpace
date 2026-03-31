@@ -4,18 +4,17 @@ import SingleInstanceRenderable from "../../util/SingleInstanceRenderable.js";
 import VisualOverlay from "../VisualOverlay/index.js";
 
 class OverlayMenu extends SingleInstanceRenderable {
+	title = "";
 	menu = [];
 	style = [...this.style, "app/renderable/OverlayMenu/main.css"];
 	allowCancel = true;
 	
 	constructor(options = {}) {
 		super();
-		if(options.title) {
-			this.title = options.title;
-		}
-		if(options.menu) {
-			this.menu = options.menu;
-		}
+		this.title = options.title ?? null;
+		this.menu = options.menu;
+		this.allowCancel = options.allowCancel ?? true;
+		this.cancelCallback = options.cancelCallback ?? (() => {});
 	}
 	
 	open() {
@@ -49,6 +48,7 @@ class OverlayMenu extends SingleInstanceRenderable {
 				roles: ["BASE_BACK"],
 				activate: () => {
 					this.overlay.remove();
+					this.cancelCallback();
 				}
 			});
 			
@@ -58,6 +58,18 @@ class OverlayMenu extends SingleInstanceRenderable {
 		return menuEl;
 	}
 	
+	static ask(details) {
+		return new Promise((res, thrw) => {
+			new OverlayMenu({
+				...details,
+				menu: (details.menu ?? []).map(item => ({
+					...item,
+					callback: () => res(item.value)
+				})),
+				cancelCallback: () => thrw("Cancelled")
+			}).open();
+		});
+	}
 }
 
 export default OverlayMenu;

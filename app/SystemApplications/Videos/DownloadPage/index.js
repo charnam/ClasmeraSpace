@@ -58,7 +58,9 @@ class DownloadPage extends VisualOverlay {
 		);
 		
 		title.innerText = this.video.title;
-		author.innerText = this.video.author.name;
+		if(this.video.author && this.video.author.name) {
+			author.innerText = this.video.author.name;
+		}
 		
 		description.innerText = this.video.description;
 		Video.getThumbnail(this.video).then(url => thumbnailEl.style.backgroundImage = `url("${url}")`);

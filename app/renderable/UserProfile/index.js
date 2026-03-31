@@ -13,6 +13,7 @@ import Renderable from "../../util/Renderable.js";
 import ButtonOption from "../OptionList/ButtonOption/index.js";
 import Dialog from "../Dialog/index.js";
 import bcrypt from "bcryptjs";
+import UserOverrideManager from "./UserOverrideManager/index.js";
 
 class UserProfile extends Overlay {
 	style = [...this.style, "app/renderable/UserProfile/main.css"];
@@ -103,6 +104,14 @@ class UserProfile extends Overlay {
 				},
 				key: `user.${this.userid}.permissions.profilesettings.name`
 			}),
+			new ButtonOption({
+				label: "Manage overrides",
+				description: "This will allow you to manage available applications, video sources, and other user-specific features.",
+				buttonText: "Open",
+				activate: () => {
+					new UserOverrideManager(this.userid).open();
+				}
+			})
 		];
 		
 		const admin = this.mode == "manager";
@@ -226,8 +235,8 @@ class UserProfile extends Overlay {
 			),
 			nameEl = new HTML.div({class: "user-profile-user-name"}),
 			new OptionList(this.mode == "viewer" ? [] : [
-				...(this.mode == "manager" ? managerList : []),
 				...(this.mode !== "viewer" ? editorList : []),
+				...(this.mode == "manager" ? managerList : []),
 				...(this.mode == "manager" ? [
 					new Header({text: "Other"}),
 					new ButtonOption({

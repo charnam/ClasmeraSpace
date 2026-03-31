@@ -66,7 +66,7 @@ class Video extends Renderable {
 		
 		const player = new VideoPlayer({
 			title: this.video.title,
-			author: this.video.author.name,
+			author: this.video.author?.name ?? "",
 			...playerArgs,
 			timeKey
 		});

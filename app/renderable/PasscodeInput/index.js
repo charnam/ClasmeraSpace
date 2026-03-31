@@ -4,6 +4,8 @@ import LoadingScreen from "../LoadingScreen/index.js";
 import Registry from "../../util/system/Registry.js";
 
 class PasscodeInput extends Keyboard {
+	_check = false;
+	
 	constructor(details) {
 		super(details);
 		
@@ -20,16 +22,22 @@ class PasscodeInput extends Keyboard {
 		const out = await bcrypt.compare(this.currentInput, this.hash);
 		loader.remove();
 		
+		this._check = out;
+		
 		return out;
 	}
 	
-	static async check(details) {
-		const loader = new LoadingScreen();
-		const pin = await this.ask(details);
-		loader.open();
-		const out = await bcrypt.compare(pin, details.hash);
-		loader.remove();
-		return out;
+	static check(details) {
+		return new Promise(res => {
+			const pin = new this({
+				...details,
+				whenFinished: async () => {
+					res(pin._check);
+				}
+			});
+			pin.open();
+		})
+		
 	}
 	
 	static async validateUser(id) {
