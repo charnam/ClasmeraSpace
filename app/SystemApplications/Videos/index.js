@@ -7,6 +7,7 @@ import TabbedContainer from "../../renderable/TabbedContainer/index.js";
 import Registry from "../../util/system/Registry.js";
 import UserHome from "../../renderable/UserHome/index.js";
 import Video from "./Video/index.js";
+import Scrollable from "../../util/Scrollable.js";
 
 class Videos extends Application {
 	static LargeIcon = class LargeApplicationIcon extends Application.LargeIcon {
@@ -127,6 +128,8 @@ class Videos extends Application {
 		} else {
 			historyTab.innerText = "No history available.";
 		}
+		
+		new Scrollable(historyTab);
 	}
 	
 }

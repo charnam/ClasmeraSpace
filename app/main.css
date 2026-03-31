@@ -271,6 +271,7 @@ input {
 	pointer-events: none;
 	backdrop-filter: blur(2vmin);
 	z-index: 1000;
+	white-space: nowrap;
 }
 
 [hovertitle][hover]:after {

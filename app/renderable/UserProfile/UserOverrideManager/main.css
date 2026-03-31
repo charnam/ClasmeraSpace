@@ -1,0 +1,10 @@
+.user-override-manager-options-list {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+}
+
+.user-override-manager-options-list > .option-list {
+	width: 80vmin;
+	flex: none;
+}

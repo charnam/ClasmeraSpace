@@ -7,13 +7,13 @@
 	overflow: hidden;
 }
 
-.user-profile.active-layer {
+.user-profile.available-layer {
 	transform: translateX(0vmin);
 	opacity: 1;
 }
 
 @starting-style {
-	.user-profile.active-layer {
+	.user-profile.available-layer {
 		transform: translateX(30vmin);
 		opacity: 0;
 	}

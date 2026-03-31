@@ -2,25 +2,37 @@ import Registry from "./system/Registry.js";
 import UserOverrides from "./system/UserOverrides.js";
 
 class Overridable {
+	static overridables = [];
+	
 	all = [];
 	byId = {};
 	
+	constructor(details) {
+		this.constructor.overridables.push(this);
+		
+		this.id = details.id ?? "unknown";
+		this.name = details.name ?? "Unnamed Override?";
+		this.user = details.user ?? true;
+	}
+	
+	async checkEnabledFor(override, userid) {
+		if(typeof override.enableCondition == "function") {
+			return await override.enableCondition(userid);
+		} else if(typeof override.enableCondition == "boolean") {
+			return override.enableCondition;
+		} else {
+			return true;
+		}
+	}
+	
 	async getOverridesFor(userid) {
-		const forceEnabled = await Registry.getKey(`user.${userid}.overrides.enabled`, []);
-		const forceDisabled = await Registry.getKey(`user.${userid}.overrides.disabled`, []);
+		const forceEnabled = await Registry.getKey(`user.${userid}.overrides.${this.id}.enabled`, []);
+		const forceDisabled = await Registry.getKey(`user.${userid}.overrides.${this.id}.disabled`, []);
 		
 		const autoEnabled = [];
 		
 		await Promise.all(this.all.map(async override => {
-			if(typeof override.enableCondition == "function") {
-				if(await override.enableCondition(userid)) {
-					autoEnabled.push(override);
-				}
-			} else if(typeof override.enableCondition == "boolean") {
-				if(override.enableCondition) {
-					autoEnabled.push(override)
-				}
-			} else {
+			if(await this.checkEnabledFor(override, userid)) {
 				autoEnabled.push(override);
 			}
 		}));
