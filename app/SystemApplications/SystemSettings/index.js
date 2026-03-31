@@ -15,6 +15,8 @@ import Option from "../../renderable/OptionList/Option/index.js";
 import Net from "../../util/system/ipcModules/Net.js";
 import SysInfo from "../../util/system/ipcModules/SysInfo.js";
 import Dialog from "../../renderable/Dialog/index.js";
+import Interactions from "../../util/Interactions.js";
+import UserHome from "../../renderable/UserHome/index.js";
 
 class SystemSettings extends Application {
 	static LargeIcon = class LargeApplicationIcon extends Application.LargeIcon {
@@ -34,7 +36,15 @@ class SystemSettings extends Application {
 		}
 	}
 	
+	static enableCondition = userid => Registry.getKey(`user.${userid}.administrator`);
+	
 	style = [...this.style, "app/SystemApplications/SystemSettings/main.css"];
+	
+	async open() {
+		if(await Interactions.focusManagers[0].PasscodeInput.validateUser(UserHome.currentUserId)) {
+			super.open();
+		}
+	}
 	
 	render() {
 		const target = super.render();
@@ -44,8 +54,10 @@ class SystemSettings extends Application {
 		
 		let closeButton;
 		target.append(new HTML.div({class: "system-settings-app-tabbed-container"},
-			new HTML.div({class: "base-header"},
-				closeButton = new HTML.div({class: "system-settings-app-exit-button base-pillbutton bi-x-lg"}),
+			new HTML.div({class: "base-header base-justify-true-center"},
+				new HTML.div(
+					closeButton = new HTML.div({class: "system-settings-app-exit-button base-pillbutton bi-x-lg"}),
+				),
 				this.tabbedContainer.renderTabButtons(),
 				new HTML.div({}) // Used for spacing
 			),

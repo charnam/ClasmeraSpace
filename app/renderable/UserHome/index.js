@@ -2,21 +2,30 @@ import { HTML } from "imperative-html";
 import Overlay from "../Overlay/index.js";
 import Registry from "../../util/system/Registry.js";
 import Interactable from "../../util/Interactable.js";
-import Applications from "../../util/Applications.js";
 import Scrollable from "../../util/Scrollable.js";
 import OverlayMenu from "../OverlayMenu/index.js";
-import SystemSettings from "../../SystemApplications/SystemSettings/index.js";
 import UserProfile from "../UserProfile/index.js";
 import UserIcon from "../UserIcon/index.js";
 
+// TODO: Fix this.
+// Using a traditional `import` statement here causes horrific issues. Don't ask me why.
+// Something about recursion maybe?
+// If we use `await pApplications` here then the same issue happens.
+const pApplications = import("../../util/Applications.js").then(m => m.default);
+
 class UserHome extends Overlay {
-	userid = null;
+	static currentUserId = null;
+	
+	get userid() {
+		return this.constructor.currentUserId;
+	}
+	
 	style = [...this.style, "app/renderable/UserHome/main.css"];
 	animateDisappearDuration = 1000;
 	
 	constructor(userid) {
 		super();
-		this.userid = userid;
+		this.constructor.currentUserId = userid;
 		this.layer.music = "app/renderable/UserHome/music.wav";
 		this.layer.isResetLayer = true;
 		this.layer.musicVolume = 0.12;
@@ -58,7 +67,7 @@ class UserHome extends Overlay {
 								callback: () => this.remove()
 							},
 							{
-								text: "Profile",
+								text: "Options",
 								callback: async manager => {
 									new UserProfile(this.userid, this.userid == manager.userid ? "editor" : "viewer").open();
 								}
@@ -86,6 +95,8 @@ class UserHome extends Overlay {
 			applicationsList = element.querySelector(".home-applications-list");
 		
 		applicationsList.innerHTML = "";
+		
+		const Applications = await pApplications;
 		
 		const disabledApplications = await Registry.getKey(`user.${this.userid}.disabledapps`, []);
 		const visibleApplications = Object.values(await Applications.getOverridesFor(this.userid)).filter(app => !disabledApplications.includes(app.id));
@@ -118,8 +129,10 @@ class UserHome extends Overlay {
 		userEl.prepend(new UserIcon(this.userid).render());
 		
 	}
+	async remove() {
+		this.constructor.currentUserId = null;
+		return await super.remove();
+	}
 }
-
-window.UserHome = UserHome;
 
 export default UserHome;

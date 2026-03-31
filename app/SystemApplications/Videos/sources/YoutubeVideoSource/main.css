@@ -1,0 +1,14 @@
+.videos-app-youtube-video-source-multi-tab {
+	overflow: hidden;
+}
+.videos-app-youtube-video-source-multi-tab-tabs > .tabbed-container-header {
+	padding: 0;
+	display: flex;
+	height: fit-content;
+}
+.videos-app-youtube-video-source-multi-tab-tabs > .tabbed-container-header > .tabbed-container-tab-buttons,
+.videos-app-youtube-video-source-multi-tab-tabs > .tabbed-container-header > .tabbed-container-tab-buttons > * {
+	width: 100%;
+	text-align: center;
+	justify-content: center;
+}

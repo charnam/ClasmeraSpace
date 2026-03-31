@@ -21,6 +21,10 @@ ipcMain.handle("getVersionInfo", async () => {
 	};
 });
 
+ipcMain.handle("setVolume", async () => {
+	
+});
+
 // TODO: test this more
 ipcMain.handle("systemUpdate", async () => {
 	const pull = await execPromise("git pull");

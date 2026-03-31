@@ -1,6 +1,7 @@
 import { HTML } from "imperative-html";
 import Interactable from "../../util/Interactable.js";
 import Keyboard from "../Keyboard/index.js";
+import OverlayMenu from "../OverlayMenu/index.js";
 
 class DefaultKeyboard extends Keyboard {
 	static lowerKeys = [
@@ -125,7 +126,7 @@ class DefaultKeyboard extends Keyboard {
 		
 		leftKeysArea.append(
 			leftKey = new HTML.div({class: "base-button keyboard-default-key keyboard-default-key-side"}, "Left"),
-			extKeyLeft = new HTML.div({class: "base-button keyboard-default-key keyboard-default-key-side disabled"}, "..."),
+			extKeyLeft = new HTML.div({class: "base-button keyboard-default-key keyboard-default-key-side"}, "Menu"),
 			capsKey = new HTML.div({class: "base-button keyboard-default-key keyboard-default-key-side keyboard-caps-button"}, "Caps")
 		);
 		
@@ -169,6 +170,24 @@ class DefaultKeyboard extends Keyboard {
 				this.update();
 			}
 		});
+		
+		new Interactable(extKeyLeft, {
+			roles: ["BASE_MENU"],
+			activate: focusManager => {
+				const menu = new OverlayMenu({
+					menu: [
+						{
+							text: "Clear",
+							callback: () => {
+								this.currentInput = "";
+								this.update();
+							}
+						}
+					]
+				});
+				menu.open();
+			}
+		})
 		
 		for(let keyRowIndex in keys) {
 			const keyRow = keys[keyRowIndex];

@@ -4,6 +4,9 @@ import Interactable from "../../util/Interactable.js";
 import Tabbed from "../../util/Tabbed.js";
 import VideoSources from "./sources/sources.js";
 import TabbedContainer from "../../renderable/TabbedContainer/index.js";
+import Registry from "../../util/system/Registry.js";
+import UserHome from "../../renderable/UserHome/index.js";
+import Video from "./Video/index.js";
 
 class Videos extends Application {
 	static LargeIcon = class LargeApplicationIcon extends Application.LargeIcon {
@@ -34,19 +37,19 @@ class Videos extends Application {
 			videosHeader,
 			videosQuit,
 			videosSourceTabs,
-			videosSourceOptions,
+			videosHistory,
 			videosMainMenu;
 		
 		app.append(
 			videosContainer = new HTML.div({class: "videos-app-main-container"},
-				videosHeader = new HTML.div({class: "base-header videos-app-header"},
+				videosHeader = new HTML.div({class: "base-header videos-app-header base-justify-true-center"},
 					new HTML.div(
 						videosQuit = new HTML.div({class: "base-pillbutton videos-app-quit-button bi-x-lg"}),
 					),
 					this.tabbed.renderTabButtons(),
 					new HTML.div(
-						videosSourceOptions = new HTML.div({class: "base-pillbutton videos-app-source-options-button bi-gear-fill"}),
-						videosMainMenu = new HTML.div({class: "base-pillbutton videos-app-menu-button bi-list"}),
+						videosHistory = new HTML.div({class: "base-pillbutton videos-app-source-options-button bi-clock-history"}),
+						//videosMainMenu = new HTML.div({class: "base-pillbutton videos-app-menu-button bi-list"}),
 					)
 				),
 				this.tabbed.renderTabContents()
@@ -61,12 +64,16 @@ class Videos extends Application {
 			}
 		});
 		
-		/*
-		new Interactable(videosSourceOptions, {
-			activate: () => {
+		new Interactable(videosHistory, {
+			activate: async manager => {
+				if(await manager.PasscodeInput.validateUser(UserHome.currentUserId)) {
+					await this.updateRendered();
+					this.tabbed.tabbed.setTab("history");
+				}
 			}
 		});
 		
+		/*
 		new Interactable(videosMainMenu, {
 			activate: () => {
 				const menu = new OverlayMenu({
@@ -83,8 +90,9 @@ class Videos extends Application {
 			}
 		})*/
 		
-		this.updateSources(videosContainer);
-		this.updateRendered(videosContainer);
+		this.updateSources(videosContainer).then(() => {
+			this.updateRendered(videosContainer);
+		});
 		return app;
 	}
 	
@@ -99,7 +107,26 @@ class Videos extends Application {
 		}
 	}
 	
-	updateRendered(element) {
+	async updateRendered(element) {
+		const historyTabPrev = this.tabbed.tabs.querySelector("[tabid=\"history\"]");
+		if(historyTabPrev) historyTabPrev.remove();
+		
+		const history = Object.values(
+			await Registry.getKey(`user.${UserHome.currentUserId}.app.videos.history`, {})
+		).sort((a,b) => b.lastPlayed - a.lastPlayed);
+		
+		const historyTab = this.tabbed.createTab({id: "history"}).render();
+		historyTab.classList.add("videos-app-history-tab");
+		if(history.length > 0) {
+			const grid = new HTML.div({class: "videos-app-video-grid"});
+			for(let vidMeta of history) {
+				const video = await Video.byId(vidMeta.video);
+				video.renderTo(grid);
+			}
+			historyTab.append(grid);
+		} else {
+			historyTab.innerText = "No history available.";
+		}
 	}
 	
 }

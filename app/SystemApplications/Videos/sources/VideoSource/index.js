@@ -1,8 +1,10 @@
+import Video from "../../Video/index.js";
 import SingleInstanceRenderable from "../../../../util/SingleInstanceRenderable.js";
 import TabbedContainer from "../../../../renderable/TabbedContainer/index.js";
 
 class VideoSource extends SingleInstanceRenderable {
 	static name = "";
+	static Video = Video;
 	
 	render() {
 		const target = super.render();

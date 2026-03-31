@@ -39,11 +39,11 @@ class InitialLoginComponent extends Renderable {
 			
 			new Interactable(userElement, {
 				activate: async focusManager => {
-					//const response = await focusManager.Keyboard.ask({prompt: "Enter your password."});
-					
-					focusManager.userid = user.id;
-					const home = new UserHome(user.id);
-					home.open();
+					if(!user.pin || await focusManager.PasscodeInput.check({prompt: "Enter your PIN", hash: user.pin})) {
+						focusManager.userid = user.id;
+						const home = new UserHome(user.id);
+						home.open();
+					}
 				}
 			});
 			

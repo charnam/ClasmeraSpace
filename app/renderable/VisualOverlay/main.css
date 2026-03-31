@@ -3,6 +3,7 @@
 	background-color: #0008;
 	transition: 0.2s ease-in-out;
 	transition-property: background-color, opacity;
+	backdrop-filter: blur(0.2vmin);
 }
 @starting-style {
 	.visual-overlay {

@@ -9,9 +9,25 @@ class Overridable {
 		const forceEnabled = await Registry.getKey(`user.${userid}.overrides.enabled`, []);
 		const forceDisabled = await Registry.getKey(`user.${userid}.overrides.disabled`, []);
 		
+		const autoEnabled = [];
+		
+		await Promise.all(this.all.map(async override => {
+			if(typeof override.enableCondition == "function") {
+				if(await override.enableCondition(userid)) {
+					autoEnabled.push(override);
+				}
+			} else if(typeof override.enableCondition == "boolean") {
+				if(override.enableCondition) {
+					autoEnabled.push(override)
+				}
+			} else {
+				autoEnabled.push(override);
+			}
+		}));
+		
 		return this.all
 			.filter(override =>
-				(!override.disabled || forceEnabled.includes(override.id))
+				(autoEnabled.includes(override) || forceEnabled.includes(override.id))
 				&& !forceDisabled.includes(override.id)
 			);
 	}

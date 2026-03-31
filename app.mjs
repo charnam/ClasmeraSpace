@@ -1,5 +1,4 @@
-import { app, BrowserWindow } from 'electron'
-import path from 'path';
+import { app } from 'electron';
 import { existsSync, mkdirSync } from 'fs';
 
 if(!existsSync("./data/")) {
@@ -21,17 +20,4 @@ if(!existsSync("./temp/")) {
 await import("./system/ipcModules/app.mjs");
 await import("./system/ipcModules/generate_preload.mjs");
 
-function createWindow() {
-	const win = new BrowserWindow({
-		backgroundColor: "black",
-		frame: false,
-		webPreferences: {
-			preload: path.join(path.resolve(path.dirname('')), "temp/preload_generated.js"),
-			webviewTag: true
-		}
-	});
-	
-	win.loadFile('index.html');
-}
-
-app.whenReady().then(createWindow)
+import("./system/mainWindow.mjs");

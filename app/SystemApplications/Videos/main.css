@@ -13,19 +13,18 @@
 
 .videos-app-source-tabbed-container .base-sidebar {
 	padding-top: 0;
+	padding-right: 0;
+	width: 12vmin;
 }
 
-.videos-app-source-tabbed-container .base-tabbed-tab {
+.videos-app-source-tabbed-container > .tabbed-container > .base-tabbed > .base-tabbed-tab,
+.videos-app-history-tab {
 	padding: 2vmin;
 	box-sizing: border-box;
 	overflow: hidden;
 }
-.videos-app-header {
-	justify-content: space-between;
-}
-.videos-app-header > * {
-	display: flex;
-	gap: inherit;
+.videos-app-source-tabbed-container > .tabbed-container > .base-tabbed > .base-tabbed-tab {
+	padding-left: 4vmin;
 }
 .videos-app-header > * > * {
 	height: 100%;
@@ -33,8 +32,30 @@
 }
 
 .videos-app-video-grid {
+	position: relative;
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
+	min-width: 100%;
+	min-height: 20vmin;
+	padding-bottom: 2vmin;
+}
+.videos-app-video-grid:before {
+	font-family: bootstrap-icons;
+	font-size: 10vmin;
+	content: "\F116";
+	animation: spin 2s linear infinite;
+	position: absolute;
+	width: 100%;
+	height: 20vmin;
+	opacity: 0;
+	transition: opacity 0.2s ease-in-out;
+	aspect-ratio: 1 / 1;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.videos-app-video-grid-is-loading:before {
+	opacity: 1;
 }
 
 .videos-app-search-bar {

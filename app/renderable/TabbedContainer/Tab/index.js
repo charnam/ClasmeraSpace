@@ -11,7 +11,7 @@ class Tab extends SingleInstanceRenderable {
 	
 	constructor(details) {
 		super();
-		this.tabId = details.id;
+		this.tabId = details.id ?? crypto.randomUUID();
 		this.tabIcon = details.icon;
 		this.tabName = details.name;
 		this.container = details.container;
@@ -19,11 +19,15 @@ class Tab extends SingleInstanceRenderable {
 	
 	render() {
 		const tabButton = new HTML.div({class: "tabbed-container-tab-button base-pillbutton"});
+		
+		let hideTabIcon = false;
 		if(this.tabIcon) {
 			tabButton.classList.add(this.tabIcon);
 			tabButton.setAttribute("hovertitle", this.tabName);
-		} else {
+		} else if(this.tabName) {
 			tabButton.innerText = this.tabName;
+		} else {
+			hideTabIcon = true;
 		}
 		
 		const tabContents = super.render();
@@ -35,14 +39,16 @@ class Tab extends SingleInstanceRenderable {
 		tabContents.classList.add("base-tabbed-tab");
 		tabContents.setAttribute("tabid", this.tabId);
 		
-		this.container.tabButtons.append(tabButton);
 		this.container.tabs.append(tabContents);
 		
-		new Interactable(tabButton, {
-			activate: () => {
-				this.container.tabbed.setTab(this.tabId);
-			}
-		});
+		if(!hideTabIcon) {
+			this.container.tabButtons.append(tabButton);
+			new Interactable(tabButton, {
+				activate: () => {
+					this.container.tabbed.setTab(this.tabId);
+				}
+			});
+		}
 		
 		return tabContents;
 	}

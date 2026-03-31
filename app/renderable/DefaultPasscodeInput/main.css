@@ -1,0 +1,91 @@
+.default-passcode-input-container {
+	display: flex;
+	flex-direction: column;
+}
+
+.default-passcode-input-main {
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+}
+
+.default-passcode-input-dots {
+	border-radius: 8em;
+	display: flex;
+	height: calc(1em + 2vmin);
+	width: 40vmin;
+	justify-content: flex-end;
+	align-items: center;
+	overflow: hidden;
+	padding: 0 4vmin;
+	box-sizing: border-box;
+	-webkit-mask-image: -webkit-linear-gradient(0deg, #0000, #00000009, #0004, #fffe, #fffe, #ffff);
+	margin-bottom: 4vmin;
+}
+
+.default-passcode-input-dot {
+	aspect-ratio: 1 / 1;
+	height: 1em;
+	border-radius: 50%;
+	margin: 1vmin 0.5vmin;
+	background: currentColor;
+	transform: translateX(0vmin);
+	transition: 0.1s ease-in-out;
+	transition-property: height, margin, transform;
+}
+
+@starting-style {
+	.default-passcode-input-dot {
+		margin: 0;
+		height: 0;
+		transform: translateX(2vmin);
+	}
+}
+
+.default-passcode-input-dot.disappear-animation {
+	margin: 0;
+	height: 0;
+}
+
+.default-passcode-input-buttons {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	/* width: 100%; */
+	height: 40vmin;
+}
+
+.default-passcode-input-button-done {
+	order: 1;
+	grid-column: 1;
+}
+
+.default-passcode-input-button-0 {
+	order: 2;
+	grid-column: 2;
+}
+
+.default-passcode-input-button-backspace {
+	order: 3;
+	grid-column: 3;
+}
+
+.default-passcode-input-button {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	aspect-ratio: 1 / 1;
+	font-size: 2em;
+	border-radius: 50%;
+}
+
+.default-passcode-input-prompt {
+	font-size: 2em;
+	margin-bottom: 2vmin;
+	border-bottom: 0.3vmin solid #fff3;
+	padding-bottom: 2vmin;
+	width: 80vmin;
+}
+
+.default-passcode-input-container.incorrect .default-passcode-input-dots {
+	color: red;
+}

@@ -82,24 +82,32 @@ class FocusManager {
 		const deltaTime = Math.min(0.5, (Date.now() - this.cursorLastFrameTime) / 1000);
 		const speedMult = Math.min(1, this.cursorSmoothing * deltaTime * 120);
 		
-		this.cursorTarget.x = Math.max(0, Math.min(this.cursorTarget.x, window.innerWidth));
-		this.cursorTarget.y = Math.max(0, Math.min(this.cursorTarget.y, window.innerHeight));
+		if(this.cursorPosition.x == -1 && this.cursorPosition.y == -1) {
+			if(this.cursorTarget.x !== -1 && this.cursorTarget.y !== -1) {
+				this.cursorPosition.x = this.cursorTarget.x;
+				this.cursorPosition.y = this.cursorTarget.y;
+			}
+		} else {
+			this.cursorTarget.x = Math.max(0, Math.min(this.cursorTarget.x, window.innerWidth));
+			this.cursorTarget.y = Math.max(0, Math.min(this.cursorTarget.y, window.innerHeight));
+			
+			let deltaX = (this.cursorTarget.x - this.cursorPosition.x) * speedMult;
+			let deltaY = (this.cursorTarget.y - this.cursorPosition.y) * speedMult;
+			
+			this.cursorPosition.x += deltaX;
+			this.cursorPosition.y += deltaY;
+			
+			const squashMult = (this.cursorIsClicked ? 1.0 : 0.2);
+			const xMovTarget = Math.max(-10, Math.min(deltaX * squashMult, 10));
+			const yMovTarget = Math.max(-4, Math.min(deltaY * squashMult, 4));
+			
+			this.hoverOverlay.x = this.cursorPosition.x;
+			this.hoverOverlay.y = this.cursorPosition.y;
+			this.hoverOverlay.xMov += (xMovTarget - this.hoverOverlay.xMov) / deltaTime / 400;
+			this.hoverOverlay.yMov += (yMovTarget - this.hoverOverlay.yMov) / deltaTime / 400;
+			this.hoverOverlay.active = this.cursorIsActive;
+		}
 		
-		let deltaX = (this.cursorTarget.x - this.cursorPosition.x) * speedMult;
-		let deltaY = (this.cursorTarget.y - this.cursorPosition.y) * speedMult;
-		
-		this.cursorPosition.x += deltaX;
-		this.cursorPosition.y += deltaY;
-		
-		const squashMult = (this.cursorIsClicked ? 1.0 : 0.2);
-		const xMovTarget = Math.max(-10, Math.min(deltaX * squashMult, 10));
-		const yMovTarget = Math.max(-4, Math.min(deltaY * squashMult, 4));
-		
-		this.hoverOverlay.x = this.cursorPosition.x;
-		this.hoverOverlay.y = this.cursorPosition.y;
-		this.hoverOverlay.xMov += (xMovTarget - this.hoverOverlay.xMov) / deltaTime / 400;
-		this.hoverOverlay.yMov += (yMovTarget - this.hoverOverlay.yMov) / deltaTime / 400;
-		this.hoverOverlay.active = this.cursorIsActive;
 		this.hoverOverlay.updateRendered();
 		
 		if(this.cursorIsActive) {
@@ -182,6 +190,7 @@ class FocusManager {
 				this.unhover();
 			}
 		}
+		this.isActive = true;
 	}
 	unhover() {
 		if(this.currentFocus) {
@@ -189,6 +198,7 @@ class FocusManager {
 			this.currentFocus = null;
 			delete this.focusLayers[Interactions.getCurrentLayer(this).id];
 		}
+		this.isActive = true;
 	}
 	beginInteract() {
 		if(this.currentFocus) {
@@ -202,6 +212,7 @@ class FocusManager {
 			this.currentFocus.activate(this);
 		}
 		this.cursorIsClicked = false;
+		this.isActive = true;
 	}
 	
 	update() {

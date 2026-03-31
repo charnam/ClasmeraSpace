@@ -2,6 +2,7 @@
   "type": "module",
   "dependencies": {
     "@fontsource/dm-sans": "^5.2.8",
+    "bcryptjs": "^3.0.3",
     "bootstrap-icons": "^1.13.1",
     "electron": "^40.8.0",
     "express": "^5.2.1",

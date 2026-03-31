@@ -1,4 +1,5 @@
 import Connection from "../../../public/shared/Connection.mjs";
+import AppComms from "./AppComms.mjs";
 
 class Session {
 	static PINExpireTimeMinutes = 10;
@@ -15,7 +16,7 @@ class Session {
 			
 			do {
 				genPIN = Math.round(Math.random() * 89999 + 10000);
-				console.log(genPIN);
+				AppComms.emit("pinDisplay", genPIN);
 				let attempts = 0;
 				while(attempts < 3 && userPIN != genPIN) {
 					if(attempts >= 1 && userPIN != genPIN) {

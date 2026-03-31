@@ -1,8 +1,8 @@
-import { ipcMain } from "electron";
+import mainWindow from "../../mainWindow.mjs";
 
 class AppComms {
 	static async emit(type, data) {
-		ipcMain.emit("webMessage", {type, data});
+		(await mainWindow).webContents.send("webMessage", {type, data});
 	}
 }
 

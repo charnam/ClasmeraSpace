@@ -38,6 +38,7 @@ class TabbedContainer extends Renderable {
 	render() {
 		const target = super.render();
 		target.classList.add("tabbed-container");
+		target.classList.add("tabbed-container-direction-"+this.direction);
 		
 		let header;
 		
