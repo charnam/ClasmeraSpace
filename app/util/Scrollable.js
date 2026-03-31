@@ -10,10 +10,12 @@ class Scrollable {
 	padding = 80;
 	maximumSpeed = Infinity;
 	buttonScrollSpeed = 10;
+	directions = ["vertical", "horizontal"];
 	
 	constructor(element, details = {}) {
 		this.element = element;
 		Interactions.makeScrollable(this);
+		this.directions = details.directions ?? this.directions;
 		if(details.padding) {
 			this.padding = details.padding;
 		}
@@ -65,22 +67,30 @@ class Scrollable {
 			
 			this.validateScrollPosition();
 			
-			this.element.scrollTop +=
-				Math.min(
-					Math.max(
-						-this.maximumSpeed, 
-						(this.currentScrollTarget.y - this.element.scrollTop) / 10 * deltaTime
-					),
-					this.maximumSpeed
-				);
-			this.element.scrollLeft +=
-				Math.min(
-					Math.max(
-						-this.maximumSpeed,
-						(this.currentScrollTarget.x - this.element.scrollLeft) / 10 * deltaTime
-					),
-					this.maximumSpeed
-				);
+			if(this.directions.includes("horizontal")) {
+				this.element.scrollLeft +=
+					Math.min(
+						Math.max(
+							-this.maximumSpeed,
+							(this.currentScrollTarget.x - this.element.scrollLeft) / 10 * deltaTime
+						),
+						this.maximumSpeed
+					);
+			} else {
+				this.currentScrollTarget.x = this.element.scrollLeft;
+			}
+			if(this.directions.includes("vertical")) {
+				this.element.scrollTop +=
+					Math.min(
+						Math.max(
+							-this.maximumSpeed, 
+							(this.currentScrollTarget.y - this.element.scrollTop) / 10 * deltaTime
+						),
+						this.maximumSpeed
+					);
+			} else {
+				this.currentScrollTarget.y = this.element.scrollTop;
+			}
 			requestAnimationFrame(() => this.animate());
 		}
 	}

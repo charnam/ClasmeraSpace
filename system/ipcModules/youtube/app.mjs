@@ -54,8 +54,7 @@ ipcMain.handle("youtubeSearch", async (_event, query) => {
 });
 
 async function getVideoInfo(id) {
-	console.log(`applications.videos.downloads.youtube-${id}`);
-	const cachedInfo = await Registry.getKey(`applications.videos.downloads.youtube-${id}`);
+	const cachedInfo = await Registry.getKey(`app.videos.all.youtube-${id}`);
 	if(cachedInfo) {
 		return cachedInfo;
 	}
@@ -96,7 +95,7 @@ ipcMain.handle("youtubeDownload", async (_event, query) => {
 	const downloadID = await Download.create();
 	downloadingVideos[query.videoID] = downloadID;
 	
-	const existingVideo = await Registry.getKey(`applications.videos.downloads.youtube-${info.id}`, {});
+	const existingVideo = await Registry.getKey(`app.videos.all.${info.id}`, {});
 	
 	if(!existingVideo.blob || !(await Blobs.getById(existingVideo.blob))) {
 		const tempID = crypto.randomUUID();
@@ -130,7 +129,7 @@ ipcMain.handle("youtubeDownload", async (_event, query) => {
 				if(dir[0]) {
 					info.thumbnail = await Blobs.store(await fetch(info.thumbnail).then(res => res.arrayBuffer()));
 					info.blob = await Blobs.storeFile(`${downloadPath}/${dir[0]}`);
-					await Registry.setKey(`applications.videos.downloads.youtube-${info.id}`, info);
+					await Registry.setKey(`app.videos.all.${info.id}`, info);
 					
 					Download.update(downloadID, {
 						complete: true,

@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import Keyboard from "../Keyboard/index.js";
 import LoadingScreen from "../LoadingScreen/index.js";
+import Registry from "../../util/system/Registry.js";
 
 class PasscodeInput extends Keyboard {
 	constructor(details) {
@@ -14,7 +15,6 @@ class PasscodeInput extends Keyboard {
 	async checkPassword() {
 		if(!this.hash) return true;
 		
-		console.log(this.currentInput);
 		const loader = new LoadingScreen();
 		loader.open();
 		const out = await bcrypt.compare(this.currentInput, this.hash);
@@ -30,6 +30,15 @@ class PasscodeInput extends Keyboard {
 		const out = await bcrypt.compare(pin, details.hash);
 		loader.remove();
 		return out;
+	}
+	
+	static async validateUser(id) {
+		const hash = await Registry.getKey(`user.${id}.pin`);
+		if(hash) {
+			return await this.check({prompt: "Enter PIN to continue", hash});
+		} else {
+			return true;
+		}
 	}
 }
 

@@ -139,7 +139,7 @@ class UserProfile extends Overlay {
 					while(ask) {
 						newPIN = await manager.PasscodeInput.ask({prompt: "Enter a new PIN"});
 						if(newPIN.length == 0) {
-							const choice = await Dialog.ask({
+							const choice = !hash ? false : await Dialog.ask({
 								prompt: "Are you sure you want to delete the PIN?\nThis account will become unlocked.",
 								buttons: [
 									{

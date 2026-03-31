@@ -6,8 +6,10 @@ import Blobs from "../../../../../util/system/Blobs.js";
 import Youtube from "../../../../../util/system/ipcModules/Youtube.js";
 import DownloadPage from "../../../DownloadPage/index.js";
 import downloadButtonProgress from "../../../../../util/simple/downloadButtonProgress.js";
+import Registry from "../../../../../util/system/Registry.js";
 
 class YoutubeVideo extends Video {
+	
 	render() {
 		const videoEl = super.render();
 		
@@ -23,25 +25,15 @@ class YoutubeVideo extends Video {
 					video: fullVideo,
 					buttons: [
 						{
-							text: "Download",
-							icon: "bi-download",
+							text: fullVideo.blob ? "Play" : "Download",
+							icon: fullVideo.blob ? "bi-play" : "bi-download",
 							activate: async (_manager, button) => {
 								if(button.classList.contains("progress")) return;
 								
 								const details = await Youtube.getVideo(this.video.source_id, progress => downloadButtonProgress(progress, button));
 								
 								if(document.body.contains(page.element)) {
-									let timeKey = null;
-									if(UserHome.currentUserId) {
-										
-									}
-									
-									const player = new VideoPlayer({
-										title: details.title,
-										author: details.author.name,
-										blob: await Blobs.get(details.blob),
-									});
-									player.open();
+									this.play({blob: await Blobs.get(details.blob)});
 									
 									button.innerText = "Play";
 									button.classList.remove("bi-download");

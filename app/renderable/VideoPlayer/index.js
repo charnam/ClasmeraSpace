@@ -157,7 +157,7 @@ class VideoPlayer extends VisualOverlay {
 		videoEl.onloadedmetadata = async () => {
 			setTimeout(() => updateTimestamp(), 200);
 			if(this.timeKey) {
-				videoEl.currentTime = await Registry.getKey(this.timeKey);
+				videoEl.currentTime = await Registry.getKey(this.timeKey, 0);
 			}
 		}
 		

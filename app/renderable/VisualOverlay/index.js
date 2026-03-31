@@ -1,16 +1,19 @@
 import SoundManager from "../../util/SoundManager.js";
 import Overlay from "../Overlay/index.js";
 
+const sounds = new SoundManager("app/sounds/ui", {
+	"open": "overlay-open.wav",
+	"close": "overlay-close.wav",
+});
+sounds.onQuickSuccession = "use-last";
+
 class VisualOverlay extends Overlay {
 	style = [...this.style, "app/renderable/VisualOverlay/main.css"];
 	animateDisappearDuration = 1000;
 	
 	enableSounds = true;
 	
-	static sounds = new SoundManager("app/sounds/ui", {
-		"open": "overlay-open.wav",
-		"close": "overlay-close.wav",
-	});
+	static sounds = sounds;
 	
 	render() {
 		const overlay = super.render();
