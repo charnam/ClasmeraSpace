@@ -1,1 +1,1 @@
-export default window.__DOWNLOADS;
+export default globalThis.__DOWNLOADS;

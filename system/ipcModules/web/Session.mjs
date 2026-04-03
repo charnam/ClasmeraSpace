@@ -1,4 +1,4 @@
-import Connection from "../../../public/shared/Connection.mjs";
+import Connection from "../../../shared/Connection.mjs";
 import AppComms from "./AppComms.mjs";
 
 class Session {

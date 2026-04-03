@@ -1,1 +1,1 @@
-export default __NET ?? {getAddresses: () => {}};
+export default globalThis.__NET ?? {getAddresses: () => {}};
