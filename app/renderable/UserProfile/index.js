@@ -170,7 +170,7 @@ class UserProfile extends Overlay {
 								return;
 							} else {
 								ask = choice;
-								if(!ask && await Registry.getKey(`user.${this.userid}.administrator`)) {
+								if(!ask && await Registry.getKey(`user.${this.userid}.administrator`) && hash) {
 									ask = await Dialog.ask({
 										prompt: "This is an administrator account!\nIf you remove the PIN, the entire system will be accessible without a password. Continue?",
 										buttons: [
