@@ -21,8 +21,15 @@ ipcMain.handle("getVersionInfo", async () => {
 	};
 });
 
-ipcMain.handle("setVolume", async () => {
+ipcMain.handle("setVolume", async (_event, query) => {
+	await execPromise(`pactl set-sink-volume @DEFAULT_SINK@ ${Math.min(Math.max(0, query.volume), 100)}%`)
+});
+ipcMain.handle("getVolume", async (_event, query) => {
+	const output = (await execPromise(`pactl get-sink-volume @DEFAULT_SINK@`)).stdout;
 	
+	const matches = output.match(/([\d\.]+\%)/) ?? [100];
+	
+	return parseFloat(matches[0]);
 });
 
 // TODO: test this more

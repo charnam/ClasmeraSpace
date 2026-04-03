@@ -75,6 +75,22 @@ const keymap = {
 	"PageDown": new Input(keyboardFocus, {
 		name: "Page Down",
 		roles: ["BASE_SCROLL_DOWN_PAGE"]
+	}),
+	"=": new Input(keyboardFocus, {
+		name: "Equals Key",
+		roles: ["BASE_VOLUME_UP"]
+	}),
+	"-": new Input(keyboardFocus, {
+		name: "Minus Key",
+		roles: ["BASE_VOLUME_DOWN"]
+	}),
+	"AudioVolumeUp": new Input(keyboardFocus, {
+		name: "Volume Up",
+		roles: ["BASE_VOLUME_UP"]
+	}),
+	"AudioVolumeDown": new Input(keyboardFocus, {
+		name: "Volume Down",
+		roles: ["BASE_VOLUME_DOWN"]
 	})
 };
 
