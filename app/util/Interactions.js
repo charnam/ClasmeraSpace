@@ -5,9 +5,13 @@ class Interactions {
 	static focusManagers = [];
 	static interactionLayers = [new InteractionLayer(document.getElementById("root"))];
 	static availableTargets = [];
-	static availableScrollers = []
+	static availableScrollers = [];
 	
-	
+	static hasPressedInput(role) {
+		return this.focusManagers.some(manager =>
+			manager.getInputsByRole(role).some(input => input.isToggled)
+		);
+	}
 	static getCurrentLayers() {
 		const layers = [];
 		for(let manager of this.focusManagers) {

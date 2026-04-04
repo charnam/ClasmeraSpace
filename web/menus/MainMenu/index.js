@@ -19,9 +19,8 @@ class MainMenu extends Overlay {
 		
 		this.tabbed.createTab({
 			icon: "bi-feather",
-			name: "Test",
-			id: "test"
-		})
+			name: "Test"
+		}).render();
 		
 		return overlay;
 	}

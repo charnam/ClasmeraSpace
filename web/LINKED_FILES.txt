@@ -1,0 +1,10 @@
+The following files / directories in the project's root directory
+are accessible to every viewer of the web-based interface:
+
+== START LINK LISTING ==
+app/
+system/
+shared/
+node_modules/
+importmap.json
+
