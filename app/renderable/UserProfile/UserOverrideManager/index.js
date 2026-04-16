@@ -47,7 +47,6 @@ class UserOverrideManager extends VisualOverlay {
 	async updateRendered(el) {
 		const optionsEl = el.querySelector(".user-override-manager-options-list");
 		
-		console.log(optionsEl);
 		let options = [];
 		
 		for(let overridable of Overridable.overridables) {
