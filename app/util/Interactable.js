@@ -26,6 +26,7 @@ class Interactable {
 		this.unhoverEvent = details.unhover;
 		this.preactivateEvent = details.preactivate;
 		this.activateEvent = details.activate;
+		this.cancelEvent = details.cancel;
 		if(Array.isArray(details.roles)) {
 			this.roles = details.roles;
 		}
@@ -58,6 +59,12 @@ class Interactable {
 		focusManager.clearAttribute("hover");
 		if(this.unhoverEvent) {
 			this.unhoverEvent(focusManager);
+		}
+	}
+	cancel(focusManager) {
+		focusManager.clearAttribute("active");
+		if(this.cancelEvent) {
+			this.cancelEvent(focusManager);
 		}
 	}
 	

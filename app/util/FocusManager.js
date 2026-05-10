@@ -9,6 +9,7 @@ class FocusManager {
 	pointerId = crypto.randomUUID();
 	userid = null;
 	currentFocus = null;
+	currentActivation = null;
 	focusLayers = {};
 	
 	inputs = [];
@@ -203,13 +204,18 @@ class FocusManager {
 	beginInteract() {
 		if(this.currentFocus) {
 			this.currentFocus.preactivate(this);
+			this.currentActivation = this.currentFocus;
 		}
 		this.cursorIsClicked = true;
 		this.isActive = true;
 	}
 	endInteract() {
-		if(this.currentFocus) {
+		if(this.currentFocus && this.currentFocus == this.currentActivation) {
 			this.currentFocus.activate(this);
+		} else {
+			if(this.currentActivation) {
+				this.currentActivation.cancel(this);
+			}
 		}
 		this.cursorIsClicked = false;
 		this.isActive = true;
