@@ -9,11 +9,15 @@ class FocusManager {
 	pointerId = crypto.randomUUID();
 	userid = null;
 	currentFocus = null;
+	currentActivation = null;
 	focusLayers = {};
 	
 	inputs = [];
 	
 	cursorSmoothing = 0.3;
+	
+	interactMovementDirection = null;
+	interactMovementOrigin = {x: 0, y: 0};
 	
 	cursorPosition = {x: -1, y: -1};
 	cursorTarget = {x: -1, y: -1};
@@ -112,7 +116,7 @@ class FocusManager {
 		
 		if(this.cursorIsActive) {
 			const element = document.elementFromPoint(this.cursorPosition.x, this.cursorPosition.y);
-			this.hover(element);
+			this.hover(element, true);
 			const scrollable = Interactions.getScrollable(element)
 			if(scrollable) {
 				for(let input of this.inputs) {
@@ -142,7 +146,7 @@ class FocusManager {
 		if(!this.currentFocus && !this.cursorIsActive) {
 			const target = Interactions.getAvailableTargets(this)[0];
 			if(target) {
-				this.hover(target.element);
+				this.hover(target.element, true);
 			}
 		}
 	}
@@ -151,6 +155,9 @@ class FocusManager {
 		this.cursorIsActive = false;
 		this.cursorWasActive = false;
 		let newFocus;
+		this.fixMovementOrigin(this.interactMovementDirection || direction);
+		
+		this.interactMovementDirection = direction;
 		if(this.currentFocus) {
 			newFocus = Interactions.getAvailableInteractableInDirection(this, this.currentFocus, direction);
 		} else {
@@ -166,6 +173,19 @@ class FocusManager {
 				scrollable.scrollToInclude(newFocus);
 			}
 		}
+		this.fixMovementOrigin(direction);
+	}
+	
+	fixMovementOrigin(direction) {
+		if(this.currentFocus) {
+			const currentFocusRect = this.currentFocus.element.getBoundingClientRect();
+			if(direction == "left" || direction == "right") {
+				this.interactMovementOrigin.x = currentFocusRect.x + currentFocusRect.width / 2;
+			}
+			if(direction == "up" || direction == "down") {
+				this.interactMovementOrigin.y = currentFocusRect.y + currentFocusRect.height / 2;
+			}
+		}
 	}
 	
 	hoverAt(x, y) {
@@ -174,7 +194,7 @@ class FocusManager {
 		this.cursorIsActive = true;
 	}
 	
-	hover(element) {
+	hover(element, setOrigin) {
 		const interactable = Interactions.getInteractable(element, this);
 		if(interactable) {
 			if(this.currentFocus !== interactable) {
@@ -191,6 +211,12 @@ class FocusManager {
 			}
 		}
 		this.isActive = true;
+		
+		if(setOrigin) {
+			const targetRect = element.getBoundingClientRect();
+			this.interactMovementOrigin.x = targetRect.x + targetRect.width;
+			this.interactMovementOrigin.y = targetRect.y + targetRect.height;
+		}
 	}
 	unhover() {
 		if(this.currentFocus) {
@@ -203,13 +229,18 @@ class FocusManager {
 	beginInteract() {
 		if(this.currentFocus) {
 			this.currentFocus.preactivate(this);
+			this.currentActivation = this.currentFocus;
 		}
 		this.cursorIsClicked = true;
 		this.isActive = true;
 	}
 	endInteract() {
-		if(this.currentFocus) {
+		if(this.currentFocus && this.currentFocus == this.currentActivation) {
 			this.currentFocus.activate(this);
+		} else {
+			if(this.currentActivation) {
+				this.currentActivation.cancel(this);
+			}
 		}
 		this.cursorIsClicked = false;
 		this.isActive = true;
@@ -222,7 +253,7 @@ class FocusManager {
 		}
 		const focusedOnLayer = this.focusLayers[Interactions.getCurrentLayer().id];
 		if(focusedOnLayer) {
-			this.hover(focusedOnLayer.element);
+			this.hover(focusedOnLayer.element, true);
 		}
 	}
 	

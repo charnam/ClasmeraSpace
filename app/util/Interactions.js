@@ -131,7 +131,7 @@ class Interactions {
 			if(otherTarget.element == targetEl) continue;
 			otherTargets.push({
 				element: otherTarget.element,
-				score: this.getOffsetScore(targetRect, otherTarget.element.getBoundingClientRect(), direction)
+				score: this.getOffsetScore(manager.interactMovementOrigin, targetRect, otherTarget.element.getBoundingClientRect(), direction)
 			});
 		}
 		
@@ -144,13 +144,14 @@ class Interactions {
 		}
 	}
 	
-	static getOffsetScore(rect1, rect2, direction = "up") {
+	static getOffsetScore(origin, rect1, rect2, direction = "up") {
 		let score = 0;
 		
-		const rect1Center = {
+		const rect1Center = origin || {
 			x: rect1.x + rect1.width / 2,
 			y: rect1.y + rect1.height / 2
 		};
+		
 		const rect2Center = {
 			x: rect2.x + rect2.width / 2,
 			y: rect2.y + rect2.height / 2
@@ -175,11 +176,11 @@ class Interactions {
 		}
 		
 		if(direction == "up" || direction == "down") {
-			if(rect2.right < rect1.left) {
+			if(rect2.right < origin.x) {
 				score += 4000;
 				//score += Math.abs(rect2.right - rect1.left);
 			}
-			if(rect2.left > rect1.right) {
+			if(rect2.left > origin.x) {
 				score += 4000;
 				//score += Math.abs(rect2.left - rect1.right);
 			}
@@ -187,11 +188,11 @@ class Interactions {
 		}
 		
 		if(direction == "left" || direction == "right") {
-			if(rect2.bottom < rect1.top) {
+			if(rect2.bottom < origin.y) {
 				score += 4000;
 				//score += Math.abs(rect2.bottom - rect1.top);
 			}
-			if(rect2.top > rect1.bottom) {
+			if(rect2.top > origin.y) {
 				score += 4000;
 				//score += Math.abs(rect2.top - rect1.bottom);
 			}
@@ -199,16 +200,16 @@ class Interactions {
 		}
 		
 		if(direction == "up") {
-			score += Math.abs(rect1.y - rect2.bottom);
+			score += Math.abs(origin.y - rect2.bottom);
 		}
 		if(direction == "down") {
-			score += Math.abs(rect1.bottom - rect2.y);
+			score += Math.abs(origin.y - rect2.y);
 		}
 		if(direction == "left") {
-			score += Math.abs(rect1.x - rect2.right);
+			score += Math.abs(origin.x - rect2.right);
 		}
 		if(direction == "right") {
-			score += Math.abs(rect1.right - rect2.x);
+			score += Math.abs(origin.x - rect2.x);
 		}
 		
 		return score;
