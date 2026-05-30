@@ -1,0 +1,5 @@
+@import url("./icon.css");
+
+.icon-party-game.app-icon-large .app-icon-foreground:after {
+	content: "Party Games";
+}

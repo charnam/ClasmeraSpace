@@ -1,0 +1,28 @@
+.party-game > div:has(.background-shader) {
+	opacity: 0.2;
+	pointer-events: none;
+	z-index: -10;
+	position: fixed;
+	inset: 0;
+}
+
+.party-game-back {
+	position: fixed;
+	top: 2vmin;
+	left: 2vmin;
+}
+.party-game-games {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	position: relative;
+	transition: 1s ease-in-out;
+	transition-property: top, opacity;
+	opacity: 1;
+	top: 0px;
+}
+@starting-style {
+	.party-game-games {
+		top: 8vmin;
+		opacity: 0;
+	}
+}

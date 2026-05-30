@@ -1,0 +1,23 @@
+.party-game-game-icon {
+	aspect-ratio: 2 / 1;
+	margin: 3vmin;
+	border-radius: 4vmin;
+	background: linear-gradient(to bottom, #fcc, #f00);
+	box-shadow: inset 0 -1vmin 2vmin #fff8;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	text-shadow: 0 0.5vmin 0.5vmin #0008;
+	padding: 2vmin;
+}
+.party-game-game-icon:before {
+	content: "\F5C1";
+	font-family: bootstrap-icons;
+	margin-bottom: 2vmin;
+	font-size: 6vmin;
+}
+.party-game-game-icon:after {
+	content: "Game Test";
+	font-size: 4vmin;
+}
