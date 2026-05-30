@@ -3,7 +3,7 @@ import InteractionLayer from "../../util/InteractionLayer.js";
 import SingleInstanceRenderable from "../../util/SingleInstanceRenderable.js";
 
 class Overlay extends SingleInstanceRenderable {
-	style = [...this.style, "app/renderable/Overlay/main.css"];
+	style = this.autoStyleByImport(import.meta.url);
 	layer = new InteractionLayer();
 	
 	constructor() {

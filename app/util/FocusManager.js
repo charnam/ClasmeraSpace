@@ -104,8 +104,8 @@ class FocusManager {
 			
 			this.hoverOverlay.x = this.cursorPosition.x;
 			this.hoverOverlay.y = this.cursorPosition.y;
-			this.hoverOverlay.xMov += (xMovTarget - this.hoverOverlay.xMov) / deltaTime / 400;
-			this.hoverOverlay.yMov += (yMovTarget - this.hoverOverlay.yMov) / deltaTime / 400;
+			this.hoverOverlay.xMov += (xMovTarget - this.hoverOverlay.xMov) * deltaTime * 8;
+			this.hoverOverlay.yMov += (yMovTarget - this.hoverOverlay.yMov) * deltaTime * 8;
 			this.hoverOverlay.active = this.cursorIsActive;
 		}
 		

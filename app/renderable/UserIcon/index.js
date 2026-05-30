@@ -3,7 +3,7 @@ import Blobs from "../../util/system/Blobs.js";
 import Registry from "../../util/system/Registry.js";
 
 class UserIcon extends Renderable {
-	style = [...this.style, "app/renderable/UserIcon/main.css"];
+	style = this.autoStyleByImport(import.meta.url);
 	
 	constructor(userOrId) {
 		super();

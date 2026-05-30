@@ -8,7 +8,7 @@ import WebViewInteractable from "../../renderable/WebViewInteractable/index.js";
 
 class WebBrowser extends Application {
 	static LargeIcon = class LargeApplicationIcon extends Application.LargeIcon {
-		style = [...this.style, "app/SystemApplications/WebBrowser/icon-large.css"];
+		style = this.autoStyleByImport(import.meta.url, "icon-large.css");
 		render() {
 			const icon = super.render();
 			icon.classList.add("icon-web-browser");
@@ -16,7 +16,7 @@ class WebBrowser extends Application {
 		}
 	}
 	static SmallIcon = class SmallApplicationIcon extends Application.SmallIcon {
-		style = [...this.style, "app/SystemApplications/WebBrowser/icon-small.css"];
+		style = this.autoStyleByImport(import.meta.url, "icon-small.css");
 		render() {
 			const icon = super.render();
 			icon.classList.add("icon-web-browser");
@@ -24,7 +24,7 @@ class WebBrowser extends Application {
 		}
 	}
 	
-	style = [...this.style, "app/SystemApplications/WebBrowser/main.css"];
+	style = this.autoStyleByImport(import.meta.url);
 	render() {
 		const app = super.render();
 		app.classList.add("browser-app");

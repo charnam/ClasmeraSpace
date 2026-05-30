@@ -3,7 +3,7 @@ import Overlay from "../../Overlay/index.js";
 import ClasmeraLogo from "../index.js";
 
 class Splash extends Overlay {
-	style = [...this.style, "app/renderable/ClasmeraLogo/Splash/main.css"];
+	style = this.autoStyleByImport(import.meta.url);
 	constructor() {
 		super();
 		this.layer.isResetLayer = true;

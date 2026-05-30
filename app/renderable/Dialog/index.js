@@ -3,7 +3,7 @@ import VisualOverlay from "../VisualOverlay/index.js";
 import Interactable from "../../util/Interactable.js";
 
 class Dialog extends VisualOverlay {
-	style = [...this.style, "app/renderable/Dialog/main.css"];
+	style = this.autoStyleByImport(import.meta.url);
 	
 	prompt = "Are you sure you want to continue?";
 	buttons = [

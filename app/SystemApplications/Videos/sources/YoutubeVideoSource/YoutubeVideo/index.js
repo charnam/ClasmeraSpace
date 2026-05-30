@@ -33,7 +33,7 @@ class YoutubeVideo extends Video {
 								const details = await Youtube.getVideo(this.video.source_id, progress => downloadButtonProgress(progress, button));
 								
 								if(document.body.contains(page.element)) {
-									this.play({blob: await Blobs.get(details.blob)});
+									this.play({url: (await Blobs.getInfo(details.blob)).url});
 									
 									button.innerText = "Play";
 									button.classList.remove("bi-download");

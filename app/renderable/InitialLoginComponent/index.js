@@ -6,7 +6,7 @@ import UserHome from "../UserHome/index.js";
 import UserIcon from "../UserIcon/index.js";
 
 class InitialLoginComponent extends Renderable {
-	style = [...this.style, "app/renderable/InitialLoginComponent/main.css"];
+	style = this.autoStyleByImport(import.meta.url);
 	
 	constructor() {
 		super();

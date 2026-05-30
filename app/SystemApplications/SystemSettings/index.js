@@ -20,7 +20,7 @@ import UserHome from "../../renderable/UserHome/index.js";
 
 class SystemSettings extends Application {
 	static LargeIcon = class LargeApplicationIcon extends Application.LargeIcon {
-		style = [...this.style, "app/SystemApplications/SystemSettings/icon-large.css"];
+		style = this.autoStyleByImport(import.meta.url, "icon-large.css");
 		render() {
 			const icon = super.render();
 			icon.classList.add("icon-system-settings");
@@ -28,7 +28,7 @@ class SystemSettings extends Application {
 		}
 	}
 	static SmallIcon = class SmallApplicationIcon extends Application.SmallIcon {
-		style = [...this.style, "app/SystemApplications/SystemVideos/icon-small.css"];
+		style = this.autoStyleByImport(import.meta.url, "icon-small.css");
 		render() {
 			const icon = super.render();
 			icon.classList.add("icon-system-settings");
@@ -38,7 +38,7 @@ class SystemSettings extends Application {
 	
 	static enableCondition = userid => Registry.getKey(`user.${userid}.administrator`);
 	
-	style = [...this.style, "app/SystemApplications/SystemSettings/main.css"];
+	style = this.autoStyleByImport(import.meta.url);
 	
 	async open() {
 		if(await Interactions.focusManagers[0].PasscodeInput.validateUser(UserHome.currentUserId)) {
@@ -93,6 +93,15 @@ class SystemSettings extends Application {
 				label: "Use separate keyboard focus",
 				description: "The mouse and keyboard, by default, become one input device. Enable this setting if you'll have one person at the keyboard, and another person at the mouse. Restart for changes to take effect.",
 				key: "system.config.focus.separatekeyboardfocus"
+			}),
+			new ToggleOption({
+				label: "Enable background music",
+				description: "Choose to enable or disable built-in background music. Will also apply to all applications with custom background music.",
+				key: "system.config.general.backgroundmusic",
+				default: true,
+				onchange: async () => {
+					await Interactions.updateMusic();
+				}
 			})
 			
 		]).renderTo(generalTabEl);

@@ -13,7 +13,7 @@ class DefaultPasscodeInput extends PasscodeInput {
 		}
 	}
 	
-	style = [...this.style, "app/renderable/DefaultPasscodeInput/main.css"];
+	style = this.autoStyleByImport(import.meta.url);
 	_dots = [];
 	
 	render() {

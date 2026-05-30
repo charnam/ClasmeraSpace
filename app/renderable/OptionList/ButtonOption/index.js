@@ -3,7 +3,7 @@ import Option from "../Option/index.js";
 import Interactable from "../../../util/Interactable.js";
 
 class ButtonOption extends Option {
-	style = [...this.style, "app/renderable/OptionList/ButtonOption/main.css"];
+	style = this.autoStyleByImport(import.meta.url);
 	
 	buttonText = "Activate";
 	activate() {}

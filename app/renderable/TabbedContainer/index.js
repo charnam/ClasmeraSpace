@@ -4,7 +4,7 @@ import Tabbed from "../../util/Tabbed.js";
 import Tab from "./Tab/index.js";
 
 class TabbedContainer extends Renderable {
-	style = [...this.style, "app/renderable/TabbedContainer/main.css"];
+	style = this.autoStyleByImport(import.meta.url);
 	direction = "horizontal";
 	
 	tabButtons = null;

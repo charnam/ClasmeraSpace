@@ -11,7 +11,7 @@ import Scrollable from "../../util/Scrollable.js";
 
 class Videos extends Application {
 	static LargeIcon = class LargeApplicationIcon extends Application.LargeIcon {
-		style = [...this.style, "app/SystemApplications/Videos/icon-large.css"];
+		style = this.autoStyleByImport(import.meta.url, "icon-large.css");
 		render() {
 			const icon = super.render();
 			icon.classList.add("icon-videos");
@@ -19,7 +19,7 @@ class Videos extends Application {
 		}
 	}
 	static SmallIcon = class SmallApplicationIcon extends Application.SmallIcon {
-		style = [...this.style, "app/SystemApplications/Videos/icon-small.css"];
+		style = this.autoStyleByImport(import.meta.url, "icon-small.css");
 		render() {
 			const icon = super.render();
 			icon.classList.add("icon-videos");
@@ -27,7 +27,10 @@ class Videos extends Application {
 		}
 	}
 	
-	style = [...this.style, "app/SystemApplications/Videos/main.css"];
+	static isMusicApp = false; // The Music app extends the Videos app.
+	
+	registryOrigin = `user.${UserHome.currentUserId}.app.${this.constructor.isMusicApp ? "music" : "videos"}`
+	style = this.autoStyleByImport(import.meta.url);
 	render() {
 		const app = super.render();
 		app.classList.add("videos-app");
@@ -112,16 +115,16 @@ class Videos extends Application {
 		const historyTabPrev = this.tabbed.tabs.querySelector("[tabid=\"history\"]");
 		if(historyTabPrev) historyTabPrev.remove();
 		
-		const history = Object.values(
-			await Registry.getKey(`user.${UserHome.currentUserId}.app.videos.history`, {})
-		).sort((a,b) => b.lastPlayed - a.lastPlayed);
+		const history =
+			Object.values(await Registry.getKey(`${this.registryOrigin}.history`, {}))
+				.sort((a,b) => b.lastPlayed - a.lastPlayed);
 		
 		const historyTab = this.tabbed.createTab({id: "history"}).render();
 		historyTab.classList.add("videos-app-history-tab");
 		if(history.length > 0) {
 			const grid = new HTML.div({class: "videos-app-video-grid"});
 			for(let vidMeta of history) {
-				const video = await Video.byId(vidMeta.video);
+				const video = await Video.byId(vidMeta.video, this);
 				video.renderTo(grid);
 			}
 			historyTab.append(grid);

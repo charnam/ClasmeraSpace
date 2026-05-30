@@ -5,7 +5,7 @@ import Scrollable from "../../../util/Scrollable.js";
 import Video from "../Video/index.js";
 
 class DownloadPage extends VisualOverlay {
-	style = [...this.style, "app/SystemApplications/Videos/DownloadPage/main.css"];
+	style = this.autoStyleByImport(import.meta.url);
 	
 	video = null;
 	download = null;

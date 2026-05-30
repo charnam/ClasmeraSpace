@@ -40,6 +40,17 @@ class Renderable {
 		return renderedElement;
 	}
 	
+	path(url, filename) {
+		const split = url.split("/");
+		split.pop();
+		const basedir = split.join("/");
+		return basedir+"/"+filename;
+	}
+	
+	autoStyleByImport(url, file = "main.css") {
+		return [...this.style, this.path(url, file)];
+	}
+	
 	async loadStyle(style) {
 		await new Promise(res => {
 			const thisStyle = style;

@@ -1,7 +1,7 @@
 import Renderable from "../../util/Renderable.js";
 
 class ClasmeraLogo extends Renderable {
-	style = [...this.style, "app/renderable/ClasmeraLogo/main.css"];
+	style = this.autoStyleByImport(import.meta.url);
 	
 	render() {
 		const logo = super.render();

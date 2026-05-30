@@ -3,7 +3,7 @@ import Renderable from "../../../util/Renderable.js";
 import Registry from "../../../util/system/Registry.js";
 
 class Option extends Renderable {
-	style = [...this.style, "app/renderable/OptionList/Option/main.css"];
+	style = this.autoStyleByImport(import.meta.url);
 	
 	key = "";
 	default = null;

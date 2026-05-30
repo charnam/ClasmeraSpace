@@ -6,6 +6,8 @@ class VideoSource extends SingleInstanceRenderable {
 	static name = "";
 	static Video = Video;
 	
+	static supportsMusicApp = false;
+	
 	render() {
 		const target = super.render();
 		target.classList.add("videos-app-source-tabbed-container");

@@ -5,9 +5,10 @@ import formatTimestamp from "../../util/simple/formatTimestamp.js";
 import Registry from "../../util/system/Registry.js";
 import FocusManager from "../../util/FocusManager.js";
 import Interactions from "../../util/Interactions.js";
+import PlaybackBar from "../PlaybackBar/index.js";
 
 class VideoPlayer extends VisualOverlay {
-	style = [...this.style, "app/renderable/VideoPlayer/main.css"];
+	style = this.autoStyleByImport(import.meta.url);
 	
 	title = undefined;
 	author = undefined;
@@ -55,6 +56,8 @@ class VideoPlayer extends VisualOverlay {
 			titleEl,
 			authorEl;
 		
+		const playbar = new PlaybackBar();
+		
 		const videoPlayer = new HTML.div({class: "video-player"},
 			videoEl = new HTML.video({class: "video-player-video", src: this.url, loop: this.loop}),
 			new HTML.div({class: "video-player-overlay"},
@@ -70,13 +73,18 @@ class VideoPlayer extends VisualOverlay {
 					playPauseEl = new HTML.div({class: "bi-play base-pillbutton video-player-center-button video-player-center-button-large"}),
 					skipForwardEl = new HTML.div({class: "bi-arrow-right base-pillbutton video-player-center-button"})
 				),
-				new HTML.div({class: "video-player-playbar-wrapper"},
-					currentTimeEl = new HTML.div({class: "video-player-time video-player-current-time"}),
-					playbarEl = new HTML.div({class: "video-player-playbar"}),
-					durationEl = new HTML.div({class: "video-player-time video-player-duration"}),
-				)
+				playbar.render()
 			),
 		);
+		
+		let targetTime = videoEl.currentTime;
+		let lastSeekTime = 0;
+		playbar.onchange = delta => {
+			targetTime = (videoEl.currentTime += delta);
+			lastSeekTime = Date.now();
+		}
+		
+		videoEl.addEventListener("paused", () => targetTime = videoEl.currentTime);
 		
 		if(this.title) {
 			titleEl.innerText = this.title;
@@ -93,6 +101,7 @@ class VideoPlayer extends VisualOverlay {
 				} else {
 					videoEl.pause();
 				}
+				updateTimestamp();
 			}
 		});
 		
@@ -107,12 +116,14 @@ class VideoPlayer extends VisualOverlay {
 			roles: ["PLAYER_SKIP_BACK"],
 			activate: () => {
 				videoEl.currentTime -= 5;
+				updateTimestamp();
 			}
 		});
 		new Interactable(skipForwardEl, {
 			roles: ["PLAYER_SKIP_FORWARD"],
 			activate: () => {
 				videoEl.currentTime += 5;
+				updateTimestamp();
 			}
 		});
 		
@@ -129,12 +140,11 @@ class VideoPlayer extends VisualOverlay {
 		let lastTimeUpdate = 0;
 		const updateTimestamp = () => {
 			if(document.body.contains(this.element)) {
-				playbarEl.setAttribute("style", `--progress: ${videoEl.currentTime / videoEl.duration};`);
+				playbar.playtime = (videoEl.paused) ? targetTime : videoEl.currentTime;
+				playbar.duration = videoEl.duration;
+				playbar.update();
 				
-				currentTimeEl.innerText = formatTimestamp(videoEl.currentTime);
-				durationEl.innerText = formatTimestamp(videoEl.duration);
-				
-				if(lastTimeUpdate < Date.now() - 10000) {
+				if(lastTimeUpdate < Date.now() - 10000 || videoEl.paused) {
 					lastTimeUpdate = Date.now();
 					if(this.timeKey) {
 						Registry.setKey(this.timeKey, videoEl.currentTime);
@@ -150,7 +160,6 @@ class VideoPlayer extends VisualOverlay {
 				}
 				
 				updatePlayButton(!videoEl.paused);
-				requestAnimationFrame(updateTimestamp);
 			}
 		}
 		
@@ -162,6 +171,7 @@ class VideoPlayer extends VisualOverlay {
 		}
 		
 		videoPlayer.setAttribute("video-player-osd", "");
+		videoEl.ontimeupdate = updateTimestamp;
 		
 		overlay.append(videoPlayer);
 		return overlay;

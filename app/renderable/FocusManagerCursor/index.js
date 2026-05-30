@@ -2,7 +2,7 @@ import { applyToElement, HTML } from "imperative-html";
 import SingleInstanceRenderable from "../../util/SingleInstanceRenderable.js";
 
 class FocusManagerCursor extends SingleInstanceRenderable {
-	style = [...this.style, "app/renderable/FocusManagerCursor/main.css"];
+	style = this.autoStyleByImport(import.meta.url);
 	
 	x = 0;
 	y = 0;

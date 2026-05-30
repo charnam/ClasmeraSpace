@@ -3,7 +3,13 @@ import Renderable from "../../util/Renderable.js";
 import GlslCanvas from "glslCanvas";
 
 class BackgroundShader extends Renderable {
-	style = [...this.style, "app/renderable/BackgroundShader/main.css"];
+	style = this.autoStyleByImport(import.meta.url);
+	shader = this.path(import.meta.url, "default.glsl");
+	
+	constructor(path = null) {
+		super();
+		if(path) this.shader = path;
+	}
 	
 	render() {
 		const container = super.render();
@@ -11,7 +17,7 @@ class BackgroundShader extends Renderable {
 		container.append(canvas);
 		const sandbox = new GlslCanvas(canvas);
 		(async () => {
-			const shader = await fetch("app/renderable/BackgroundShader/default.glsl").then(res => res.text());
+			const shader = await fetch(this.shader).then(res => res.text());
 			sandbox.load(shader);
 			setTimeout(() => {
 				canvas.classList.add("loaded");

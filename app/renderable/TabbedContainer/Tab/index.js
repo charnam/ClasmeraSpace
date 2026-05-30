@@ -3,7 +3,7 @@ import Interactable from "../../../util/Interactable.js";
 import SingleInstanceRenderable from "../../../util/SingleInstanceRenderable.js";
 
 class Tab extends SingleInstanceRenderable {
-	style = [...this.style, "app/renderable/TabbedContainer/Tab/main.css"];
+	style = this.autoStyleByImport(import.meta.url);
 	
 	tabId = "";
 	tabIcon = "";

@@ -20,7 +20,7 @@ class UserHome extends Overlay {
 		return this.constructor.currentUserId;
 	}
 	
-	style = [...this.style, "app/renderable/UserHome/main.css"];
+	style = this.autoStyleByImport(import.meta.url);
 	animateDisappearDuration = 1000;
 	
 	constructor(userid) {

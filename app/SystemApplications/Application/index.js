@@ -8,7 +8,7 @@ class Application extends Overlay {
 	static id = ""; // Auto-replaced with filename due to naming requirement
 	
 	static Icon = class ApplicationIcon extends SingleInstanceRenderable {
-		style = [...this.style, "app/SystemApplications/Application/icon.css"];
+		style = this.autoStyleByImport(import.meta.url, "icon.css");
 		render() {
 			const icon = super.render()
 			icon.classList.add("app-icon");
@@ -24,7 +24,7 @@ class Application extends Overlay {
 	}
 	
 	static LargeIcon = class LargeApplicationIcon extends Application.Icon {
-		style = [...this.style, "app/SystemApplications/Application/icon-large.css"];
+		style = this.autoStyleByImport(import.meta.url, "icon-large.css");
 		animateDisappearDuration = 2000;
 		render() {
 			const icon = super.render()
@@ -33,7 +33,7 @@ class Application extends Overlay {
 		}
 	}
 	static SmallIcon = class SmallApplicationIcon extends Application.Icon {
-		style = [...this.style, "app/SystemApplications/Application/icon-small.css"];
+		style = this.autoStyleByImport(import.meta.url, "icon-small.css");
 		render() {
 			const icon = super.render()
 			icon.classList.add("app-icon-small");
@@ -41,7 +41,7 @@ class Application extends Overlay {
 		}
 	}
 	
-	style = [...this.style, "app/SystemApplications/Application/main.css"];
+	style = this.autoStyleByImport(import.meta.url);
 	animateDisappearDuration = 1000;
 	
 	constructor(launchedBy) {

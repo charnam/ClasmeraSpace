@@ -4,7 +4,7 @@ import Interactable from "../../../util/Interactable.js";
 import LoadingScreen from "../../LoadingScreen/index.js";
 
 class TextOption extends Option {
-	style = [...this.style, "app/renderable/OptionList/TextOption/main.css"];
+	style = this.autoStyleByImport(import.meta.url);
 	
 	buttonText = "Edit...";
 	

@@ -3,7 +3,7 @@ import SingleInstanceRenderable from "../../../util/SingleInstanceRenderable.js"
 import Interactions from "../../../util/Interactions.js";
 
 class VolumeBar extends SingleInstanceRenderable {
-	style = [...this.style, "app/Overlays/volume/VolumeBar/style.css"];
+	style = this.autoStyleByImport(import.meta.url);
 	
 	render() {
 		const element = super.render();

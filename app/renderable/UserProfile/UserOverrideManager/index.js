@@ -11,7 +11,7 @@ import Header from "../../OptionList/Header/index.js";
 import OverlayMenu from "../../OverlayMenu/index.js";
 
 class UserOverrideManager extends VisualOverlay {
-	style = [...this.style, "app/renderable/UserProfile/UserOverrideManager/main.css"];
+	style = this.autoStyleByImport(import.meta.url);
 	
 	constructor(userid) {
 		super();

@@ -8,10 +8,11 @@ import Scrollable from "../../../../util/Scrollable.js";
 import TabbedContainer from "../../../../renderable/TabbedContainer/index.js";
 
 class YoutubeVideoSource extends VideoSource {
-	style = [...this.style, "app/SystemApplications/Videos/sources/YoutubeVideoSource/main.css"];
+	style = this.autoStyleByImport(import.meta.url);
 	
 	static name = "YouTube";
 	static Video = YoutubeVideo;
+	static supportsMusicApp = true;
 	
 	render() {
 		const el = super.render();
@@ -33,7 +34,7 @@ class YoutubeVideoSource extends VideoSource {
 		});
 		this.addMultiTab({icon: "bi-tags", name: "Animals"}, {
 			"Wildlife": "wildlife nature documentaries",
-			"Pets": "our pets"
+			"Pets": "our pets vlog"
 		});
 		this.addAutoTab({icon: "bi-motherboard", name: "Technology"}, 'technology news');
 		

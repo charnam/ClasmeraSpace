@@ -14,7 +14,7 @@ class WebViewInteractable extends SingleInstanceRenderable {
 		this.updateRendered();
 	}
 	
-	style = [...this.style, "app/renderable/WebViewInteractable/main.css"]
+	style = this.autoStyleByImport(import.meta.url)
 	render() {
 		const container = super.render();
 		

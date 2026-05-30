@@ -1,4 +1,5 @@
 import Interactions from "./Interactions.js";
+import Registry from "./system/Registry.js";
 
 class InteractionLayer {
 	id = crypto.randomUUID();
@@ -96,9 +97,11 @@ class InteractionLayer {
 	async fadeInMusic() {
 		if(this.musicIsPlaying) return;
 		this.musicIsPlaying = true;
-		for(let i = 0; i < 40; i++) {
-			this.currentMusicVolume += this.musicVolume/40;
-			await new Promise(res => setTimeout(res, 10));
+		if(await Registry.getKey("system.config.general.backgroundmusic", true)) {
+			for(let i = 0; i < 40; i++) {
+				this.currentMusicVolume += this.musicVolume/40;
+				await new Promise(res => setTimeout(res, 10));
+			}
 		}
 	}
 	

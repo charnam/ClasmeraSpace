@@ -3,7 +3,7 @@ import VisualOverlay from "../VisualOverlay/index.js";
 import Interactions from "../../util/Interactions.js";
 
 class LoadingScreen extends VisualOverlay {
-	style = [...this.style, "app/renderable/LoadingScreen/main.css"];
+	style = this.autoStyleByImport(import.meta.url);
 	enableSounds = false;
 	
 	loadTimeout = null;

@@ -25,7 +25,7 @@ class DefaultKeyboard extends Keyboard {
 		";": "SEMICOLON"
 	};
 	
-	style = [...this.style, "app/renderable/DefaultKeyboard/main.css"];
+	style = this.autoStyleByImport(import.meta.url);
 	inCapsMode = false;
 	cursorPosition = 0;
 	get textBeforeCursor() {

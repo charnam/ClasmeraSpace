@@ -3,7 +3,7 @@ import Option from "../Option/index.js";
 import Interactable from "../../../util/Interactable.js";
 
 class ToggleOption extends Option {
-	style = [...this.style, "app/renderable/OptionList/ToggleOption/main.css"];
+	style = this.autoStyleByImport(import.meta.url);
 	
 	enabled = {
 		icon: "",
@@ -21,6 +21,9 @@ class ToggleOption extends Option {
 		}
 		if(details.disabled) {
 			this.disabled = details.disabled;
+		}
+		if(details.onchange) {
+			this.onchange = details.onchange;
 		}
 	}
 	
@@ -41,6 +44,7 @@ class ToggleOption extends Option {
 			activate: async () => {
 				element.classList.add("options-list-option-loading");
 				await this.setValue(!await this.getValue());
+				if(this.onchange) await this.onchange(await this.getValue());
 				element.classList.remove("options-list-option-loading");
 			}
 		})

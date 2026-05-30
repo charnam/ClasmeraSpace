@@ -1,7 +1,7 @@
 import Renderable from "../../util/Renderable.js";
 
 class OptionList extends Renderable {
-	style = [...this.style, "app/renderable/OptionList/main.css"];
+	style = this.autoStyleByImport(import.meta.url);
 	options = [];
 	
 	constructor(options = []) {

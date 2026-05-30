@@ -6,7 +6,7 @@ import VisualOverlay from "../VisualOverlay/index.js";
 class OverlayMenu extends SingleInstanceRenderable {
 	title = "";
 	menu = [];
-	style = [...this.style, "app/renderable/OverlayMenu/main.css"];
+	style = this.autoStyleByImport(import.meta.url);
 	allowCancel = true;
 	
 	constructor(options = {}) {

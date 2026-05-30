@@ -14,6 +14,7 @@ class Video extends Renderable {
 	constructor(details = {}) {
 		super();
 		this.video = details.video;
+		this.app = details.app;
 	}
 	
 	render() {
@@ -49,8 +50,8 @@ class Video extends Renderable {
 		const loader = new LoadingScreen();
 		loader.open();
 		let timeKey = null;
-		if(UserHome.currentUserId) {
-			const historyKey = `user.${UserHome.currentUserId}.app.videos.history.${this.video.id}`;
+		if(UserHome.currentUserId && this.app?.registryOrigin) {
+			const historyKey = `${this.app.registryOrigin}.history.${this.video.id}`;
 			const history = await Registry.getKey(historyKey, {firstPlayed: Date.now(), timesPlayed: []});
 			
 			history.timesPlayed.push(Date.now());
@@ -67,6 +68,7 @@ class Video extends Renderable {
 		const player = new VideoPlayer({
 			title: this.video.title,
 			author: this.video.author?.name ?? "",
+			music: this.app?.isMusicApp,
 			...playerArgs,
 			timeKey
 		});
@@ -85,11 +87,11 @@ class Video extends Renderable {
 		return URL.createObjectURL(blob);
 	}
 	
-	static async byId(videoId) {
+	static async byId(videoId, app) {
 		const video = await Registry.getKey(`app.videos.all.${videoId}`);
 		const Source = (await pVideoSources).byId[video.source];
 		if(Source) {
-			return new Source.Video({video});
+			return new Source.Video({video, app});
 		} else {
 			return null;
 		}

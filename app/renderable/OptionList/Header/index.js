@@ -1,7 +1,7 @@
 import Renderable from "../../../util/Renderable.js";
 
 class Header extends Renderable {
-	style = [...this.style, "app/renderable/OptionList/Header/main.css"];
+	style = this.autoStyleByImport(import.meta.url);
 	
 	constructor(details) {
 		super();

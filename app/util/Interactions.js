@@ -1,5 +1,6 @@
 import InteractionLayer from "./InteractionLayer.js";
 import callToParents from "./simple/callToParents.js";
+import Registry from "./system/Registry.js";
 
 class Interactions {
 	static focusManagers = [];
@@ -42,16 +43,23 @@ class Interactions {
 		}
 		return availableLayers;
 	}
-	static updateMusic() {
-		const layers = [...this.interactionLayers];
-		let currentLayer = layers.pop();
-		while(currentLayer && currentLayer.music.length == 0) {
+	static async updateMusic() {
+		// have to assign "interactionLayers" before "await" to prevent weird race conditions
+		const interactionLayers = [...this.interactionLayers];
+		
+		const layers = [...interactionLayers];
+		
+		let currentLayer;
+		
+		do {
 			currentLayer = layers.pop();
-		}
+		} while(currentLayer && currentLayer.music.length == 0);
+		
 		if(!currentLayer) {
 			return;
 		}
-		for(let layer of this.interactionLayers) {
+		
+		for(let layer of interactionLayers) {
 			if(layer !== currentLayer && layer.musicIsPlaying) {
 				layer.fadeOutMusic();
 			}
@@ -59,6 +67,12 @@ class Interactions {
 		if(!currentLayer.musicIsPlaying) {
 			currentLayer.fadeInMusic();
 		}
+		
+		await Registry.getKey("system.config.general.backgroundmusic", true).then(shouldPlayMusic => {
+			if(!shouldPlayMusic) {
+				currentLayer.fadeOutMusic();
+			}
+		});
 	}
 	
 	static addLayer(layer) {

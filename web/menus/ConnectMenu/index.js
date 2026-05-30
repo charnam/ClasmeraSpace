@@ -3,7 +3,7 @@ import Interactable from "../../../app/util/Interactable.js";
 import VisualOverlay from "../../../app/renderable/VisualOverlay/index.js";
 
 class ConnectMenu extends VisualOverlay {
-	style = [...this.style, "menus/ConnectMenu/main.css"];
+	style = this.autoStyleByImport(import.meta.url);
 	
 	callback() {};
 	constructor(details = {}) {

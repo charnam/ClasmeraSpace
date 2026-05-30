@@ -73,51 +73,11 @@
 }
 
 
-
-.video-player-playbar-wrapper {
+.video-player .playback-bar {
 	position: absolute;
 	bottom: 0;
-	width: 100%;
-	display: grid;
-	grid-template-areas:
-		"time duration"
-		"playbar playbar";
-	justify-content: space-between;
-	padding: 6vmin;
+	left: 0;
+	right: 0;
+	margin: 6vmin;
 	box-sizing: border-box;
 }
-
-.video-player-playbar {
-	grid-area: playbar;
-	height: 2.5vmin;
-	background: #222;
-	border-radius: 4vmin;
-	position: relative;
-	overflow: hidden;
-}
-
-.video-player-playbar:after {
-	content: "";
-	position: absolute;
-	left: 0;
-	top: 0;
-	width: calc(var(--progress) * 100%);
-	height: 100%;
-	background: #ccc;
-	border-radius: inherit;
-}
-
-.video-player-time {
-	font-size: 3vmin;
-	padding: 2vmin
-}
-
-.video-player-time.video-player-current-time {
-	grid-area: time;
-}
-
-.video-player-time.video-player-duration {
-	grid-area: duration;
-	width: fit-content;
-}
-

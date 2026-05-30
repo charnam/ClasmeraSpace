@@ -16,7 +16,7 @@ import bcrypt from "bcryptjs";
 import UserOverrideManager from "./UserOverrideManager/index.js";
 
 class UserProfile extends Overlay {
-	style = [...this.style, "app/renderable/UserProfile/main.css"];
+	style = this.autoStyleByImport(import.meta.url);
 	animateDisappearDuration = 1000;
 	
 	constructor(userid, mode = "viewer") {

@@ -8,7 +8,7 @@ const sounds = new SoundManager("app/sounds/ui", {
 sounds.onQuickSuccession = "use-last";
 
 class VisualOverlay extends Overlay {
-	style = [...this.style, "app/renderable/VisualOverlay/main.css"];
+	style = this.autoStyleByImport(import.meta.url);
 	animateDisappearDuration = 1000;
 	
 	enableSounds = true;
